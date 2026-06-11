@@ -1,0 +1,1227 @@
+.DAT_Dashboard_Page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-base);
+  --dashboard-radius: var(--radius-md);
+
+  &_Section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-base);
+
+    &_Grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-base);
+    }
+
+    &_KpiGrid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+
+      > .kpi-card {
+        display: none;
+      }
+    }
+
+    &_VisualCard {
+      // height: 700px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      max-width: 100%;
+      padding: 12px;
+      transition: box-shadow var(--transition-base);
+
+      &_Layout {
+        display: grid;
+        grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+        gap: 10px;
+        align-items: stretch;
+
+        &_Main,
+        &_Side {
+          min-width: 0;
+          height: 100%;
+        }
+
+        &_Main {
+          display: flex;
+
+          &_Scene {
+            position: relative;
+            flex: 1;
+            height: 600px;
+            min-height: 180px;
+            border-radius: var(--dashboard-radius);
+            overflow: hidden;
+            border: 1px solid rgba(214, 228, 238, 1);
+            background: linear-gradient(
+              180deg,
+              rgba(165, 208, 234, 1) 0%,
+              rgba(220, 233, 241, 1) 50%,
+              rgba(128, 185, 93, 1) 50.2%,
+              rgba(117, 167, 79, 1) 100%
+            );
+          }
+        }
+
+        &_Side {
+          display: grid;
+          grid-template-rows: auto minmax(0, 1fr) auto;
+          gap: 10px;
+        }
+      }
+    }
+  }
+}
+
+.DAT_Infor {
+  display: contents;
+
+  &_Card {
+    &_SOC {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      border: 1px solid var(--border-light);
+      border-radius: var(--dashboard-radius);
+      overflow: hidden;
+      min-height: 74px;
+      background: var(--card-bg);
+
+      &_Label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        min-height: 100%;
+        padding: 6px 0;
+        color: rgba(255, 255, 255, 1);
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: var(--font-weight-semibold);
+        letter-spacing: 1px;
+        line-height: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(34, 197, 94, 1) 0%,
+          rgba(22, 163, 74, 1) 100%
+        );
+      }
+
+      &_Body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: 22px 28px 1fr;
+        align-content: start;
+        padding: 10px 12px 8px;
+
+        &_Header {
+          display: flex;
+          align-items: flex-start;
+          gap: 6px;
+          min-height: 22px;
+
+          &_Title {
+            flex: 1;
+            min-width: 0;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: var(--font-weight-semibold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 14px;
+            padding-left: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          &_Status {
+            flex-shrink: 0;
+          }
+        }
+
+        &_Value {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          min-height: 28px;
+          margin-top: 0;
+
+          &_Val {
+            font-size: 16px;
+            font-weight: var(--font-weight-bold);
+            line-height: 16px;
+            color: rgba(21, 128, 61, 1);
+          }
+
+          &_Status {
+            flex-shrink: 0;
+          }
+
+          &_Unit {
+            font-size: 10px;
+            color: var(--text-secondary);
+          }
+        }
+
+        &_Progress {
+          align-self: end;
+          padding-top: 6px;
+
+          &_Bar {
+            width: 100%;
+            height: 8px;
+            overflow: hidden;
+            border-radius: var(--radius-full);
+            background: var(--gray-200);
+
+            &_Fill {
+              height: 100%;
+              border-radius: var(--radius-full);
+              transition: width var(--transition-slow);
+              background: linear-gradient(
+                90deg,
+                var(--success-indicator),
+                var(--success)
+              );
+            }
+          }
+        }
+      }
+    }
+
+    &_SOH {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      border: 1px solid var(--border-light);
+      border-radius: var(--dashboard-radius);
+      overflow: hidden;
+      min-height: 74px;
+      background: var(--card-bg);
+
+      &_Label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        min-height: 100%;
+        padding: 6px 0;
+        color: rgba(255, 255, 255, 1);
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: var(--font-weight-semibold);
+        letter-spacing: 1px;
+        line-height: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(96, 165, 250, 1) 0%,
+          rgba(37, 99, 235, 1) 100%
+        );
+      }
+
+      &_Body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: 22px 28px 1fr;
+        align-content: start;
+        padding: 10px 12px 8px;
+
+        &_Header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 6px;
+          min-height: 22px;
+
+          &_Title {
+            flex: 1;
+            min-width: 0;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: var(--font-weight-semibold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 14px;
+            padding-left: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        &_Value {
+          display: flex;
+          align-items: baseline;
+          gap: 4px;
+          min-height: 28px;
+          margin-top: 0;
+
+          &_Val {
+            font-size: 16px;
+            font-weight: var(--font-weight-bold);
+            line-height: 16px;
+            color: rgba(29, 78, 216, 1);
+          }
+
+          &_Unit {
+            font-size: 10px;
+            color: var(--text-secondary);
+          }
+        }
+
+        &_Progress {
+          align-self: end;
+          padding-top: 6px;
+
+          &_Bar {
+            width: 100%;
+            height: 8px;
+            overflow: hidden;
+            border-radius: var(--radius-full);
+            background: var(--gray-200);
+
+            &_Fill {
+              height: 100%;
+              border-radius: var(--radius-full);
+              transition: width var(--transition-slow);
+              background: linear-gradient(
+                90deg,
+                var(--primary),
+                var(--primary-hover)
+              );
+            }
+          }
+        }
+      }
+    }
+
+    &_PowerOutput {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      border: 1px solid var(--border-light);
+      border-radius: var(--dashboard-radius);
+      overflow: hidden;
+      min-height: 74px;
+      background: var(--card-bg);
+
+      &_Label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        min-height: 100%;
+        padding: 6px 0;
+        color: rgba(255, 255, 255, 1);
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: var(--font-weight-semibold);
+        letter-spacing: 1px;
+        line-height: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(194, 65, 12, 1) 0%,
+          rgba(194, 65, 12, 1) 100%
+        );
+      }
+
+      &_Body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: 22px 28px 1fr;
+        align-content: start;
+        padding: 10px 12px 8px;
+
+        &_Header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 6px;
+          min-height: 22px;
+
+          &_Title {
+            flex: 1;
+            min-width: 0;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: var(--font-weight-semibold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 14px;
+            padding-left: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        &_Value {
+          display: flex;
+          align-items: baseline;
+          gap: 4px;
+          min-height: 28px;
+          margin-top: 0;
+
+          &_Val {
+            font-size: 16px;
+            font-weight: var(--font-weight-bold);
+            line-height: 16px;
+            color: rgba(194, 65, 12, 1);
+          }
+
+          &_Unit {
+            font-size: 10px;
+            color: var(--text-secondary);
+          }
+        }
+      }
+    }
+  }
+}
+
+.DAT_Infor2 {
+  display: contents;
+
+  &_Card {
+    &_Charge {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      border: 1px solid var(--border-light);
+      border-radius: var(--dashboard-radius);
+      overflow: hidden;
+      min-height: 74px;
+      background: var(--card-bg);
+
+      &_Label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        min-height: 100%;
+        padding: 6px;
+        color: rgba(255, 255, 255, 1);
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: var(--font-weight-semibold);
+        letter-spacing: 0.5px;
+        line-height: 14px;
+        white-space: nowrap;
+        background: linear-gradient(
+          180deg,
+          rgba(251, 146, 60, 1) 0%,
+          rgba(249, 115, 22, 1) 100%
+        );
+      }
+
+      &_Body {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        padding: 8px;
+        gap: 8px;
+
+        &_Item {
+          display: flex;
+          flex: 1;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 6px;
+          min-width: 0;
+          text-align: center;
+
+          &_Label {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            min-height: 22px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: var(--font-weight-semibold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 14px;
+          }
+
+          &_Value {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+            min-height: 28px;
+            width: 100%;
+
+            &_Val {
+              color: var(--text-primary);
+              font-size: 16px;
+              font-weight: var(--font-weight-bold);
+              line-height: 16px;
+              text-align: center;
+            }
+
+            &_Unit {
+              font-size: 10px;
+              color: var(--text-secondary);
+              text-align: center;
+            }
+          }
+        }
+
+        &_Divider {
+          width: 1px;
+          height: 100%;
+          background: var(--border-light);
+        }
+      }
+    }
+
+    &_Discharge {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      border: 1px solid var(--border-light);
+      border-radius: var(--dashboard-radius);
+      overflow: hidden;
+      min-height: 74px;
+      background: var(--card-bg);
+
+      &_Label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        min-height: 100%;
+        padding: 6px;
+        color: rgba(255, 255, 255, 1);
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 12px;
+        font-weight: var(--font-weight-semibold);
+        letter-spacing: 0.5px;
+        line-height: 14px;
+        white-space: nowrap;
+        background: linear-gradient(
+          180deg,
+          rgba(167, 139, 250, 1) 0%,
+          rgba(124, 58, 237, 1) 100%
+        );
+      }
+
+      &_Body {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        padding: 8px;
+        gap: 8px;
+
+        &_Item {
+          display: flex;
+          flex: 1;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 6px;
+          min-width: 0;
+          text-align: center;
+
+          &_Label {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            min-height: 22px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: var(--font-weight-semibold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 14px;
+          }
+
+          &_Value {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 6px;
+            min-height: 28px;
+            width: 100%;
+
+            &_Val {
+              font-size: 16px;
+              font-weight: var(--font-weight-bold);
+              line-height: 16px;
+              color: rgba(49, 46, 129, 1);
+            }
+
+            &_Unit {
+              font-size: 10px;
+              color: var(--text-secondary);
+              text-align: center;
+            }
+          }
+        }
+
+        &_Divider {
+          width: 1px;
+          height: 100%;
+          background: var(--border-light);
+        }
+      }
+    }
+  }
+}
+
+.DAT_Weather {
+  &_Card {
+    position: relative;
+    border-radius: var(--dashboard-radius);
+    overflow: hidden;
+    padding: 12px 14px;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s;
+
+    &_Orb_1,
+    &_Orb_2 {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    &_Orb_1 {
+      width: 130px;
+      height: 130px;
+      background: rgba(255, 255, 255, 0.7);
+      top: -35px;
+      right: -25px;
+    }
+
+    &_Orb_2 {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.4);
+      bottom: -15px;
+      left: 15px;
+    }
+
+    &_Top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+
+      &_Content {
+        display: flex;
+        flex-direction: column;
+
+        &_City {
+          font-size: 14px;
+          font-weight: var(--font-weight-semibold);
+          opacity: 0.95;
+        }
+
+        &_Condition {
+          font-size: 11px;
+          opacity: 0.72;
+          margin-top: 1px;
+        }
+      }
+
+      &_Icon {
+        font-size: 28px;
+        opacity: 0.9;
+        line-height: 1;
+        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+      }
+    }
+
+    &_Temperature {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+      letter-spacing: -2px;
+
+      &_Unit {
+        font-size: 16px;
+        font-weight: 400;
+        opacity: 0.8;
+        vertical-align: super;
+      }
+    }
+  }
+}
+
+.DAT_Power_Donut {
+  &_Card {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+
+    &_Header {
+      margin-bottom: 10px;
+
+      &_Title {
+        font-size: var(--font-size-lg);
+        color: var(--text-primary);
+        font-weight: var(--font-weight-semibold);
+      }
+    }
+  }
+
+  &_Chart_Wrap {
+    position: relative;
+    flex: 1;
+    min-height: 100px;
+    height: 400px;
+  }
+
+  &_Center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-17px);
+    gap: 6px;
+    text-align: center;
+    pointer-events: none;
+
+    &_Value {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+
+      &_Val {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text-primary);
+        line-height: 1;
+      }
+    }
+
+    &_Label {
+      font-size: 9px;
+      color: var(--text-secondary);
+      line-height: 12px;
+    }
+  }
+
+  &_Legend {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 2px 2px;
+
+    &_Item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.48px;
+
+      &_Dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+    }
+
+    &_Name {
+      flex: 1;
+      color: var(--text-secondary);
+    }
+
+    &_Value {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-primary);
+
+      &_Val {
+        line-height: 1;
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+      }
+
+      &_Unit {
+        font-size: 10px;
+        color: var(--text-secondary);
+      }
+    }
+  }
+
+  &_Tooltip {
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid var(--border-light);
+    border-radius: var(--dashboard-radius);
+    padding: 8px 12px;
+    font-size: 13px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+    &_Value {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-top: 4px;
+
+      &_Val {
+        font-weight: var(--font-weight-semibold);
+        color: var(--text-primary);
+      }
+
+      &_Unit {
+        font-size: 10px;
+        color: var(--text-secondary);
+      }
+    }
+  }
+}
+
+.DAT_Economic {
+  &_Card {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+
+    &_Header {
+      font-size: var(--font-size-lg);
+      color: var(--text-primary);
+      font-weight: var(--font-weight-semibold);
+      padding-bottom: 10px;
+    }
+
+    &_Grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      &_Item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 8px;
+        border-radius: var(--dashboard-radius);
+        background: var(--gray-100);
+        transition: background 0.15s;
+
+        &_Icon {
+          width: 30px;
+          height: 30px;
+          border-radius: var(--dashboard-radius);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 15px;
+          flex-shrink: 0;
+          object-fit: contain;
+        }
+
+        &_Body {
+          flex: 1;
+          min-width: 0;
+
+          &_Label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          &_Value {
+            font-size: 15px;
+            font-weight: 800;
+            line-height: 1.2;
+            display: flex;
+            align-items: baseline;
+            gap: 3px;
+
+            &_Val {
+              line-height: 1;
+            }
+
+            &_Unit {
+              font-size: 10px;
+              font-weight: 500;
+              opacity: 0.7;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.DAT_LineChart {
+  &_Card {
+    padding: 14px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+
+    &_Header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: var(--space-base);
+
+      &_Content {
+        min-width: 0;
+
+        &_Title {
+          font-size: var(--font-size-lg);
+          font-weight: var(--font-weight-semibold);
+          color: var(--text-primary);
+        }
+      }
+
+      &_Controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+
+        &_DateInput {
+          min-width: 148px;
+          height: 36px;
+          padding: 0 12px;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 1);
+          color: var(--text-body);
+          font-size: 14px;
+          outline: none;
+          transition:
+            border-color var(--transition-fast),
+            box-shadow var(--transition-fast);
+
+          &:focus {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-focus);
+          }
+        }
+
+        &_Switcher {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 4px;
+          background: var(--gray-100);
+          border-radius: 999px;
+
+          &_Button {
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+
+            &[aria-pressed="true"] {
+              background: var(--primary);
+              color: rgba(255, 255, 255, 1);
+              box-shadow: var(--shadow-sm);
+            }
+          }
+        }
+      }
+    }
+
+    &_Body {
+      width: 100%;
+      min-height: 280px;
+    }
+  }
+}
+
+.DAT_DataText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  border-radius: var(--dashboard-radius);
+  padding: 4px;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+
+  span {
+    font-size: 14px;
+  }
+
+  &_Data {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+
+    &_Val {
+      color: rgba(255, 255, 255, 1);
+      font-size: 18px;
+    }
+
+    &_Unit {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+    }
+  }
+}
+
+// ------------------MOBILE------------------
+
+.DAT_DashboardMobile_Page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-base);
+  box-sizing: border-box;
+
+  &_Section {
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--space-base);
+
+    &_Grid {
+      display: grid;
+
+      grid-template-columns: 1fr;
+
+      gap: 12px;
+    }
+
+    &_KpiGrid {
+      display: grid;
+
+      grid-template-columns: 1fr;
+
+      gap: 10px;
+    }
+
+    &_VisualCard {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+
+      background: var(--card-bg);
+      box-shadow: var(--shadow-card);
+
+      &_Layout {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 10px;
+
+        &_Main {
+          width: 100%;
+          position: relative;
+
+          &_Scene {
+            position: relative;
+            height: 340px;
+
+            min-height: 300px;
+
+            border-radius: var(--radius-md);
+
+            overflow: hidden;
+          }
+
+          &_Weather {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+
+            .DAT_WeatherMobile_Card {
+              width: auto;
+              padding: 8px 10px;
+              gap: 8px;
+              border-radius: 999px;
+              background: rgba(255, 255, 255, 0.92);
+            }
+          }
+        }
+
+        &_Side {
+          display: flex;
+
+          flex-direction: column;
+
+          gap: 10px;
+        }
+      }
+    }
+  }
+}
+.DAT_WeatherMobile_Card {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  background: rgba(255, 255, 255, 1);
+
+  &_Icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(37, 99, 235, 1);
+  }
+
+  &_Temperature {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+
+  &_Condition {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
+}
+.DAT_InforMobile {
+  width: 100%;
+
+  &_Card {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+
+    &_Item {
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+
+      &_Label {
+        width: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      &_Label_SOC {
+        width: 100%;
+        height: 35px;
+        background: #18b95d;
+      }
+
+      &_Label_SOH {
+        width: 100%;
+        height: 35px;
+        background: #3b82f6;
+      }
+
+      &_Label_Power {
+        width: 100%;
+        height: 35px;
+        background: #d64200;
+      }
+
+      &_Body {
+        flex: 1;
+        min-width: 0;
+
+        padding: 8px 6px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+
+        &_Circle {
+          width: 54px;
+          height: 54px;
+          border-radius: 50%;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &_Inner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--card-bg);
+
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+          }
+        }
+
+        &_Title {
+          font-size: 11px;
+          font-weight: bold;
+          text-align: center;
+
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        &_Status {
+          font-size: 11px;
+          color: var(--text-body);
+          text-align: center;
+        }
+      }
+    }
+  }
+}

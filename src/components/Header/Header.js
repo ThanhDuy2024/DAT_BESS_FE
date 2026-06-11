@@ -1,0 +1,210 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LuBell, LuLogOut } from "react-icons/lu";
+import { FaEarthAsia } from "react-icons/fa6";
+import { useIntl } from "react-intl";
+import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../Lang/LanguageProvider";
+import "./Header.scss";
+import { isMobile } from "react-device-detect";
+
+export default function Header({ onAlarmClick }) {
+  const lang = useIntl();
+  const { locale, setLocale } = useLanguage();
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+  const [showLanMenu, setShowLanMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const currentLanguageLabel = locale === "vi" ? "VI" : "ENG";
+  const languageOptions = [
+    {
+      key: "vi",
+      label: lang.formatMessage({ id: "language_vi" }),
+      flag: "/img/vie.png",
+    },
+    {
+      key: "en",
+      label: lang.formatMessage({ id: "language_en" }),
+      flag: "/img/uk.png",
+    },
+  ];
+
+  const handleChangeLanguage = (nextLang) => {
+    setLocale(nextLang);
+    setShowLanMenu(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  return (
+    <>
+      {isMobile ? (
+        <header className="DAT_HeaderMobile">
+          <div className="DAT_HeaderMobile_left">
+            <img src={"/img/DAT.png"} alt="DAT" />
+          </div >
+          <div className="DAT_HeaderMobile_right">
+            <div className="DAT_HeaderMobile_right_dropdown">
+              <button
+                type="button"
+                className="DAT_HeaderMobile_right_iconButton"
+                onClick={() => setShowLanMenu(!showLanMenu)}
+                aria-label={lang.formatMessage({ id: "common_select_language" })}
+              >
+                <FaEarthAsia />
+                <span className="DAT_HeaderMobile_right_iconButton_label">
+                  {currentLanguageLabel}
+                </span>
+              </button>
+              {showLanMenu && (
+                <div className="DAT_HeaderMobile_right_dropdown_menu DAT_Header_right_dropdown_menu_language">
+                  {languageOptions.map((option) => (
+                    <div
+                      key={option.key}
+                      className="DAT_HeaderMobile_right_dropdown_menuItem"
+                      onClick={() => handleChangeLanguage(option.key)}
+                    >
+                      <img
+                        className="DAT_HeaderMobile_right_dropdown_menuItem_flag"
+                        src={option.flag}
+                        alt={option.label}
+                      />
+                      <span>{option.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="DAT_HeaderMobile_right_iconButton"
+              onClick={onAlarmClick}
+              aria-label={lang.formatMessage({ id: "common_open_alarms" })}
+            >
+              <LuBell />
+              <span className="DAT_HeaderMobile_right_iconButton_badge">3</span>
+            </button>
+
+            <div className="DAT_HeaderMobile_right_dropdown">
+              <button
+                type="button"
+                className="DAT_HeaderMobile_right_user"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+              >
+                <div className="DAT_HeaderMobile_right_user_avatar">
+                  {currentUser?.name?.charAt(0) || "U"}
+                </div>
+                {/* <div className="DAT_HeaderMobile_right_user_info">
+                  <span className="DAT_HeaderMobile_right_user_info_name">
+                    {currentUser?.name}
+                  </span>
+                  <span className="DAT_HeaderMobile_right_user_info_role">
+                    {currentUser?.role}
+                  </span>
+                </div> */}
+              </button>
+              {showUserMenu && (
+                <div className="DAT_HeaderMobile_right_dropdown_menu DAT_Header_right_dropdown_menu_user">
+                  <div
+                    className="DAT_HeaderMobile_right_dropdown_menuItem"
+                    onClick={handleLogout}
+                  >
+                    <LuLogOut />
+                    {lang.formatMessage({ id: "common_logout" })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </header >
+      ) : (
+        <header className="DAT_Header">
+          <div className="DAT_Header_left">
+            <h1 className="DAT_Header_left_title">
+              {lang.formatMessage({ id: "bess" })}
+            </h1 >
+          </div >
+          <div className="DAT_Header_right">
+            <div className="DAT_Header_right_dropdown">
+              <button
+                type="button"
+                className="DAT_Header_right_iconButton"
+                onClick={() => setShowLanMenu(!showLanMenu)}
+                aria-label={lang.formatMessage({ id: "common_select_language" })}
+              >
+                <FaEarthAsia />
+                <span className="DAT_Header_right_iconButton_label">
+                  {currentLanguageLabel}
+                </span>
+              </button>
+              {showLanMenu && (
+                <div className="DAT_Header_right_dropdown_menu DAT_Header_right_dropdown_menu_language">
+                  {languageOptions.map((option) => (
+                    <div
+                      key={option.key}
+                      className="DAT_Header_right_dropdown_menuItem"
+                      onClick={() => handleChangeLanguage(option.key)}
+                    >
+                      <img
+                        className="DAT_Header_right_dropdown_menuItem_flag"
+                        src={option.flag}
+                        alt={option.label}
+                      />
+                      <span>{option.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="DAT_Header_right_iconButton"
+              onClick={onAlarmClick}
+              aria-label={lang.formatMessage({ id: "common_open_alarms" })}
+            >
+              <LuBell />
+              <span className="DAT_Header_right_iconButton_badge">3</span>
+            </button>
+
+            <div className="DAT_Header_right_dropdown">
+              <button
+                type="button"
+                className="DAT_Header_right_user"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+              >
+                <div className="DAT_Header_right_user_avatar">
+                  {currentUser?.name?.charAt(0) || "U"}
+                </div>
+                <div className="DAT_Header_right_user_info">
+                  <span className="DAT_Header_right_user_info_name">
+                    {currentUser?.name}
+                  </span>
+                  <span className="DAT_Header_right_user_info_role">
+                    {currentUser?.role}
+                  </span>
+                </div>
+              </button>
+              {showUserMenu && (
+                <div className="DAT_Header_right_dropdown_menu DAT_Header_right_dropdown_menu_user">
+                  <div
+                    className="DAT_Header_right_dropdown_menuItem"
+                    onClick={handleLogout}
+                  >
+                    <LuLogOut />
+                    {lang.formatMessage({ id: "common_logout" })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </header >
+      )
+      }
+    </>
+  );
+}
