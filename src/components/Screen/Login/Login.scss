@@ -267,6 +267,16 @@
       display: flex;
       flex-direction: column;
 
+      &_Resend {
+        margin-top: 5px;
+
+        &_Active {
+          color: var(--primary);
+          font-weight: var(--font-weight-medium);
+          cursor: pointer;
+        }
+      }
+
       &_Otp {
         display: flex;
         justify-content: space-around;

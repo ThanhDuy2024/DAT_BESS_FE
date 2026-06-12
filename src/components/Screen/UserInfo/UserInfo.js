@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { LuUserPen } from "react-icons/lu";
 import { useIntl } from "react-intl";
+import { callApi } from "../../Api/Api";
 
 export default function UserInfo() {
   const lang = useIntl();
@@ -18,9 +19,11 @@ export default function UserInfo() {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordCurrent, setPasswordCurrent] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [editField, setEditField] = useState("");
   const [value, setValue] = useState("");
+  const [error, setError] = useState("");
 
   const handleOpenModal = (field, currentValue) => {
     setEditField(field);
@@ -70,6 +73,54 @@ export default function UserInfo() {
       window.removeEventListener("keydown", handleEsc);
     };
   }, [changePassword]);
+
+  const handleChangePassword = async (e) => {
+
+    e.preventDefault();
+    setError("");
+
+
+    if (!passwordCurrent) {
+      setError(lang.formatMessage({ id: "alarm_current_password" }));
+      return;
+    }
+
+    if (!newPassword) {
+      setError(lang.formatMessage({ id: "alarm_new_password" }));
+      return;
+    }
+
+    if (!confirmPassword) {
+      setError(lang.formatMessage({ id: "alarm_confirm_password" }));
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError(lang.formatMessage({ id: "alarm_password_not_match" }));
+      return;
+    }
+
+    try {
+      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/changePassword`, {
+        oldPassword: passwordCurrent,
+        newPassword: newPassword
+      });
+      if (res.status === false) {
+        setError(lang.formatMessage({ id: "alarm_wrong_current_password" }));
+      } else {
+        setChangePassword(false);
+      }
+    } catch (error) {
+      setError(lang.formatMessage({ id: "alarm_wrong_current_password" }));
+    }
+  }
+
+  const offChangePassword = () => {
+    setPasswordCurrent("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setChangePassword(false);
+  };
 
   return (
     <div className="DAT_UserInfor">
@@ -219,7 +270,7 @@ export default function UserInfo() {
 
           {changePassword && (
             <div className="DAT_UserInfor_Modal">
-              <div className="DAT_UserInfor_Modal_Container">
+              <form className="DAT_UserInfor_Modal_Container" onSubmit={handleChangePassword}>
                 <div className="DAT_UserInfor_Modal_Container_Header">
                   <div className="DAT_UserInfor_Modal_Container_Header_Title">
                     {lang.formatMessage({ id: "change_password_title" })}
@@ -233,14 +284,14 @@ export default function UserInfo() {
                       height="25"
                       width="25"
                       xmlns="http://www.w3.org/2000/svg"
-                      onClick={() => setChangePassword(false)}
+                      onClick={offChangePassword}
                     >
                       <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
                     </svg>
                   </div>
                 </div>
 
-                <div className="DAT_UserInfor_Modal_Container_Main">
+                <div className="DAT_UserInfor_Modal_Container_Main" >
                   <div className="DAT_UserInfor_Modal_Container_Main_Label">
                     {lang.formatMessage({ id: "current_password" })}
                   </div>
@@ -249,7 +300,7 @@ export default function UserInfo() {
                       type={showPasswordCurrent ? "text" : "password"}
                       value={passwordCurrent}
                       onChange={(e) => setPasswordCurrent(e.target.value)}
-                      placeholder={lang.formatMessage({ id: "password_input" })}
+                      placeholder={lang.formatMessage({ id: "password_input_current" })}
                     />
                     <button
                       type="button"
@@ -267,7 +318,7 @@ export default function UserInfo() {
                       type={showNewPassword ? "text" : "password"}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder={lang.formatMessage({ id: "password_input" })}
+                      placeholder={lang.formatMessage({ id: "password_input_new" })}
                     />
                     <button type="button" onClick={() => setShowNewPassword(!showNewPassword)}>
                       {showNewPassword ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
@@ -280,20 +331,22 @@ export default function UserInfo() {
                   <div className="DAT_UserInfor_Modal_Container_Main_Box">
                     <input
                       type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder={lang.formatMessage({ id: "password_input" })}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder={lang.formatMessage({ id: "password_input_confirm" })}
                     />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}>
                       {showPassword ? <FaRegEye size={20} /> : <FaRegEyeSlash size={20} />}
                     </button>
                   </div>
+                  {error && <div className="DAT_UserInfor_Modal_Container_Main_Error">{error}</div>}
+
                 </div>
 
                 <div className="DAT_UserInfor_Modal_Container_Foot">
-                  <button onClick={handleSave}>{lang.formatMessage({ id: "save" })}</button>
+                  <button>{lang.formatMessage({ id: "save" })}</button>
                 </div>
-              </div>
+              </form>
             </div>
           )}
         </div>

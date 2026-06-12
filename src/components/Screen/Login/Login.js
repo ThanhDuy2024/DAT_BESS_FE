@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { LuEye, LuEyeOff, LuGlobe, LuLock, LuUser } from "react-icons/lu";
-import { RiArrowGoBackLine } from "react-icons/ri";
+import { LuEye, LuEyeOff, LuGlobe, LuLock, LuUser, LuMail } from "react-icons/lu";
+import { RiArrowGoBackLine, RiLockPasswordLine } from "react-icons/ri";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useLanguage } from "../../Lang/LanguageProvider";
@@ -29,6 +29,24 @@ export default function Login() {
   const [error, setError] = useState("");
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [step, setStep] = useState(1);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [countdown, setCountdown] = useState(60);
+  const otpRefs = useRef([]);
+  const [email, setEmail] = useState("");
+  useEffect(() => {
+    if (countdown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  useEffect(() => {
+    setOtp(["", "", "", "", "", ""]);
+    setError("");
+  }, [isForgotPassword]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -53,7 +71,7 @@ export default function Login() {
       return;
     }
 
-    setError(result.error);
+    setError(lang.formatMessage({ id: "login_error" }));
   };
 
   const handleForgotPassword = () => {
@@ -77,73 +95,109 @@ export default function Login() {
 
   const handleSubmitEmail = async (e) => {
     e.preventDefault();
+    setError("");
+
     const email = e.target.email.value;
+    if (!email.trim()) {
+      setError(lang.formatMessage({ id: "alarm_email" }));
+      return;
+    }
     try {
       const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/renderOtp`, {
         email: email
       });
       if (res.status === false) {
-        console.log("Không tìm thấy email trong hệ thống")
+        setError("Không tìm thấy email trong hệ thống");
+        return;
       } else {
-        sessionStorage.setItem("email", email);
-        setStep(2);
+        setEmail(email);
+        setStep(2); 
+        setCountdown(60);
+
       }
     } catch (error) {
-      console.log(error);
+      setError(lang.formatMessage({ id: "alarm_email_notfound" }));
     }
   }
 
   const handleSubmitOtp = async (e) => {
     e.preventDefault();
-    const otp1 = e.target.otp1.value;
-    const otp2 = e.target.otp2.value;
-    const otp3 = e.target.otp3.value;
-    const otp4 = e.target.otp4.value;
-    const otp5 = e.target.otp5.value;
-    const otp6 = e.target.otp6.value;
-    const otp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
+    setError("");
+
+    setOtp(["", "", "", "", "", ""]);
+
+    if (otp.some(item => item === "")) {
+      setError(lang.formatMessage({ id: "alarm_otp" }));
+      return;
+    }
+    const otpCode = otp.join("");
     try {
       const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/verifyOtp`, {
-        otp: otp
+        otp: otpCode
       });
       if (res.status === false) {
-        console.log("Otp của bạn sai")
+        setError(lang.formatMessage({ id: "alarm_wrong_otp" }))
       } else {
         setStep(3);
       }
     } catch (error) {
-      console.log(error);
+      setError(lang.formatMessage({ id: "alarm_wrong_otp" }))
     }
   };
 
   const handleSubmitPassword = async (e) => {
     e.preventDefault();
+    setError("");
+
     const password = e.target.password.value;
     const confirmPassword = e.target.confirmPassword.value;
+    if (!password) {
+      setError(lang.formatMessage({ id: "alarm_new_password" }));
+      return;
+    }
+
+    if (!confirmPassword) {
+      setError(lang.formatMessage({ id: "alarm_confirm_password" }));
+      return;
+    }
+
     if (password === confirmPassword) {
       try {
         const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/changePasswordWithOtp`, {
           password: password,
+          email: email
         });
 
         if (res.status === false) {
-          console.log("Error sys")
+          setError("Error sys")
         } else {
-          setIsForgotPassword(false)
+          setIsForgotPassword(false);
+          setStep(1);
         }
       } catch (error) {
         console.log(error);
       }
     } else {
-      console.log("Confirm password sai")
+      setError(lang.formatMessage({ id: "alarm_password_not_match" }));
     }
   }
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus();
+    }
+  };
 
   const handleOtpAgain = async () => {
-    const email = sessionStorage.getItem("email");
+    setCountdown(60);
+    const emailOtp = email
     try {
       const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/renderOtp`, {
-        email: email
+        email: emailOtp
       });
       if (res.status === false) {
         console.log("Error sys")
@@ -154,6 +208,22 @@ export default function Login() {
       console.log(error);
       console.log("Lỗi hệ thống");
     }
+  }
+
+  const handleOtpKeyDown = (index, e) => {
+    if (
+      e.key === "Backspace" &&
+      !otp[index] &&
+      index > 0
+    ) {
+      otpRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleBack = () => {
+    setOtp(["", "", "", "", "", ""]);
+    setError("");
+    setStep(1);
   }
 
   return (
@@ -170,20 +240,20 @@ export default function Login() {
                     onClick={() => { setIsForgotPassword(false); setStep(1) }}
                   ><RiArrowGoBackLine />
                   </div>
-                  <h1>QUÊN MẬT KHẨU</h1>
+                  <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
                 </div>
                 <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitEmail}>
                   <div className="DAT_Forgot_Card_Form_Sub">1/3</div>
-                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>Xác minh tài khoản</div>
+                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "verify_account" })}</div>
                   <div className="DAT_Forgot_Card_Form_Progress">
                     <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
                     <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
                     <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
                   </div>
-                  <div className="DAT_Forgot_Card_Form_Label"> Nhập E-mail</div>
+                  <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "input_email" })}</div>
                   <div className="DAT_Forgot_Card_Form_Field">
                     <span className="DAT_Forgot_Card_Form_Field_Icon">
-                      <LuUser />
+                      <LuMail />
                     </span>
                     <input
                       type="text"
@@ -192,11 +262,13 @@ export default function Login() {
                       autoFocus
                     />
                   </div>
+                  {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
                   <button
                     type="submit"
                     className="DAT_Forgot_Card_Form_Submit"
                   >
-                    Gửi
+                    {lang.formatMessage({ id: "send" })}
                   </button>
                 </form>
               </div>
@@ -208,37 +280,55 @@ export default function Login() {
                     onClick={() => { setIsForgotPassword(false); setStep(1) }}
                   ><RiArrowGoBackLine />
                   </div>
-                  <h1>QUÊN MẬT KHẨU</h1>
+                  <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
                 </div>
                 <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitOtp}>
                   <div className="DAT_Forgot_Card_Form_Sub">2/3</div>
-                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>Mã xác thực</div>
+                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "verify_code" })}</div>
                   <div className="DAT_Forgot_Card_Form_Progress">
                     <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
                     <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
                     <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
                   </div>
-                  <div className="DAT_Forgot_Card_Form_Label">Mã xác thực</div>
+                  <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "input_otp" })}</div>
                   <div className="DAT_Forgot_Card_Form_Otp">
-                    <input type="text" autoFocus name="otp1" />
-                    <input type="text" name="otp2" />
-                    <input type="text" name="otp3" />
-                    <input type="text" name="otp4" />
-                    <input type="text" name="otp5" />
-                    <input type="text" name="otp6" />
+                    {otp.map((digit, index) => (
+                      <input
+                        key={index}
+                        value={otp[index]}
+                        ref={(el) => (otpRefs.current[index] = el)}
+                        onChange={(e) => handleOtpChange(index, e.target.value)}
+                        maxLength={1}
+                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      />
+                    ))}
                   </div>
+                  {countdown > 0 ? (
+                    <div className="DAT_Forgot_Card_Form_Resend">
+                      {lang.formatMessage({ id: "resend_otp_after" })} {countdown}s
+                    </div>
+                  ) : (
+                    <div
+                      className="DAT_Forgot_Card_Form_Resend DAT_Forgot_Card_Form_Resend_Active"
+                      onClick={handleOtpAgain}
+                    >
+                      {lang.formatMessage({ id: "resend_otp" })}
+                    </div>
+                  )}
+                  {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
                   <button
                     type="submit"
                     className="DAT_Forgot_Card_Form_Submit"
                   >
-                    Tiếp tục
+                    {lang.formatMessage({ id: "next" })}
                   </button>
                   <button
                     className="DAT_Forgot_Card_Form_Submit"
                     style={{ color: "var(--gray-900)", backgroundColor: "var(--gray-300)" }}
-                    onClick={handleOtpAgain}
+                    onClick={handleBack}
                   >
-                    Gửi lại mã OTP
+                    {lang.formatMessage({ id: "go_back" })}
                   </button>
                 </form>
 
@@ -248,49 +338,52 @@ export default function Login() {
               <div className="DAT_Forgot_Card_Inner">
                 <div className="DAT_Forgot_Card_Header">
                   <div className="DAT_Forgot_Card_Header_Back"
-                    onClick={() => { setIsForgotPassword(false); setStep(2) }}
+                    onClick={() => { setIsForgotPassword(false); setStep(1); setError("") }}
                   ><RiArrowGoBackLine />
                   </div>
-                  <h1>QUÊN MẬT KHẨU</h1>
+                  <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
+
                 </div>
 
                 <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitPassword}>
                   <div className="DAT_Forgot_Card_Form_Sub">3/3</div>
-                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>Đặt lại mặt khẩu</div>
+                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "reset_password" })}</div>
                   <div className="DAT_Forgot_Card_Form_Progress">
                     <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
                     <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
                     <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
                   </div>
-                  <div className="DAT_Forgot_Card_Form_Label"> Mật khẩu mới</div>
+                  <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "new_password" })}</div>
                   <div className="DAT_Forgot_Card_Form_Field">
                     <span className="DAT_Forgot_Card_Form_Field_Icon">
-                      <LuUser />
+                      <RiLockPasswordLine />
                     </span>
                     <input
                       type="password"
-                      placeholder="Mật khẩu mới"
+                      placeholder={lang.formatMessage({ id: "password_input_new" })}
                       name="password"
                       autoFocus
                     />
                   </div>
-                  <div className="DAT_Forgot_Card_Form_Label">Xác nhận mật khẩu mới</div>
+                  <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "confirm_password" })}</div>
                   <div className="DAT_Forgot_Card_Form_Field">
                     <span className="DAT_Forgot_Card_Form_Field_Icon">
-                      <LuUser />
+                      <RiLockPasswordLine />
                     </span>
                     <input
                       type="password"
-                      placeholder="Xác nhận mật khẩu mới"
+                      placeholder={lang.formatMessage({ id: "password_input_confirm" })}
                       name="confirmPassword"
                       autoFocus
                     />
                   </div>
+                  {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
                   <button
                     type="submit"
                     className="DAT_Forgot_Card_Form_Submit"
                   >
-                    Đặt lại mặt khẩu
+                    {lang.formatMessage({ id: "reset_password" })}
                   </button>
 
                 </form>

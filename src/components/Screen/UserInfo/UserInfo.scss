@@ -152,6 +152,7 @@
             overflow: hidden;
             position: relative;
             width: 400px;
+            top: 40px;
 
             &_Header {
                 align-items: center;
@@ -202,7 +203,8 @@
 
                 &_Label {
                     cursor: default;
-                    color: var(--card-bg);
+                    color: var(--gray-900);
+                    margin-bottom: 5px;
                 }
 
                 &_Box {
@@ -213,6 +215,8 @@
                     gap: 8px;
                     justify-content: center;
                     width: 100%;
+                    margin-bottom: 5px;
+
 
                     input {
                         border: none;
@@ -243,7 +247,20 @@
                     padding: 8px;
                     width: 100%;
                 }
+
+                &_Error {
+                    text-align: center;
+                    margin-left: 10px;
+                    margin-right: 10px;
+                    padding: 3px 8px;
+                    border-radius: 5px;
+                    background: var(--danger);
+                    color: rgba(255, 255, 255, 1);
+                    font-size: 14px;
+                }
             }
+
+
 
             &_Foot {
                 display: flex;
