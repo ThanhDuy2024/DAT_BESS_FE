@@ -16,7 +16,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const backgroundStyle = {
-    backgroundImage: `linear-gradient(rgba(7, 15, 32, 0.28), rgba(7, 15, 32, 0.42)), url(${process.env.PUBLIC_URL}/intro.jpg)`,
+    backgroundImage: `linear-gradient(rgba(7, 15, 32, 0.28), rgba(7, 15, 32, 0.42)), url(https://embody.com.vn/BG/728_0/1/tontaynam.jpg)`,
   };
   const handleChangeLanguage = () => {
     setLocale(locale === "vi" ? "en" : "vi");
