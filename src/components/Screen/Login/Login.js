@@ -9,6 +9,7 @@ import { useIntl } from "react-intl";
 
 import "./Login.scss";
 import { callApi } from "../../Api/Api";
+import { isMobile } from "react-device-detect"
 
 export default function Login() {
   const lang = useIntl();
@@ -111,7 +112,7 @@ export default function Login() {
         return;
       } else {
         setEmail(email);
-        setStep(2); 
+        setStep(2);
         setCountdown(60);
 
       }
@@ -227,261 +228,525 @@ export default function Login() {
   }
 
   return (
-    <div className="DAT_Login" style={backgroundStyle}>
-      <div className="DAT_Login_Overlay"></div>
+    <>
+      {isMobile ? (
+        <div className="DAT_LoginMobile" style={backgroundStyle}>
+          <div className="DAT_LoginMobile_Overlay"></div>
 
-      <div className="DAT_Login_Card">
-        {isForgotPassword ? (
-          <>
-            {step === 1 && (
-              <div className="DAT_Forgot_Card_Inner">
-                <div className="DAT_Forgot_Card_Header">
-                  <div className="DAT_Forgot_Card_Header_Back"
-                    onClick={() => { setIsForgotPassword(false); setStep(1) }}
-                  ><RiArrowGoBackLine />
-                  </div>
-                  <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
-                </div>
-                <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitEmail}>
-                  <div className="DAT_Forgot_Card_Form_Sub">1/3</div>
-                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "verify_account" })}</div>
-                  <div className="DAT_Forgot_Card_Form_Progress">
-                    <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
-                    <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
-                    <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
-                  </div>
-                  <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "input_email" })}</div>
-                  <div className="DAT_Forgot_Card_Form_Field">
-                    <span className="DAT_Forgot_Card_Form_Field_Icon">
-                      <LuMail />
-                    </span>
-                    <input
-                      type="text"
-                      name="email"
-                      placeholder="E-mail"
-                      autoFocus
-                    />
-                  </div>
-                  {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
-
-                  <button
-                    type="submit"
-                    className="DAT_Forgot_Card_Form_Submit"
-                  >
-                    {lang.formatMessage({ id: "send" })}
-                  </button>
-                </form>
-              </div>
-            )}
-            {step === 2 && (
-              <div className="DAT_Forgot_Card_Inner">
-                <div className="DAT_Forgot_Card_Header">
-                  <div className="DAT_Forgot_Card_Header_Back"
-                    onClick={() => { setIsForgotPassword(false); setStep(1) }}
-                  ><RiArrowGoBackLine />
-                  </div>
-                  <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
-                </div>
-                <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitOtp}>
-                  <div className="DAT_Forgot_Card_Form_Sub">2/3</div>
-                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "verify_code" })}</div>
-                  <div className="DAT_Forgot_Card_Form_Progress">
-                    <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
-                    <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
-                    <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
-                  </div>
-                  <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "input_otp" })}</div>
-                  <div className="DAT_Forgot_Card_Form_Otp">
-                    {otp.map((digit, index) => (
-                      <input
-                        key={index}
-                        value={otp[index]}
-                        ref={(el) => (otpRefs.current[index] = el)}
-                        onChange={(e) => handleOtpChange(index, e.target.value)}
-                        maxLength={1}
-                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      />
-                    ))}
-                  </div>
-                  {countdown > 0 ? (
-                    <div className="DAT_Forgot_Card_Form_Resend">
-                      {lang.formatMessage({ id: "resend_otp_after" })} {countdown}s
+          <div className="DAT_LoginMobile_Card">
+            {isForgotPassword ? (
+              <>
+                {step === 1 && (
+                  <div className="DAT_Forgot_Card_Inner">
+                    <div className="DAT_Forgot_Card_Header">
+                      <div className="DAT_Forgot_Card_Header_Back"
+                        onClick={() => { setIsForgotPassword(false); setStep(1) }}
+                      ><RiArrowGoBackLine />
+                      </div>
+                      <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
                     </div>
-                  ) : (
-                    <div
-                      className="DAT_Forgot_Card_Form_Resend DAT_Forgot_Card_Form_Resend_Active"
-                      onClick={handleOtpAgain}
+                    <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitEmail}>
+                      <div className="DAT_Forgot_Card_Form_Sub">1/3</div>
+                      <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "verify_account" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Progress">
+                        <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                      </div>
+                      <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "input_email" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Field">
+                        <span className="DAT_Forgot_Card_Form_Field_Icon">
+                          <LuMail />
+                        </span>
+                        <input
+                          type="text"
+                          name="email"
+                          placeholder="E-mail"
+                          autoFocus
+                        />
+                      </div>
+                      {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
+                      <button
+                        type="submit"
+                        className="DAT_Forgot_Card_Form_Submit"
+                      >
+                        {lang.formatMessage({ id: "send" })}
+                      </button>
+                    </form>
+                  </div>
+                )}
+                {step === 2 && (
+                  <div className="DAT_Forgot_Card_Inner">
+                    <div className="DAT_Forgot_Card_Header">
+                      <div className="DAT_Forgot_Card_Header_Back"
+                        onClick={() => { setIsForgotPassword(false); setStep(1) }}
+                      ><RiArrowGoBackLine />
+                      </div>
+                      <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
+                    </div>
+                    <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitOtp}>
+                      <div className="DAT_Forgot_Card_Form_Sub">2/3</div>
+                      <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "verify_code" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Progress">
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                      </div>
+                      <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "input_otp" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Otp">
+                        {otp.map((digit, index) => (
+                          <input
+                            key={index}
+                            value={otp[index]}
+                            ref={(el) => (otpRefs.current[index] = el)}
+                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                            maxLength={1}
+                            onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                          />
+                        ))}
+                      </div>
+                      {countdown > 0 ? (
+                        <div className="DAT_Forgot_Card_Form_Resend">
+                          {lang.formatMessage({ id: "resend_otp_after" })} {countdown}s
+                        </div>
+                      ) : (
+                        <div
+                          className="DAT_Forgot_Card_Form_Resend DAT_Forgot_Card_Form_Resend_Active"
+                          onClick={handleOtpAgain}
+                        >
+                          {lang.formatMessage({ id: "resend_otp" })}
+                        </div>
+                      )}
+                      {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
+                      <button
+                        type="submit"
+                        className="DAT_Forgot_Card_Form_Submit"
+                      >
+                        {lang.formatMessage({ id: "next" })}
+                      </button>
+                      <button
+                        className="DAT_Forgot_Card_Form_Submit"
+                        style={{ color: "var(--gray-900)", backgroundColor: "var(--gray-300)" }}
+                        onClick={handleBack}
+                      >
+                        {lang.formatMessage({ id: "go_back" })}
+                      </button>
+                    </form>
+
+                  </div>
+                )}
+                {step === 3 && (
+                  <div className="DAT_Forgot_Card_Inner">
+                    <div className="DAT_Forgot_Card_Header">
+                      <div className="DAT_Forgot_Card_Header_Back"
+                        onClick={() => { setIsForgotPassword(false); setStep(1); setError("") }}
+                      ><RiArrowGoBackLine />
+                      </div>
+                      <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
+
+                    </div>
+
+                    <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitPassword}>
+                      <div className="DAT_Forgot_Card_Form_Sub">3/3</div>
+                      <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "reset_password" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Progress">
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
+                      </div>
+                      <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "new_password" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Field">
+                        <span className="DAT_Forgot_Card_Form_Field_Icon">
+                          <RiLockPasswordLine />
+                        </span>
+                        <input
+                          type="password"
+                          placeholder={lang.formatMessage({ id: "password_input_new" })}
+                          name="password"
+                          autoFocus
+                        />
+                      </div>
+                      <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "confirm_password" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Field">
+                        <span className="DAT_Forgot_Card_Form_Field_Icon">
+                          <RiLockPasswordLine />
+                        </span>
+                        <input
+                          type="password"
+                          placeholder={lang.formatMessage({ id: "password_input_confirm" })}
+                          name="confirmPassword"
+                          autoFocus
+                        />
+                      </div>
+                      {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
+                      <button
+                        type="submit"
+                        className="DAT_Forgot_Card_Form_Submit"
+                      >
+                        {lang.formatMessage({ id: "reset_password" })}
+                      </button>
+
+                    </form>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="DAT_LoginMobile_Card_Inner">
+                  <div className="DAT_LoginMobile_Card_Header">
+                    <div>{lang.formatMessage({ id: "login_system" })}</div>
+                    <button
+                      type="button"
+                      className="DAT_LoginMobile_Card_Header_Language"
+                      onClick={handleChangeLanguage}
                     >
-                      {lang.formatMessage({ id: "resend_otp" })}
+                      <LuGlobe />
+                      <span>{locale === "vi" ? "VI" : "EN"}</span>
+                    </button>
+                  </div>
+
+                  <form className="DAT_LoginMobile_Card_Form" onSubmit={handleSubmit}>
+                    <div className="DAT_LoginMobile_Card_Form_Field">
+                      <span className="DAT_LoginMobile_Card_Form_Field_Icon">
+                        <LuUser />
+                      </span>
+                      <input
+                        type="text"
+                        placeholder={lang.formatMessage({ id: "username" })}
+                        value={identifier}
+                        onChange={(event) => setIdentifier(event.target.value)}
+                        autoFocus
+                      />
                     </div>
-                  )}
-                  {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
 
-                  <button
-                    type="submit"
-                    className="DAT_Forgot_Card_Form_Submit"
-                  >
-                    {lang.formatMessage({ id: "next" })}
-                  </button>
-                  <button
-                    className="DAT_Forgot_Card_Form_Submit"
-                    style={{ color: "var(--gray-900)", backgroundColor: "var(--gray-300)" }}
-                    onClick={handleBack}
-                  >
-                    {lang.formatMessage({ id: "go_back" })}
-                  </button>
-                </form>
+                    <div className="DAT_LoginMobile_Card_Form_Field">
+                      <span className="DAT_LoginMobile_Card_Form_Field_Icon">
+                        <LuLock />
+                      </span>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder={lang.formatMessage({ id: "password" })}
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="DAT_LoginMobile_Card_Form_Field_Action"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label="Hien hoac an mat khau"
+                      >
+                        {showPassword ? <LuEyeOff /> : <LuEye />}
+                      </button>
+                    </div>
 
-              </div>
+                    <label className="DAT_LoginMobile_Card_Form_Remember">
+                      <input
+                        type="checkbox"
+                        checked={remember}
+                        onChange={(event) => setRemember(event.target.checked)}
+                      />
+                      <span>{lang.formatMessage({ id: "save_login" })}</span>
+                    </label>
+
+                    {error && <div className="DAT_LoginMobile_Card_Form_Error">{error}</div>}
+
+                    <button
+                      type="submit"
+                      className="DAT_LoginMobile_Card_Form_Submit"
+                      disabled={loading}
+                    >
+                      {loading ? lang.formatMessage({ id: "logining" }) : lang.formatMessage({ id: "login" })}
+                    </button>
+
+                    <div className="DAT_LoginMobile_Card_Form_button">
+                      <div className="DAT_LoginMobile_Card_Form_button_Links">
+                        <button type="button" onClick={handleForgotPassword}>
+                          {lang.formatMessage({ id: "forgot_password" })}
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="DAT_LoginMobile_Card_Form_button_Demo"
+                        onClick={handleDemoLogin}
+                        disabled={loading}
+                      >
+                        {lang.formatMessage({ id: "trial_account" })}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </>
             )}
-            {step === 3 && (
-              <div className="DAT_Forgot_Card_Inner">
-                <div className="DAT_Forgot_Card_Header">
-                  <div className="DAT_Forgot_Card_Header_Back"
-                    onClick={() => { setIsForgotPassword(false); setStep(1); setError("") }}
-                  ><RiArrowGoBackLine />
-                  </div>
-                  <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
+          </div>
 
+          <div className="DAT_LoginMobile_Footer">
+            <span>{lang.formatMessage({ id: "version" })}: 1.1</span>
+            <span>BESS</span>
+          </div>
+        </div>
+      ) : (
+        <div className="DAT_Login" style={backgroundStyle}>
+          <div className="DAT_Login_Overlay"></div>
+
+          <div className="DAT_Login_Card">
+            {isForgotPassword ? (
+              <>
+                {step === 1 && (
+                  <div className="DAT_Forgot_Card_Inner">
+                    <div className="DAT_Forgot_Card_Header">
+                      <div className="DAT_Forgot_Card_Header_Back"
+                        onClick={() => { setIsForgotPassword(false); setStep(1) }}
+                      ><RiArrowGoBackLine />
+                      </div>
+                      <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
+                    </div>
+                    <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitEmail}>
+                      <div className="DAT_Forgot_Card_Form_Sub">1/3</div>
+                      <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "verify_account" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Progress">
+                        <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                      </div>
+                      <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "input_email" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Field">
+                        <span className="DAT_Forgot_Card_Form_Field_Icon">
+                          <LuMail />
+                        </span>
+                        <input
+                          type="text"
+                          name="email"
+                          placeholder="E-mail"
+                          autoFocus
+                        />
+                      </div>
+                      {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
+                      <button
+                        type="submit"
+                        className="DAT_Forgot_Card_Form_Submit"
+                      >
+                        {lang.formatMessage({ id: "send" })}
+                      </button>
+                    </form>
+                  </div>
+                )}
+                {step === 2 && (
+                  <div className="DAT_Forgot_Card_Inner">
+                    <div className="DAT_Forgot_Card_Header">
+                      <div className="DAT_Forgot_Card_Header_Back"
+                        onClick={() => { setIsForgotPassword(false); setStep(1) }}
+                      ><RiArrowGoBackLine />
+                      </div>
+                      <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
+                    </div>
+                    <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitOtp}>
+                      <div className="DAT_Forgot_Card_Form_Sub">2/3</div>
+                      <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "verify_code" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Progress">
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                      </div>
+                      <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "input_otp" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Otp">
+                        {otp.map((digit, index) => (
+                          <input
+                            key={index}
+                            value={otp[index]}
+                            ref={(el) => (otpRefs.current[index] = el)}
+                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                            maxLength={1}
+                            onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                          />
+                        ))}
+                      </div>
+                      {countdown > 0 ? (
+                        <div className="DAT_Forgot_Card_Form_Resend">
+                          {lang.formatMessage({ id: "resend_otp_after" })} {countdown}s
+                        </div>
+                      ) : (
+                        <div
+                          className="DAT_Forgot_Card_Form_Resend DAT_Forgot_Card_Form_Resend_Active"
+                          onClick={handleOtpAgain}
+                        >
+                          {lang.formatMessage({ id: "resend_otp" })}
+                        </div>
+                      )}
+                      {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
+                      <button
+                        type="submit"
+                        className="DAT_Forgot_Card_Form_Submit"
+                      >
+                        {lang.formatMessage({ id: "next" })}
+                      </button>
+                      <button
+                        className="DAT_Forgot_Card_Form_Submit"
+                        style={{ color: "var(--gray-900)", backgroundColor: "var(--gray-300)" }}
+                        onClick={handleBack}
+                      >
+                        {lang.formatMessage({ id: "go_back" })}
+                      </button>
+                    </form>
+
+                  </div>
+                )}
+                {step === 3 && (
+                  <div className="DAT_Forgot_Card_Inner">
+                    <div className="DAT_Forgot_Card_Header">
+                      <div className="DAT_Forgot_Card_Header_Back"
+                        onClick={() => { setIsForgotPassword(false); setStep(1); setError("") }}
+                      ><RiArrowGoBackLine />
+                      </div>
+                      <h1 style={{ textTransform: "uppercase" }}>{lang.formatMessage({ id: "forgot_password" })}</h1>
+
+                    </div>
+
+                    <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitPassword}>
+                      <div className="DAT_Forgot_Card_Form_Sub">3/3</div>
+                      <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "reset_password" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Progress">
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
+                        <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
+                      </div>
+                      <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "new_password" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Field">
+                        <span className="DAT_Forgot_Card_Form_Field_Icon">
+                          <RiLockPasswordLine />
+                        </span>
+                        <input
+                          type="password"
+                          placeholder={lang.formatMessage({ id: "password_input_new" })}
+                          name="password"
+                          autoFocus
+                        />
+                      </div>
+                      <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "confirm_password" })}</div>
+                      <div className="DAT_Forgot_Card_Form_Field">
+                        <span className="DAT_Forgot_Card_Form_Field_Icon">
+                          <RiLockPasswordLine />
+                        </span>
+                        <input
+                          type="password"
+                          placeholder={lang.formatMessage({ id: "password_input_confirm" })}
+                          name="confirmPassword"
+                          autoFocus
+                        />
+                      </div>
+                      {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
+                      <button
+                        type="submit"
+                        className="DAT_Forgot_Card_Form_Submit"
+                      >
+                        {lang.formatMessage({ id: "reset_password" })}
+                      </button>
+
+                    </form>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="DAT_Login_Card_Inner">
+                  <div className="DAT_Login_Card_Header">
+                    <h1>{lang.formatMessage({ id: "login_system" })}</h1>
+                    <button
+                      type="button"
+                      className="DAT_Login_Card_Header_Language"
+                      onClick={handleChangeLanguage}
+                    >
+                      <LuGlobe />
+                      <span>{locale === "vi" ? "VI" : "EN"}</span>
+                    </button>
+                  </div>
+
+                  <form className="DAT_Login_Card_Form" onSubmit={handleSubmit}>
+                    <div className="DAT_Login_Card_Form_Field">
+                      <span className="DAT_Login_Card_Form_Field_Icon">
+                        <LuUser />
+                      </span>
+                      <input
+                        type="text"
+                        placeholder={lang.formatMessage({ id: "username" })}
+                        value={identifier}
+                        onChange={(event) => setIdentifier(event.target.value)}
+                        autoFocus
+                      />
+                    </div>
+
+                    <div className="DAT_Login_Card_Form_Field">
+                      <span className="DAT_Login_Card_Form_Field_Icon">
+                        <LuLock />
+                      </span>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder={lang.formatMessage({ id: "password" })}
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="DAT_Login_Card_Form_Field_Action"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        aria-label="Hien hoac an mat khau"
+                      >
+                        {showPassword ? <LuEyeOff /> : <LuEye />}
+                      </button>
+                    </div>
+
+                    <label className="DAT_Login_Card_Form_Remember">
+                      <input
+                        type="checkbox"
+                        checked={remember}
+                        onChange={(event) => setRemember(event.target.checked)}
+                      />
+                      <span>{lang.formatMessage({ id: "save_login" })}</span>
+                    </label>
+
+                    {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
+
+                    <button
+                      type="submit"
+                      className="DAT_Login_Card_Form_Submit"
+                      disabled={loading}
+                    >
+                      {loading ? lang.formatMessage({ id: "logining" }) : lang.formatMessage({ id: "login" })}
+                    </button>
+
+                    <div className="DAT_Login_Card_Form_Links">
+                      <button type="button" onClick={handleForgotPassword}>
+                        {lang.formatMessage({ id: "forgot_password" })}
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="DAT_Login_Card_Form_Demo"
+                      onClick={handleDemoLogin}
+                      disabled={loading}
+                    >
+                      {lang.formatMessage({ id: "trial_account" })}
+                    </button>
+                  </form>
                 </div>
-
-                <form className="DAT_Forgot_Card_Form" onSubmit={handleSubmitPassword}>
-                  <div className="DAT_Forgot_Card_Form_Sub">3/3</div>
-                  <div className="DAT_Forgot_Card_Form_Label" style={{ color: "white" }}>{lang.formatMessage({ id: "reset_password" })}</div>
-                  <div className="DAT_Forgot_Card_Form_Progress">
-                    <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
-                    <div className="DAT_Forgot_Card_Form_Progress_Item"></div>
-                    <div className="DAT_Forgot_Card_Form_Progress_Item" style={{ backgroundColor: "var(--primary)" }}></div>
-                  </div>
-                  <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "new_password" })}</div>
-                  <div className="DAT_Forgot_Card_Form_Field">
-                    <span className="DAT_Forgot_Card_Form_Field_Icon">
-                      <RiLockPasswordLine />
-                    </span>
-                    <input
-                      type="password"
-                      placeholder={lang.formatMessage({ id: "password_input_new" })}
-                      name="password"
-                      autoFocus
-                    />
-                  </div>
-                  <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "confirm_password" })}</div>
-                  <div className="DAT_Forgot_Card_Form_Field">
-                    <span className="DAT_Forgot_Card_Form_Field_Icon">
-                      <RiLockPasswordLine />
-                    </span>
-                    <input
-                      type="password"
-                      placeholder={lang.formatMessage({ id: "password_input_confirm" })}
-                      name="confirmPassword"
-                      autoFocus
-                    />
-                  </div>
-                  {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
-
-                  <button
-                    type="submit"
-                    className="DAT_Forgot_Card_Form_Submit"
-                  >
-                    {lang.formatMessage({ id: "reset_password" })}
-                  </button>
-
-                </form>
-              </div>
+              </>
             )}
-          </>
-        ) : (
-          <>
-            <div className="DAT_Login_Card_Inner">
-              <div className="DAT_Login_Card_Header">
-                <h1>{lang.formatMessage({ id: "login_system" })}</h1>
-                <button
-                  type="button"
-                  className="DAT_Login_Card_Header_Language"
-                  onClick={handleChangeLanguage}
-                >
-                  <LuGlobe />
-                  <span>{locale === "vi" ? "VI" : "EN"}</span>
-                </button>
-              </div>
+          </div>
 
-              <form className="DAT_Login_Card_Form" onSubmit={handleSubmit}>
-                <div className="DAT_Login_Card_Form_Field">
-                  <span className="DAT_Login_Card_Form_Field_Icon">
-                    <LuUser />
-                  </span>
-                  <input
-                    type="text"
-                    placeholder={lang.formatMessage({ id: "username" })}
-                    value={identifier}
-                    onChange={(event) => setIdentifier(event.target.value)}
-                    autoFocus
-                  />
-                </div>
+          <div className="DAT_Login_Footer">
+            <span>{lang.formatMessage({ id: "version" })}: 1.1</span>
+            <span>BESS</span>
+          </div>
+        </div>
+      )}
 
-                <div className="DAT_Login_Card_Form_Field">
-                  <span className="DAT_Login_Card_Form_Field_Icon">
-                    <LuLock />
-                  </span>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder={lang.formatMessage({ id: "password" })}
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                  />
-                  <button
-                    type="button"
-                    className="DAT_Login_Card_Form_Field_Action"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    aria-label="Hien hoac an mat khau"
-                  >
-                    {showPassword ? <LuEyeOff /> : <LuEye />}
-                  </button>
-                </div>
-
-                <label className="DAT_Login_Card_Form_Remember">
-                  <input
-                    type="checkbox"
-                    checked={remember}
-                    onChange={(event) => setRemember(event.target.checked)}
-                  />
-                  <span>{lang.formatMessage({ id: "save_login" })}</span>
-                </label>
-
-                {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
-
-                <button
-                  type="submit"
-                  className="DAT_Login_Card_Form_Submit"
-                  disabled={loading}
-                >
-                  {loading ? lang.formatMessage({ id: "logining" }) : lang.formatMessage({ id: "login" })}
-                </button>
-
-                <div className="DAT_Login_Card_Form_Links">
-                  <button type="button" onClick={handleForgotPassword}>
-                    {lang.formatMessage({ id: "forgot_password" })}
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  className="DAT_Login_Card_Form_Demo"
-                  onClick={handleDemoLogin}
-                  disabled={loading}
-                >
-                  {lang.formatMessage({ id: "trial_account" })}
-                </button>
-              </form>
-            </div>
-          </>
-        )}
-      </div>
-
-      <div className="DAT_Login_Footer">
-        <span>{lang.formatMessage({ id: "version" })}: 1.1</span>
-        <span>BESS</span>
-      </div>
-    </div>
+    </>
   );
 }
