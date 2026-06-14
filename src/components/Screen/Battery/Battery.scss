@@ -563,26 +563,28 @@
 
     &_Cell {
       margin-top: 16px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
       gap: 12px;
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-bottom: 20px;
+      padding: 0 20px 20px 20px;
+      width: 100%;
 
       &_Card {
+        flex: 1 1 calc(25% - 9px); 
+        min-width: 200px;
         background: rgba(248, 250, 252, 1);
         padding: 14px;
         border-radius: 12px;
-        gap: 6px;
         border: 1px solid rgba(226, 232, 240, 1);
         transition: 0.2s;
 
         &--High {
+          flex: 1 1 calc(25% - 9px);
+          min-width: 200px;
+          
           background: rgba(248, 250, 252, 1);
           padding: 14px;
           border-radius: 12px;
-          gap: 6px;
           transition: 0.2s;
           border: 1px solid var(--danger);
         }
@@ -810,6 +812,7 @@
 
         &_Body {
           text-align: center;
+
           &_Row {
             transition: background var(--transition-fast);
 
@@ -1148,6 +1151,7 @@
     }
   }
 }
+
 /* animation */
 @keyframes pop {
   from {
