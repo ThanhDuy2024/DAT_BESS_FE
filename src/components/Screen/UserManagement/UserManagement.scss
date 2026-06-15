@@ -164,6 +164,7 @@
         display: flex;
         gap: var(--space-sm);
         position: relative;
+        justify-content: center;
 
         &_Button_GhostSm,
         &_Button_SecondarySm {
@@ -450,8 +451,8 @@
   &_Pop {
 
     &_MenuItem {
-      padding: 10px 10px;
-      font-size: 12px;
+      padding: 10px 16px;
+      font-size: var(--font-size-base);
       color: var(--text-body);
       cursor: pointer;
       transition: background var(--transition-fast);
@@ -467,9 +468,8 @@
 
     &_Menu {
       position: absolute;
-      top: 20px;
-      right: 0;
-      left: 10px;
+      top: -45px;
+      right: 50px;
       margin-top: 6px;
       background: var(--card-bg);
       border: 1px solid var(--border-light);
@@ -477,7 +477,20 @@
       box-shadow: var(--shadow-lg);
       min-width: 100px;
       z-index: var(--z-dropdown);
-      animation: headerMenuFadeIn 0.15s ease-out;
+      animation: pop 0.2s ease;
+    }
+
+    &_MenuLast {
+      position: absolute;
+      right: 50px;
+      top: -100px;
+      margin-top: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      min-width: 100px;
+      z-index: var(--z-dropdown);
     }
 
   }

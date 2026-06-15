@@ -212,10 +212,11 @@
             transition: box-shadow var(--transition-base);
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: var(--space-base);
             flex-wrap: wrap;
             gap: 10px;
+            margin-bottom: 8px;
+            position: relative;
 
             &_Avt {
                 width: 40px;
@@ -243,6 +244,9 @@
             &_Button {
                 color: var(--primary);
                 font-weight: var(--font-weight-medium);
+                position: absolute;
+                top: 5px;
+                right: 8px;
             }
         }
     }

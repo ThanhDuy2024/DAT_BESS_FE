@@ -13,6 +13,7 @@ import {
   LuBell,
   LuUserPen
 } from "react-icons/lu";
+import { GoLaw } from "react-icons/go";
 import { useAuth } from "../contexts/AuthContext";
 import "./Sidebar.scss";
 
@@ -78,6 +79,12 @@ const menuGroups = [
         path: "/users",
         icon: <LuUsers />,
         labelId: "sidebar_item_user_management",
+        perm: "manage_users",
+      },
+      {
+        path: "/roles",
+        icon: <GoLaw />,
+        labelId: "sidebar_item_role_management",
         perm: "manage_users",
       },
       {

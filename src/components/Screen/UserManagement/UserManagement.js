@@ -52,7 +52,6 @@ export default function UserManagement() {
         email: item.email_,
         role: normalizeValue(item.role_),
         status: normalizeValue(item.status_),
-        lastLogin: item.last_login_,
         created: item.created_at_,
       }));
 
@@ -78,12 +77,7 @@ export default function UserManagement() {
       label: lang.formatMessage({ id: "user_status_table" }),
       value: selectedUser?.status,
     },
-    {
-      label: lang.formatMessage({ id: "user_last_login_table" }),
-      value: selectedUser?.lastLogin
-        ? new Date(selectedUser?.lastLogin).toLocaleString("vi-VN")
-        : "-",
-    },
+
     {
       label: lang.formatMessage({ id: "user_create_at_table" }),
       value: selectedUser?.created
@@ -179,7 +173,7 @@ export default function UserManagement() {
         }
       );
 
-      if(res.status) {
+      if (res.status) {
         loadUser();
         setIsModalOpen(false)
       } else {
@@ -202,7 +196,7 @@ export default function UserManagement() {
         }
       );
 
-      if(res.status) {
+      if (res.status) {
         loadUser();
       } else {
         console.log("error database")
@@ -293,7 +287,7 @@ export default function UserManagement() {
                     {user.email}
                   </div>
                 </div>
-                <button
+                <div
                   type="button"
                   className="DAT_UserManagementMobile_Container_Card_Button"
                   onClick={() => {
@@ -301,38 +295,11 @@ export default function UserManagement() {
                     setIsModalOpen(true);
                   }}
                 >
-                  Xem chi tiết
-                </button>
+                  {lang.formatMessage({ id: "view_details" })}
+                </div>
               </div>
             ))}
-            {/* <div className="DAT_UserManagementMobile_Container_Table">
-              <table className="DAT_UserManagementMobile_Container_Table_Main">
-                <thead>
-                  <tr>
-                    <th>{lang.formatMessage({ id: "user_id_table" })}</th>
-                    <th>{lang.formatMessage({ id: "user_name_table" })}</th>
-                    <th>{lang.formatMessage({ id: "user_email_table" })}</th>
 
-                  </tr>
-                </thead>
-                <tbody className="DAT_UserManagementMobile_Container_Table_Main_Body">
-                  {filtered.map((user) => (
-                    <tr key={user.id} className="DAT_UserManagementMobile_Container_Table_Main_Row"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setIsModalOpen(true);
-                      }}>
-                      <td className="DAT_UserManagementMobile_Container_Table_Main_Cell">
-                        USR-{String(user.id).padStart(3, "0")}
-                      </td>
-                      <td className="DAT_UserManagementMobile_Container_Table_Main_Cell">{user.name}</td>
-                      <td className="DAT_UserManagementMobile_Container_Table_Main_Cell">{user.email}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div> */}
           </div>
           {isModalOpen && selectedUser && (
             <div className="DAT_UserManagementMobile_Modal">
@@ -397,7 +364,7 @@ export default function UserManagement() {
                   >
                     {selectedUser.status === "true"
                       ? lang.formatMessage({ id: "user_locked_button" })
-                      : lang.formatMessage({ id: "user_unlock_button" }) 
+                      : lang.formatMessage({ id: "user_unlock_button" })
                     }
                   </button>
                   <div
@@ -654,9 +621,7 @@ export default function UserManagement() {
                     <th>{lang.formatMessage({ id: "user_email_table" })}</th>
                     <th>{lang.formatMessage({ id: "user_role_table" })}</th>
                     <th>{lang.formatMessage({ id: "user_status_table" })}</th>
-                    <th>
-                      {lang.formatMessage({ id: "user_last_login_table" })}
-                    </th>
+
                     <th>
                       {lang.formatMessage({ id: "user_create_at_table" })}
                     </th>
@@ -664,165 +629,167 @@ export default function UserManagement() {
                   </tr>
                 </thead>
                 <tbody className="DAT_UserManagement_Container_Table_Main_Body">
-                  {filtered.map((user) => (
-                    <tr
-                      key={user.id}
-                      className="DAT_UserManagement_Container_Table_Main_Row"
-                    >
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        USR-{String(user.id).padStart(3, "0")}
-                      </td>
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        {user.name}
-                      </td>
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        {user.userName}
-                      </td>
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        {user.email}
-                      </td>
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        {user.role}
-                      </td>
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        {user.status == 'true' ? "Active" : "Locked"}
-                      </td>
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        {user.lastLogin
-                          ? new Date(user.lastLogin).toLocaleString("vi-VN")
-                          : "-"}
-                      </td>
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        {user.created
-                          ? new Date(user.created).toLocaleString("vi-VN")
-                          : "-"}
-                      </td>
-                      <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                        <div className="DAT_UserManagement_Container_Table_Actions">
-                          <button
-                            className="DAT_UserManagement_Container_Table_Actions_Button_GhostSm"
-                            onClick={() =>
-                              setOpenMenu(openMenu === user.id ? null : user.id)
-                            }
-                          >
-                            <LuMenu />
-                          </button>
+                  {filtered.map((user) => {
+                    const isLastItem = user.id === filtered[filtered.length - 1]?.id;
+                    return (
+                      <tr
+                        key={user.id}
+                        className="DAT_UserManagement_Container_Table_Main_Row"
+                      >
+                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                          USR-{String(user.id).padStart(3, "0")}
+                        </td>
+                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                          {user.name}
+                        </td>
+                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                          {user.userName}
+                        </td>
+                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                          {user.email}
+                        </td>
+                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                          {user.role}
+                        </td>
+                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                          {user.status == 'true' ? "Active" : "Locked"}
+                        </td>
 
-                          {openMenu === user.id && (
-                            <div className="DAT_UserManagement_Pop_Menu">
-                              <div
-                                className="DAT_UserManagement_Pop_MenuItem"
-                                onClick={() => {
-                                  openEdit(user);
-                                  setOpenMenu(null);
-                                }}
-                              >
-                                {lang.formatMessage({ id: "user_edit_button" })}
-                              </div>
+                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                          {user.created
+                            ? new Date(user.created).toLocaleString("vi-VN")
+                            : "-"}
+                        </td>
+                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                          <div className="DAT_UserManagement_Container_Table_Actions">
+                            <button
+                              className="DAT_UserManagement_Container_Table_Actions_Button_GhostSm"
+                              onClick={() =>
+                                setOpenMenu(openMenu === user.id ? null : user.id)
+                              }
+                            >
+                              <LuMenu />
+                            </button>
 
-                              <div
-                                className="DAT_UserManagement_Pop_MenuItem"
-                                onClick={() => handleAction(user.id, user.status)}
-                              >
-                                {user.status === 'true'
-                                  ? lang.formatMessage({
-                                    id: "user_locked_button",  
-                                  })
-                                  : lang.formatMessage({
-                                    id: "user_unlock_button",
-                                  })}
-                              </div>
-                              <div
-                                className="DAT_UserManagement_Pop_MenuItem DAT_UserManagement_Pop_MenuItem_Delete"
-                                onClick={() => handleDelete(user.id)}
-                              >
-                                {lang.formatMessage({
-                                  id: "user_delete_button",
-                                })}
-                              </div>
-                            </div>
-                          )}
-                          {deleteUser && (
-                            <div className="DAT_UserManagement_Modal">
-                              <div className="DAT_UserManagement_Modal_Container">
-                                <div className="DAT_UserManagement_Modal_Container_Header">
-                                  <div className="DAT_UserManagement_Modal_Container_Header_Title">
-                                    {lang.formatMessage({
-                                      id: "confirm_delete",
-                                    })}{" "}
-                                  </div>
-                                  <div className="DAT_UserManagement_Modal_Container_Header_Close">
-                                    <svg
-                                      stroke="currentColor"
-                                      fill="currentColor"
-                                      strokeWidth="0"
-                                      viewBox="0 0 512 512"
-                                      height="25"
-                                      width="25"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      onClick={() => setDeleteUser(false)}
-                                    >
-                                      <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
-                                    </svg>
-                                  </div>
+                            {openMenu === user.id && (
+                              <div className={`DAT_UserManagement_Pop_Menu ${isLastItem
+                                  ? "DAT_UserManagement_Pop_MenuLast"
+                                  : ""
+                                }`}>
+                                <div
+                                  className="DAT_UserManagement_Pop_MenuItem"
+                                  onClick={() => {
+                                    openEdit(user);
+                                    setOpenMenu(null);
+                                  }}
+                                >
+                                  {lang.formatMessage({ id: "user_edit_button" })}
                                 </div>
 
-                                <div className="DAT_UserManagement_Modal_Container_Main">
-                                  {lang.formatMessage({
-                                    id: "description_delete",
-                                  })}
-                                </div>
-
-                                <div className="DAT_UserManagement_Modal_Container_Foot">
-                                  <button
-                                    className="DAT_UserManagement_Modal_Container_Foot_Btn_Cancel"
-                                    onClick={() => setDeleteUser(null)}
-                                  >
-                                    {lang.formatMessage({ id: "cancel" })}
-                                  </button>
-
-                                  <button
-                                    className="DAT_UserManagement_Modal_Container_Foot_Btn_Delete"
-                                    onClick={async () => {
-                                      let res = await callApi(
-                                        "post",
-                                        process.env.REACT_APP_APIDEV +
-                                        "/data/updateUser",
-                                        {
-                                          action: "delete",
-                                          id: user.id,
-                                          name: "",
-                                          username: "",
-                                          email: "",
-                                          password: "",
-                                          role: "",
-                                          status: "",
-                                        },
-                                      );
-
-                                      if (res.status) {
-                                        setDeleteUser(null);
-                                        loadUser();
-                                      } else {
-                                        alert(res.mes);
-                                      }
-                                    }}
-                                  >
-                                    {lang.formatMessage({
-                                      id: "user_delete_button",
+                                <div
+                                  className="DAT_UserManagement_Pop_MenuItem"
+                                  onClick={() => handleAction(user.id, user.status)}
+                                >
+                                  {user.status === 'true'
+                                    ? lang.formatMessage({
+                                      id: "user_locked_button",
+                                    })
+                                    : lang.formatMessage({
+                                      id: "user_unlock_button",
                                     })}
-                                  </button>
-                                  {/* <button onClick={handleSave}>
+                                </div>
+                                <div
+                                  className="DAT_UserManagement_Pop_MenuItem DAT_UserManagement_Pop_MenuItem_Delete"
+                                  onClick={() => handleDelete(user.id)}
+                                >
+                                  {lang.formatMessage({
+                                    id: "user_delete_button",
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                            {deleteUser && (
+                              <div className="DAT_UserManagement_Modal">
+                                <div className="DAT_UserManagement_Modal_Container">
+                                  <div className="DAT_UserManagement_Modal_Container_Header">
+                                    <div className="DAT_UserManagement_Modal_Container_Header_Title">
+                                      {lang.formatMessage({
+                                        id: "confirm_delete",
+                                      })}{" "}
+                                    </div>
+                                    <div className="DAT_UserManagement_Modal_Container_Header_Close">
+                                      <svg
+                                        stroke="currentColor"
+                                        fill="currentColor"
+                                        strokeWidth="0"
+                                        viewBox="0 0 512 512"
+                                        height="25"
+                                        width="25"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        onClick={() => setDeleteUser(false)}
+                                      >
+                                        <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
+                                      </svg>
+                                    </div>
+                                  </div>
+
+                                  <div className="DAT_UserManagement_Modal_Container_Main">
+                                    {lang.formatMessage({
+                                      id: "description_delete",
+                                    })}
+                                  </div>
+
+                                  <div className="DAT_UserManagement_Modal_Container_Foot">
+                                    <button
+                                      className="DAT_UserManagement_Modal_Container_Foot_Btn_Cancel"
+                                      onClick={() => setDeleteUser(null)}
+                                    >
+                                      {lang.formatMessage({ id: "cancel" })}
+                                    </button>
+
+                                    <button
+                                      className="DAT_UserManagement_Modal_Container_Foot_Btn_Delete"
+                                      onClick={async () => {
+                                        let res = await callApi(
+                                          "post",
+                                          process.env.REACT_APP_APIDEV +
+                                          "/data/updateUser",
+                                          {
+                                            action: "delete",
+                                            id: user.id,
+                                            name: "",
+                                            username: "",
+                                            email: "",
+                                            password: "",
+                                            role: "",
+                                            status: "",
+                                          },
+                                        );
+
+                                        if (res.status) {
+                                          setDeleteUser(null);
+                                          loadUser();
+                                        } else {
+                                          alert(res.mes);
+                                        }
+                                      }}
+                                    >
+                                      {lang.formatMessage({
+                                        id: "user_delete_button",
+                                      })}
+                                    </button>
+                                    {/* <button onClick={handleSave}>
                   {lang.formatMessage({ id: "save" })}
                 </button> */}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
