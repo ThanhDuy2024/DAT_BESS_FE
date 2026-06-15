@@ -8,7 +8,7 @@ import { callApi } from "../../Api/Api";
 
 export default function UserInfo() {
   const lang = useIntl();
-  const { currentUser } = useAuth();
+  const { currentUser, loadUser } = useAuth();
 
   const [changeInfor, setChangeInfor] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
@@ -31,8 +31,22 @@ export default function UserInfo() {
     setChangeInfor(true);
   };
 
-  const handleSave = () => {
-    setChangeInfor(false);
+  const handleSave = async () => {
+    const editFieldFormat = editField === "Phone Number" ? "Phone" : editField;
+    try {
+      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/changeUserInfo`, {
+        action: editFieldFormat,
+        value: value
+      });
+
+      if(response.status === false) {
+        console.log(response);
+      }
+      await loadUser();
+      setChangeInfor(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const displayValue = (fieldValue) => {
