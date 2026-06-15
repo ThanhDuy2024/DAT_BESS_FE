@@ -83,7 +83,7 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    const result = await login("admin", "admin123", true);
+    const result = await login("Khách", "12345", true);
     setLoading(false);
 
     if (result.success) {
