@@ -261,6 +261,10 @@ const enMessages = {
   role_edit_button: "Edit",
   role_delete_button: "Delete",
   role_modal_save: "Save role",
+  role_modal_full_name: "Role name",
+  role_modal_status: "Status",
+
+
   energy_report: "Energy Report",
   ack_alarm: "ack",
   clear_alarm: " clear",
@@ -275,6 +279,7 @@ const enMessages = {
   system_permissions: "System Permissions ",
   notification_permission: "Request Notification Permission",
   change: "Change",
+  readOnly: "Read only",
   request: "Request",
   notification: "Notification",
   notification_on_off: "Notification ON/OFF",
@@ -823,7 +828,7 @@ const viMessages = {
   alarm_wrong_current_password: "Mật khẩu hiện tại chưa đúng.",
   confirm_password: "Xác nhận mật khẩu",
   login_error: "Tên tài khoản hoặc mật khẩu sai.",
-
+  readOnly: "Chỉ xem",
   role_id_table: "ID",
   role_name_table: "Tên Vai Trò",
   role_status_tabel: "Trạng Thái",
@@ -834,7 +839,9 @@ const viMessages = {
   role_delete_button: "Xóa",
   role_search: "Tìm kiếm tên vai trò",
   role_modal_create_title: "Thêm mới vai trò",
-  role_modal_save: "Lưu vai trò"
+  role_modal_save: "Lưu vai trò",
+  role_modal_full_name: "Tên vai trò",
+  role_modal_status: "Trạng thái",
 };
 
 export const messages = {

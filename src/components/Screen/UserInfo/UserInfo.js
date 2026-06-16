@@ -189,10 +189,8 @@ export default function UserInfo() {
           </div>
           <div
             className="DAT_UserInfor_Container_Row_Btn"
-            onClick={() => handleOpenModal("Email", currentUser?.email || "")}
-            aria-label="Change Email"
           >
-            {lang.formatMessage({ id: "change" })}
+            {lang.formatMessage({ id: "readOnly" })}
           </div>
         </div>
 

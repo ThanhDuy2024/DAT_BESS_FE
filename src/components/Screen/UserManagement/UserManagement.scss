@@ -266,6 +266,7 @@
       overflow: hidden;
       position: relative;
       width: 400px;
+      top:50px;
 
       &_Header {
 
@@ -316,10 +317,60 @@
         padding: 16px;
         background-color: var(--card-bg);
 
+        &_Otp {
+          display: flex;
+          justify-content: space-around;
+          padding-left: 10px;
+          padding-right: 10px;
+          margin-top: 5px;
+
+          &_Input {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            border: 1px solid rgba(198, 197, 197, 0.5);
+            box-sizing: border-box;
+
+            text-align: center;
+            color: black;
+            font-size: 20px;
+          }
+        }
+
+        &_Form {
+          display: flex;
+          justify-content:space-between;
+
+          &_Item {
+            margin-top: 14px;
+            flex-direction: column;
+            display: flex;
+
+            &_Label {
+              cursor: default;
+              color: var(--gray-900);
+              margin-bottom: 8px;
+            }
+
+            &_Select {
+              width: 150px;
+              height:30px;
+              padding: 0 32px 0 14px;
+              appearance: none;
+              border: 1px solid rgba(198, 197, 197, 0.5);
+              cursor: pointer;
+              border-radius: 5px;
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+              background-repeat: no-repeat;
+              background-position: right 12px center;
+            }
+          }
+        }
 
         &_Label {
           cursor: default;
-          color: var(--card-bg);
+          color: var(--gray-900);
+          margin-bottom: 8px;
         }
 
         &_Box {
@@ -330,6 +381,7 @@
           gap: 8px;
           justify-content: center;
           width: 100%;
+          margin-bottom: 8px;
 
           input {
             border: none;
@@ -350,16 +402,16 @@
           }
         }
 
-        input {
-          border-radius: 5px;
-          box-sizing: border-box;
-          -webkit-box-sizing: border-box;
-          -moz-box-sizing: border-box;
-          height: 30px;
-          outline: none;
-          padding: 8px;
-          width: 100%;
-        }
+        // input {
+        //   border-radius: 5px;
+        //   -webkit-box-sizing: border-box;
+        //   -moz-box-sizing: border-box;
+        //   height: 30px;
+        //   outline: none;
+        //   padding: 8px;
+        //   width: 100%;
+        // }
+
       }
 
       &_Foot {
@@ -392,6 +444,35 @@
           cursor: pointer;
           padding: 8px 16px;
           margin-left: 6px;
+        }
+
+        &_Button_Primary,
+        &_Button_Secondary,
+        &_Button_Ghost,
+        &_Button_GhostSm,
+        &_Button_SecondarySm {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: var(--space-sm);
+          padding: 10px 20px;
+          border: 1px solid transparent;
+          border-radius: var(--radius-md);
+          font-size: var(--font-size-base);
+          font-weight: var(--font-weight-medium);
+          line-height: 1.4;
+          white-space: nowrap;
+          transition: all var(--transition-base);
+        }
+
+        &_Button_Primary {
+          background: var(--primary);
+          color: rgba(255, 255, 255, 1);
+
+          &:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(11, 25, 103, 0.22);
+          }
         }
       }
     }

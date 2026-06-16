@@ -1,34 +1,54 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Role.scss'
 import { useIntl } from 'react-intl';
 import { LuSettings } from 'react-icons/lu';
 import { TbRvTruck } from 'react-icons/tb';
 import { CiEdit } from "react-icons/ci";
 import Modal from '../../Modal/Modal';
+import { callApi } from '../../Api/Api';
 export default function Role() {
-  const mockData = [
-    {
-      id: 1,
-      name: "Admin",
-      status: "Active",
-      createdBy: "Master",
-      createdAt: "16/05/2026"
-    },
-    {
-      id: 2,
-      name: "Engineer",
-      status: "Active",
-      createdBy: "Master",
-      createdAt: "16/05/2026"
-    }
-  ]
-
   const lang = useIntl();
   const [addRoleModal, setAddRoleModal] = useState(false);
-
+  const [roleName, setRoleName] = useState();
+  const [status, setStatus] = useState("active");
+  const [roles, setRoles] = useState([]);
   const openNew = () => {
     setAddRoleModal(true);
+  };
+
+  const handleCreateRole = async () => {
+    try {
+      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/createRole`, {
+        roleName: roleName,
+        status: status,
+      });
+      
+      if(response.status === false) {
+        console.log(response.msg);
+      } else {
+        setAddRoleModal(false);
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
+
+  const getAllRole = async () => {
+    try {
+      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/getAllRoles`);
+      if(response.status === false) {
+        console.log(response.msg);
+      } else {
+        setRoles(response.data);
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getAllRole();
+  }, [addRoleModal])
   return (
     <>
       <div className="DAT_RoleSetting">
@@ -51,11 +71,11 @@ export default function Role() {
               className="DAT_RoleSetting_Card_Actions_FilterSelect"
               style={{ width: 140 }}
             >
-              <option value="All">
-                {lang.formatMessage({ id: "all_status_role" })}
-              </option>
               <option value="active">
                 {lang.formatMessage({ id: "statusActive_role" })}
+              </option>
+              <option value="inactive">
+                {lang.formatMessage({ id: "statusInactive_role" })}
               </option>
             </select>
             <button
@@ -81,12 +101,12 @@ export default function Role() {
                 </tr>
               </thead>
               <tbody className="DAT_RoleSetting_Container_Table_Main_Body">
-                {mockData.map((item) => {
+                {roles.map((item) => {
                   return (
                     <tr className='DAT_RoleSetting_Container_Table_Main_Row' key={item.id}>
-                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">ROLE-{item.id > 10 ? `0${item.id}` : `00${item.id}`}</td>
-                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.name}</td>
-                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.status}</td>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">ROLE-{item.id >= 10 ? `0${item.id}` : `00${item.id}`}</td>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.roleName}</td>
+                      <td className={`DAT_RoleSetting_Container_Table_Main_Cell--${item.status}`}>{item.status == "active" ? lang.formatMessage({id: "statusActive_role"}) : lang.formatMessage({id: "statusInactive_role"})}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdAt}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdBy}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">
@@ -122,6 +142,7 @@ export default function Role() {
               </button>
               <button
                 className="DAT_RoleSetting_Modal_Footer_Button_Primary"
+                onClick={handleCreateRole}
               >
                 {lang.formatMessage({ id: "role_modal_save" })}
               </button>
@@ -131,36 +152,24 @@ export default function Role() {
           <div className="DAT_RoleSetting_Form_Grid">
             <div className="DAT_RoleSetting_Form_Grid_Group">
               <label className="DAT_RoleSetting_Form_Grid_Group_Label">
-                {lang.formatMessage({ id: "user_modal_full_name" })}
+                {lang.formatMessage({ id: "role_modal_full_name" })}
               </label>
               <input
                 className="DAT_RoleSetting_Form_Grid_Group_Input"
+                onChange={(e) => setRoleName(e.target.value)}
               />
             </div>
             <div className="DAT_RoleSetting_Form_Grid_Group">
               <label className="DAT_RoleSetting_Form_Grid_Group_Label">
-                {lang.formatMessage({ id: "user_modal_email" })}
+                {lang.formatMessage({ id: "role_modal_status" })}
               </label>
-              <input
-                className="DAT_RoleSetting_Form_Grid_Group_Input"
-              />
-            </div>
-            <div className="DAT_RoleSetting_Form_Grid_Group">
-              <label className="DAT_RoleSetting_Form_Grid_Group_Label">
-                {lang.formatMessage({ id: "user_modal_password" })}
-              </label>
-              <input
-                className="DAT_RoleSetting_Form_Grid_Group_Input"
-                type="password"
-              />
-            </div>
-            <div className="DAT_RoleSetting_Form_Grid_Group">
-              <label className="DAT_RoleSetting_Form_Grid_Group_Label">
-                Username
-              </label>
-              <input
-                className="DAT_RoleSetting_Form_Grid_Group_Input"
-              />
+              <select
+                className="DAT_RoleSetting_Form_Grid_Group_Select"
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="active">{lang.formatMessage({ id: "statusActive_role" })}</option>
+                <option value="inactive">{lang.formatMessage({ id: "statusInactive_role" })}</option>
+              </select>
             </div>
           </div>
         </Modal>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import Modal from "../../Modal/Modal";
 import StatusBadge from "../../Modal/StatusBadge";
 import "./UserManagement.scss";
@@ -30,8 +30,32 @@ export default function UserManagement() {
   const [openMenu, setOpenMenu] = useState(null);
   const [deleteUser, setDeleteUser] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [addUser, setAddUser] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [roleUser, setRoleUser] = useState("engineer");
+  const [statusUser, setStatusUser] = useState("active");
+  const [password, setPassword] = useState("");
+  const otpRefs = useRef([]);
+
+
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+
+  const [step, setStep] = useState(1);
+  const userRef = useRef(null);
 
   const lang = useIntl();
+
+  // useEffect(() => {
+  //   if (countdown <= 0) return;
+
+  //   const timer = setInterval(() => {
+  //     setCountdown((prev) => prev - 1);
+  //   }, 1000);
+
+  //   return () => clearInterval(timer);
+  // }, [countdown]);
   const normalizeValue = (value) =>
     String(value || "")
       .trim()
@@ -58,9 +82,47 @@ export default function UserManagement() {
       setUsers(list);
     }
   };
+  const handleOtpChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
+    setOtp(newOtp);
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (
+      e.key === "Backspace" &&
+      !otp[index] &&
+      index > 0
+    ) {
+      otpRefs.current[index - 1]?.focus();
+    }
+  };
 
   useEffect(() => {
     loadUser();
+
+  }, [addUser]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        userRef.current &&
+        !userRef.current.contains(event.target)
+      ) {
+        setOpenMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const userInfo = [
@@ -204,6 +266,100 @@ export default function UserManagement() {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  const handleSubmitStep1 = async (e) => {
+    e.preventDefault();
+    const fullName = e.target.fullname.value;
+    setStep(2);
+    setFullName(fullName);
+
+  }
+  const handleSubmitStep2 = async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value
+    const username = e.target.username.value
+    const password = e.target.password.value
+    const confirmPassword = e.target.confirmpassword.value
+
+    try {
+      if (password === confirmPassword) {
+        const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/renderOtpWhenCreateUser`, {
+          email: email
+        })
+        console.log(res)
+        if (res.status === false) {
+          console.log("Email không tồn tại")
+        } else {
+          setStep(3);
+          setEmail(email);
+          setPassword(password);
+          setUsername(username);
+        }
+      }
+    } catch (error) {
+      // setError(lang.formatMessage({ id: "alarm_email_notfound" }));
+      console.log(error)
+
+    }
+    // setError("");
+
+    // const email = e.target.email.value;
+    // if (!email.trim()) {
+    //   setError(lang.formatMessage({ id: "alarm_email" }));
+    //   return;
+    // }
+    // try {
+    //   const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/renderOtp`, {
+    //     email: email
+    //   });
+    //   if (res.status === false) {
+    //     setError("Không tìm thấy email trong hệ thống");
+    //     return;
+    //   } else {
+    //     setEmail(email);
+    //     setStep(2);
+    //     setCountdown(60);
+
+    //   }
+    // } catch (error) {
+    //   setError(lang.formatMessage({ id: "alarm_email_notfound" }));
+    // }
+  }
+  const handleSubmitStep3 = async (e) => {
+    e.preventDefault();
+
+    setOtp(["", "", "", "", "", ""]);
+
+    if (otp.some(item => item === "")) {
+      // setError(lang.formatMessage({ id: "alarm_otp" }));
+      return;
+    }
+    const otpCode = otp.join("");
+
+    try {
+      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/createUser`, {
+        otp: otpCode,
+        email: email,
+        username: username,
+        password: password,
+        name: fullName,
+        role: roleUser,
+        status: statusUser
+      });
+      if (res.status === false) {
+        // setError(lang.formatMessage({ id: "alarm_wrong_otp" }))
+      } else {
+        setAddUser(false);
+        console.log(roleUser)
+        console.log(statusUser)
+
+      }
+    } catch (error) {
+      // setError(lang.formatMessage({ id: "alarm_wrong_otp" }))
+      console.log(error)
+    }
+
   }
   return (
     <>
@@ -603,10 +759,198 @@ export default function UserManagement() {
               </select>
               <button
                 className="DAT_UserManagement_Card_Actions_Button_Primary"
-                onClick={openNew}
+                onClick={() => { setAddUser(!addUser); setStep(1) }}
               >
                 {lang.formatMessage({ id: "add_user" })}
               </button>
+              {addUser && (
+                <>
+                  {step === 1 && (
+                    <>
+                      <div className="DAT_UserManagement_Modal">
+                        <form className="DAT_UserManagement_Modal_Container" onSubmit={handleSubmitStep1}>
+                          <div className="DAT_UserManagement_Modal_Container_Header">
+                            <div className="DAT_UserManagement_Modal_Container_Header_Title">Thêm người dùng</div>
+                          </div>
+                          <div className="DAT_UserManagement_Modal_Container_Main" >
+                            <label className="DAT_UserManagement_Modal_Container_Main_Label">
+                              {lang.formatMessage({ id: "user_modal_full_name" })}
+                            </label>
+                            <div className="DAT_UserManagement_Modal_Container_Main_Box">
+                              <input
+                                name="fullname"
+                                type="text"
+                              />
+                            </div>
+                            <div className="DAT_UserManagement_Modal_Container_Main_Form">
+                              <div className="DAT_UserManagement_Modal_Container_Main_Form_Item" >
+                                <label className="DAT_UserManagement_Modal_Container_Main_Form_Item_Label">
+                                  {lang.formatMessage({ id: "user_modal_role" })}
+                                </label>
+                                <select
+                                  className="DAT_UserManagement_Modal_Container_Main_Form_Item_Select"
+                                  onChange={(e) => setRoleUser(e.target.value)}
+                                  value={roleUser}
+                                >
+                                  <option value="admin">Admin</option>
+                                  <option value="engineer">Engineer</option>
+                                </select>
+                              </div>
+                              <div className="DAT_UserManagement_Modal_Container_Main_Form_Item">
+                                <label className="DAT_UserManagement_Modal_Container_Main_Form_Item_Label">
+                                  {lang.formatMessage({ id: "user_modal_status" })}
+                                </label>
+                                <select
+                                  className="DAT_UserManagement_Modal_Container_Main_Form_Item_Select"
+                                  onChange={(e) => setStatusUser(e.target.value)}
+                                  value={statusUser}
+                                >
+                                  <option value="active">Active</option>
+                                  <option value="locked">Locked</option>
+                                </select>
+
+                              </div>
+                            </div>
+                          </div>
+                          <div className="DAT_UserManagement_Modal_Container_Foot">
+                            <button
+                              className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary"
+                              onClick={() => setAddUser(false)}
+                            >
+                              {lang.formatMessage({ id: "modal_cancel" })}
+                            </button>
+                            <button
+                              className="DAT_UserManagement_Modal_Container_Foot_Button_Primary"
+                              // onClick={() => setStep(2)}
+                              type="submit"
+                            >
+                              Tiếp tục
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </>
+                  )}
+                  {step === 2 && (
+                    <div>
+                      <div className="DAT_UserManagement_Modal">
+                        <form className="DAT_UserManagement_Modal_Container" onSubmit={handleSubmitStep2}>
+                          <div className="DAT_UserManagement_Modal_Container_Header">
+                            <div className="DAT_UserManagement_Modal_Container_Header_Title">Thêm người dùng</div>
+                          </div>
+                          <div className="DAT_UserManagement_Modal_Container_Main">
+                            <label className="DAT_UserManagement_Modal_Container_Main_Label">
+                              Email
+                            </label>
+                            <div className="DAT_UserManagement_Modal_Container_Main_Box">
+                              <input
+                                name="email"
+                                type="email"
+                              />
+                            </div>
+                            <label className="DAT_UserManagement_Modal_Container_Main_Label">
+                              Username
+                            </label>
+                            <div className="DAT_UserManagement_Modal_Container_Main_Box">
+                              <input
+                                name="username"
+                                type="text"
+                              />
+                            </div>
+                            <label className="DAT_UserManagement_Modal_Container_Main_Label">
+                              Mật khẩu
+                            </label>
+                            <div className="DAT_UserManagement_Modal_Container_Main_Box">
+                              <input
+                                name="password"
+                                type="password"
+                              />
+                            </div>
+                            <label className="DAT_UserManagement_Modal_Container_Main_Label">
+                              Xác nhận mật khẩu
+                            </label>
+                            <div className="DAT_UserManagement_Modal_Container_Main_Box">
+                              <input
+                                name="confirmpassword"
+                                type="password"
+                              />
+                            </div>
+                          </div>
+                          <div className="DAT_UserManagement_Modal_Container_Foot">
+                            <button
+                              className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary"
+                              onClick={() => setStep(1)}
+                            >
+                              Quay lại
+                            </button>
+                            <button
+                              type="submit"
+                              className="DAT_UserManagement_Modal_Container_Foot_Button_Primary"
+                            >
+                              Tiếp tục
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                  {step === 3 && (
+                    <div>
+                      <div className="DAT_UserManagement_Modal">
+                        <form className="DAT_UserManagement_Modal_Container" onSubmit={handleSubmitStep3}>
+                          <div className="DAT_UserManagement_Modal_Container_Header">
+                            <div className="DAT_UserManagement_Modal_Container_Header_Title">Thêm người dùng</div>
+                          </div>
+                          <div className="DAT_UserManagement_Modal_Container_Main">
+                            <label className="DAT_UserManagement_Modal_Container_Main_Label">
+                              Nhập Otp
+                            </label>
+                            <div className="DAT_UserManagement_Modal_Container_Main_Otp">
+                              {otp.map((digit, index) => (
+                                <input
+                                  className="DAT_UserManagement_Modal_Container_Main_Otp_Input"
+                                  key={index}
+                                  value={otp[index]}
+                                  ref={(el) => (otpRefs.current[index] = el)}
+                                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                                  maxLength={1}
+                                  onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                                />
+                              ))}
+                            </div>
+                            {/* {countdown > 0 ? (
+                              <div className="DAT_Forgot_Card_Form_Resend">
+                                {lang.formatMessage({ id: "resend_otp_after" })} {countdown}s
+                              </div>
+                            ) : (
+                              <div
+                                className="DAT_Forgot_Card_Form_Resend DAT_Forgot_Card_Form_Resend_Active"
+                                onClick={handleOtpAgain}
+                              >
+                                {lang.formatMessage({ id: "resend_otp" })}
+                              </div>
+                            )} */}
+                          </div>
+                          <div className="DAT_UserManagement_Modal_Container_Foot">
+                            <button
+                              className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary"
+                              onClick={() => setStep(2)}
+                            >
+                              Quay lại
+                            </button>
+                            <button
+                              className="DAT_UserManagement_Modal_Container_Foot_Button_Primary"
+                              type="sumit"
+                            >
+                              Tiếp tục
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
@@ -661,7 +1005,7 @@ export default function UserManagement() {
                             : "-"}
                         </td>
                         <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                          <div className="DAT_UserManagement_Container_Table_Actions">
+                          <div className="DAT_UserManagement_Container_Table_Actions" ref={userRef}>
                             <button
                               className="DAT_UserManagement_Container_Table_Actions_Button_GhostSm"
                               onClick={() =>
@@ -673,9 +1017,10 @@ export default function UserManagement() {
 
                             {openMenu === user.id && (
                               <div className={`DAT_UserManagement_Pop_Menu ${isLastItem
-                                  ? "DAT_UserManagement_Pop_MenuLast"
-                                  : ""
-                                }`}>
+                                ? "DAT_UserManagement_Pop_MenuLast"
+                                : ""
+                                }`}
+                                onMouseDown={(e) => e.stopPropagation()}>
                                 <div
                                   className="DAT_UserManagement_Pop_MenuItem"
                                   onClick={() => {
@@ -700,7 +1045,7 @@ export default function UserManagement() {
                                 </div>
                                 <div
                                   className="DAT_UserManagement_Pop_MenuItem DAT_UserManagement_Pop_MenuItem_Delete"
-                                  onClick={() => handleDelete(user.id)}
+                                  onClick={() => setDeleteUser(true)}
                                 >
                                   {lang.formatMessage({
                                     id: "user_delete_button",
@@ -823,12 +1168,15 @@ export default function UserManagement() {
             <div className="DAT_UserManagement_Form_Grid">
               <div className="DAT_UserManagement_Form_Grid_Group">
                 <label className="DAT_UserManagement_Form_Grid_Group_Label">
-                  {lang.formatMessage({ id: "user_modal_full_name" })}
+                  Username
                 </label>
                 <input
                   className="DAT_UserManagement_Form_Grid_Group_Input"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  value={form.userName}
+                  onChange={(e) =>
+                    setForm({ ...form, userName: e.target.value })
+                  }
+                  readOnly
                 />
               </div>
               <div className="DAT_UserManagement_Form_Grid_Group">
@@ -839,8 +1187,20 @@ export default function UserManagement() {
                   className="DAT_UserManagement_Form_Grid_Group_Input"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  readOnly
                 />
               </div>
+              <div className="DAT_UserManagement_Form_Grid_Group">
+                <label className="DAT_UserManagement_Form_Grid_Group_Label">
+                  {lang.formatMessage({ id: "user_modal_full_name" })}
+                </label>
+                <input
+                  className="DAT_UserManagement_Form_Grid_Group_Input"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+              </div>
+
               <div className="DAT_UserManagement_Form_Grid_Group">
                 <label className="DAT_UserManagement_Form_Grid_Group_Label">
                   {lang.formatMessage({ id: "user_modal_password" })}
@@ -851,18 +1211,6 @@ export default function UserManagement() {
                   value={form.password}
                   onChange={(e) =>
                     setForm({ ...form, password: e.target.value })
-                  }
-                />
-              </div>
-              <div className="DAT_UserManagement_Form_Grid_Group">
-                <label className="DAT_UserManagement_Form_Grid_Group_Label">
-                  Username
-                </label>
-                <input
-                  className="DAT_UserManagement_Form_Grid_Group_Input"
-                  value={form.userName}
-                  onChange={(e) =>
-                    setForm({ ...form, userName: e.target.value })
                   }
                 />
               </div>

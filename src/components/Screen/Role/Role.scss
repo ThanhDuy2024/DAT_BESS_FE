@@ -242,6 +242,22 @@
           font-size: var(--font-size-base);
           vertical-align: middle;
 
+          &--active {
+            color: var(--primary);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: var(--font-size-base);
+            vertical-align: middle;
+          }
+
+          &--inactive {
+            color: var(--danger);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: var(--font-size-base);
+            vertical-align: middle;
+          }
+
           &_Action {
             display: flex;
             align-items: center;
