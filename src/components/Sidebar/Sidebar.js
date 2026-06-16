@@ -14,7 +14,6 @@ import {
   LuUserPen
 } from "react-icons/lu";
 import { GoLaw } from "react-icons/go";
-import { useAuth } from "../contexts/AuthContext";
 import "./Sidebar.scss";
 
 const menuGroups = [
@@ -28,7 +27,6 @@ const menuGroups = [
         path: "/dashboard",
         icon: <LuLayoutDashboard />,
         labelId: "sidebar_item_dashboard_overview",
-        perm: "view_dashboard",
       },
     ],
   },
@@ -41,13 +39,11 @@ const menuGroups = [
         path: "/pcs",
         icon: <LuCpu />,
         labelId: "sidebar_item_pcs_detail",
-        perm: "view_pcs",
       },
       {
         path: "/battery",
         icon: <LuBatteryCharging />,
         labelId: "sidebar_item_battery_detail",
-        perm: "view_battery",
       },
     ],
   },
@@ -57,16 +53,14 @@ const menuGroups = [
     mobileIcon: <LuChartNoAxesCombined />,
     items: [
       {
-       path: "/alarm",
-      icon: <LuBell />,
-      labelId: "sidebar_item_alarm",
-      perm: "view_alarm",
+        path: "/alarm",
+        icon: <LuBell />,
+        labelId: "sidebar_item_alarm",
       },
       {
         path: "/energy-report",
         icon: <LuChartNoAxesCombined />,
         labelId: "sidebar_item_energy_report",
-        perm: "view_report",
       },
     ],
   },
@@ -79,25 +73,21 @@ const menuGroups = [
         path: "/users",
         icon: <LuUsers />,
         labelId: "sidebar_item_user_management",
-        perm: "manage_users",
       },
       {
         path: "/roles",
         icon: <GoLaw />,
         labelId: "sidebar_item_role_management",
-        perm: "manage_users",
       },
       {
         path: "/settings",
         icon: <LuSettings />,
         labelId: "sidebar_item_system_settings",
-        perm: "system_settings",
       },
       {
         path: "/user-info",
         icon: <LuUserPen />,
         labelId: "sidebar_item_user_info",
-        perm: "view_user_info",
       },
     ],
   },
@@ -105,7 +95,6 @@ const menuGroups = [
 
 export default function Sidebar({ collapsed, onToggle }) {
   const lang = useIntl();
-  const { hasPermission } = useAuth();
   const [activeMobileGroup, setActiveMobileGroup] = useState(null);
 
   if (isMobile) {
@@ -120,18 +109,13 @@ export default function Sidebar({ collapsed, onToggle }) {
 
         <div className="DAT_SidebarMobile">
           {menuGroups.map((group, index) => {
-            const visibleItems = group.items.filter((item) =>
-              hasPermission(item.perm),
-            );
-            const hasSingleItem = visibleItems.length === 1;
-
-            if (visibleItems.length === 0) return null;
+            const hasSingleItem = group.items.length === 1;
 
             return (
               <div key={group.labelId} className="DAT_SidebarMobile_Group">
                 {!hasSingleItem && activeMobileGroup === index && (
                   <div className="DAT_SidebarMobile_Group_Popup">
-                    {visibleItems.map((item) => (
+                    {group.items.map((item) => (
                       <NavLink
                         key={item.path}
                         to={item.path}
@@ -156,7 +140,7 @@ export default function Sidebar({ collapsed, onToggle }) {
 
                 {hasSingleItem ? (
                   <NavLink
-                    to={visibleItems[0].path}
+                    to={group.items[0].path}
                     className={({ isActive }) =>
                       isActive
                         ? "DAT_SidebarMobile_Group_Button_Active"
@@ -169,7 +153,7 @@ export default function Sidebar({ collapsed, onToggle }) {
                     </span>
 
                     <span className="DAT_SidebarMobile_Group_Button_Label">
-                      {lang.formatMessage({id: group.mobileLabel})}
+                      {lang.formatMessage({ id: group.mobileLabel })}
                     </span>
                   </NavLink>
                 ) : (
@@ -191,7 +175,7 @@ export default function Sidebar({ collapsed, onToggle }) {
                     </span>
 
                     <span className="DAT_SidebarMobile_Group_Button_Label">
-                      {lang.formatMessage({id: group.mobileLabel})}
+                      {lang.formatMessage({ id: group.mobileLabel })}
                     </span>
                   </button>
                 )}
@@ -232,12 +216,6 @@ export default function Sidebar({ collapsed, onToggle }) {
 
       <nav className="DAT_Sidebar_Nav">
         {menuGroups.map((group) => {
-          const visibleItems = group.items.filter((item) =>
-            hasPermission(item.perm),
-          );
-
-          if (visibleItems.length === 0) return null;
-
           return (
             <div key={group.labelId} className="DAT_Sidebar_Nav_Group">
               {!collapsed && (
@@ -246,7 +224,7 @@ export default function Sidebar({ collapsed, onToggle }) {
                 </div>
               )}
 
-              {visibleItems.map((item) => (
+              {group.items.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}

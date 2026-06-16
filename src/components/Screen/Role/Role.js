@@ -1,9 +1,34 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Role.scss'
 import { useIntl } from 'react-intl';
 import { LuSettings } from 'react-icons/lu';
+import { TbRvTruck } from 'react-icons/tb';
+import { CiEdit } from "react-icons/ci";
+import Modal from '../../Modal/Modal';
 export default function Role() {
+  const mockData = [
+    {
+      id: 1,
+      name: "Admin",
+      status: "Active",
+      createdBy: "Master",
+      createdAt: "16/05/2026"
+    },
+    {
+      id: 2,
+      name: "Engineer",
+      status: "Active",
+      createdBy: "Master",
+      createdAt: "16/05/2026"
+    }
+  ]
+
   const lang = useIntl();
+  const [addRoleModal, setAddRoleModal] = useState(false);
+
+  const openNew = () => {
+    setAddRoleModal(true);
+  }
   return (
     <>
       <div className="DAT_RoleSetting">
@@ -16,8 +41,129 @@ export default function Role() {
               {lang.formatMessage({ id: "role_management" })}
             </div>
           </div>
-          <div className=''>This is add button and search</div>
+          <div className="DAT_RoleSetting_Card_Actions">
+            <input
+              className="DAT_RoleSetting_Card_Actions_FilterInput"
+              style={{ width: 220 }}
+              placeholder={lang.formatMessage({ id: "role_search" })}
+            />
+            <select
+              className="DAT_RoleSetting_Card_Actions_FilterSelect"
+              style={{ width: 140 }}
+            >
+              <option value="All">
+                {lang.formatMessage({ id: "all_status_role" })}
+              </option>
+              <option value="active">
+                {lang.formatMessage({ id: "statusActive_role" })}
+              </option>
+            </select>
+            <button
+              className="DAT_RoleSetting_Card_Actions_Button_Primary"
+              onClick={openNew}
+            >
+              {lang.formatMessage({ id: "add_role" })}
+            </button>
+          </div>
         </div>
+
+        <div className="DAT_RoleSetting_Container">
+          <div className="DAT_RoleSetting_Container_Table">
+            <table className="DAT_RoleSetting_Container_Table_Main">
+              <thead>
+                <tr style={{ textAlign: "center" }}>
+                  <th>{lang.formatMessage({ id: "role_id_table" })}</th>
+                  <th>{lang.formatMessage({ id: "role_name_table" })}</th>
+                  <th>{lang.formatMessage({ id: "role_status_tabel" })}</th>
+                  <th>{lang.formatMessage({ id: "role_create_at_table" })}</th>
+                  <th>{lang.formatMessage({ id: "role_create_by_table" })}</th>
+                  <th>{lang.formatMessage({ id: "role_action_table" })}</th>
+                </tr>
+              </thead>
+              <tbody className="DAT_RoleSetting_Container_Table_Main_Body">
+                {mockData.map((item) => {
+                  return (
+                    <tr className='DAT_RoleSetting_Container_Table_Main_Row' key={item.id}>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">ROLE-{item.id > 10 ? `0${item.id}` : `00${item.id}`}</td>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.name}</td>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.status}</td>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdAt}</td>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdBy}</td>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">
+                        <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
+                          <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'>
+                            {lang.formatMessage({ id: "role_edit_button" })}
+                          </button>
+                          <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'>
+                            {lang.formatMessage({ id: "role_delete_button" })}
+                          </button>
+                        </div>
+
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <Modal
+          isOpen={addRoleModal}
+          onClose={() => setAddRoleModal(false)}
+          title={lang.formatMessage({ id: "role_modal_create_title" })}
+          footer={
+            <>
+              <button
+                className="DAT_RoleSetting_Modal_Footer_Button_Secondary"
+                onClick={() => setAddRoleModal(false)}
+              >
+                {lang.formatMessage({ id: "modal_cancel" })}
+              </button>
+              <button
+                className="DAT_RoleSetting_Modal_Footer_Button_Primary"
+              >
+                {lang.formatMessage({ id: "role_modal_save" })}
+              </button>
+            </>
+          }
+        >
+          <div className="DAT_RoleSetting_Form_Grid">
+            <div className="DAT_RoleSetting_Form_Grid_Group">
+              <label className="DAT_RoleSetting_Form_Grid_Group_Label">
+                {lang.formatMessage({ id: "user_modal_full_name" })}
+              </label>
+              <input
+                className="DAT_RoleSetting_Form_Grid_Group_Input"
+              />
+            </div>
+            <div className="DAT_RoleSetting_Form_Grid_Group">
+              <label className="DAT_RoleSetting_Form_Grid_Group_Label">
+                {lang.formatMessage({ id: "user_modal_email" })}
+              </label>
+              <input
+                className="DAT_RoleSetting_Form_Grid_Group_Input"
+              />
+            </div>
+            <div className="DAT_RoleSetting_Form_Grid_Group">
+              <label className="DAT_RoleSetting_Form_Grid_Group_Label">
+                {lang.formatMessage({ id: "user_modal_password" })}
+              </label>
+              <input
+                className="DAT_RoleSetting_Form_Grid_Group_Input"
+                type="password"
+              />
+            </div>
+            <div className="DAT_RoleSetting_Form_Grid_Group">
+              <label className="DAT_RoleSetting_Form_Grid_Group_Label">
+                Username
+              </label>
+              <input
+                className="DAT_RoleSetting_Form_Grid_Group_Input"
+              />
+            </div>
+          </div>
+        </Modal>
       </div>
     </>
   )

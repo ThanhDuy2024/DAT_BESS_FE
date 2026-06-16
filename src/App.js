@@ -50,8 +50,8 @@ export const convertToDoublewordAndFloat = (cal, type, scale) => {
 function ProtectedRoute({ permission }) {
   const { isAuthenticated, hasPermission, authLoading } = useAuth();
   const location = useLocation();
-  if (authLoading){
-    return null; 
+  if (authLoading) {
+    return null;
   }
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location }} />;
@@ -80,24 +80,22 @@ function AppRoutes() {
         }
       />
 
-      <Route element={<ProtectedRoute />}>
-        <Route element={<MainLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/battery" element={<BatteryPage />} />
-          <Route path="/pcs" element={<PCSPage />} />
-          <Route path="/alarm" element={<AlarmPage />} />
-          <Route path="/energy-report" element={<EnergyReportPage />} />
-          <Route path="/roles" element={<RolePage />} />
-          <Route path="/user-info" element={<UserInfoPage />} />
+      <Route element={<MainLayout />}>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/battery" element={<BatteryPage />} />
+        <Route path="/pcs" element={<PCSPage />} />
+        <Route path="/alarm" element={<AlarmPage />} />
+        <Route path="/energy-report" element={<EnergyReportPage />} />
+        <Route path="/roles" element={<RolePage />} />
+        <Route path="/user-info" element={<UserInfoPage />} />
 
-          <Route element={<ProtectedRoute permission="manage_users" />}>
-            <Route path="/users" element={<UserManagementPage />} />
-          </Route>
+        <Route>
+          <Route path="/users" element={<UserManagementPage />} />
+        </Route>
 
-          <Route element={<ProtectedRoute permission="system_settings" />}>
-            <Route path="/settings" element={<SystemSettingsPage />} />
-          </Route>
+        <Route>
+          <Route path="/settings" element={<SystemSettingsPage />} />
         </Route>
       </Route>
     </Routes>
