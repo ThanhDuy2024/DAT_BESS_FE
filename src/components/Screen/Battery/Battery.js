@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LuBadgeCheck, LuSearch, LuBatteryCharging, LuSeBatteryMobile} from "react-icons/lu";
+import { LuBadgeCheck, LuSearch, LuBatteryCharging, LuSeBatteryMobile } from "react-icons/lu";
 import StatusBadge from "../../Modal/StatusBadge";
 import { mockAlarms, mockContainers } from "../../data/mockData";
 import "./Battery.scss";
@@ -111,7 +111,7 @@ export default function Battery() {
                       <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Icon">
                         <LuBatteryCharging size={40} />
                       </div>
-                      <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({id: "bms_level"})}</div>
+                      <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({ id: "bms_level" })}</div>
                     </div>
                     <StatusBadge status={batteryStatus[parseInt(dataInf?.['43-1'])] ?? 0} />
                   </div>
@@ -135,7 +135,7 @@ export default function Battery() {
           <div className="DAT_BatteryMobile_RackList">
             <div className="DAT_BatteryMobile_RackList_Header">
               <span className="DAT_BatteryMobile_RackList_Header_Title">
-                {lang.formatMessage({id: "bms_rack_list"})}
+                {lang.formatMessage({ id: "bms_rack_list" })}
               </span>
               <div className="DAT_BatteryMobile_RackList_Filter">
                 <select
@@ -144,10 +144,10 @@ export default function Battery() {
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
                 >
-                  <option value="All">{lang.formatMessage({id: "bms_all_status"})}</option>
-                  <option value="Normal">{lang.formatMessage({id: "bms_status_normal"})}</option>
-                  <option value="Warning">{lang.formatMessage({id: "bms_status_warning"})}</option>
-                  <option value="Fault">{lang.formatMessage({id: "bms_status_fault"})}</option>
+                  <option value="All">{lang.formatMessage({ id: "bms_all_status" })}</option>
+                  <option value="Normal">{lang.formatMessage({ id: "bms_status_normal" })}</option>
+                  <option value="Warning">{lang.formatMessage({ id: "bms_status_warning" })}</option>
+                  <option value="Fault">{lang.formatMessage({ id: "bms_status_fault" })}</option>
                 </select>
               </div>
             </div>
@@ -188,7 +188,13 @@ export default function Battery() {
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="DAT_ModalMobile_Overlay_Box_Header">
-                  <h2>{selectedRack.id} - {lang.formatMessage({id: "bms_rack_detail"})}</h2>
+                  <h2>{selectedRack.id} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
+                  <button
+                    className="DAT_ModalMobile_Overlay_Box_Header_Close"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    ✕
+                  </button>
                 </div>
 
                 {/* KPI GRID */}
@@ -205,37 +211,37 @@ export default function Battery() {
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_temp"})}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_temp" })}:</span>
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.temperature}°C</span>
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_max_temp_normal"})}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_temp_normal" })}:</span>
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.maxTemp}°C</span>
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_min_cell"})}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_min_cell" })}:</span>
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.minCellV}</span>
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_max_cell"})}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_cell" })}:</span>
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.maxCellV}</span>
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_voltage"})}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_voltage" })}:</span>
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.voltage}V</span>
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_current"})}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_current" })}:</span>
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.current}A</span>
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_cycles"})}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_cycles" })}:</span>
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.cycles}</span>
                   </div>
 
@@ -260,9 +266,7 @@ export default function Battery() {
                   })}
                 </div>
 
-                <div className="DAT_ModalMobile_Overlay_Box_Footer">
-                  <button onClick={() => setIsModalOpen(false)}>{lang.formatMessage({id: "bms_close"})}</button>
-                </div>
+
               </div>
             </div>
           )}
@@ -298,17 +302,17 @@ export default function Battery() {
                         <div className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header">
                           <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Title">{cell.id}</span>
                           <div className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status">
-                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Label">{lang.formatMessage({id: "bms_status"})}:</span>
-                            <span className={cell.status === "Normal" ? `DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Value` : "DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value_High"}>{lang.formatMessage({id: `bms_status_${cell.status.toLowerCase()}`})}</span>
+                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Label">{lang.formatMessage({ id: "bms_status" })}:</span>
+                            <span className={cell.status === "Normal" ? `DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Value` : "DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value_High"}>{lang.formatMessage({ id: `bms_status_${cell.status.toLowerCase()}` })}</span>
                           </div>
                         </div>
                         <div className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats">
                           <div className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item">
-                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({id: "bms_voltage"})}:</span>
+                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({ id: "bms_voltage" })}:</span>
                             <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.voltage}V</span>
                           </div>
                           <div className="">
-                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({id: "bms_temp"})}:</span>
+                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({ id: "bms_temp" })}:</span>
                             <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.temperature}°C</span>
                           </div>
                         </div>
@@ -338,7 +342,7 @@ export default function Battery() {
                       <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title_Icon">
                         <LuBatteryCharging size={40} />
                       </div>
-                      <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({id: "bms_level"})}</div>
+                      <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({ id: "bms_level" })}</div>
                     </div>
                     <StatusBadge status={batteryStatus[parseInt(dataInf?.['43-1'])] ?? 0} />
                   </div>
@@ -355,11 +359,11 @@ export default function Battery() {
                     </div>
 
                     <div className="DAT_Battery_Overview_Card_Header_Box_Item">
-                      <div className="DAT_Battery_Overview_Card_Header_Box_Item_Label">{lang.formatMessage({id: "bms_max_temp"})}:</div>
+                      <div className="DAT_Battery_Overview_Card_Header_Box_Item_Label">{lang.formatMessage({ id: "bms_max_temp" })}:</div>
                       <div className="DAT_Battery_Overview_Card_Header_Box_Item_Value">{parseFloat(dataInf?.['12-1']) - 40}°C</div>
                     </div>
                     <div className="DAT_Battery_Overview_Card_Header_Box_Item">
-                      <div className="DAT_Battery_Overview_Card_Header_Box_Item_Label">{lang.formatMessage({id: "bms_min_temp"})}:</div>
+                      <div className="DAT_Battery_Overview_Card_Header_Box_Item_Label">{lang.formatMessage({ id: "bms_min_temp" })}:</div>
                       <div className="DAT_Battery_Overview_Card_Header_Box_Item_Value">{parseFloat(dataInf?.['15-1']) - 40}°C</div>
                     </div>
                   </div>
@@ -371,7 +375,7 @@ export default function Battery() {
           <div className="DAT_Battery_RackList">
             <div className="DAT_Battery_RackList_Header">
               <span className="DAT_Battery_RackList_Header_Title">
-                {lang.formatMessage({id: "bms_rack_list"})}
+                {lang.formatMessage({ id: "bms_rack_list" })}
               </span>
               <div className="DAT_Battery_RackList_Filter">
                 <div className="DAT_Battery_RackList_Filter_Search" style={{ width: 180 }}>
@@ -381,7 +385,7 @@ export default function Battery() {
                   <input
                     className="DAT_Battery_RackList_Filter_Search_Input"
                     style={{ height: 36 }}
-                    placeholder={lang.formatMessage({id: "bms_search"})}
+                    placeholder={lang.formatMessage({ id: "bms_search" })}
                     value={searchRack}
                     onChange={(e) => setSearchRack(e.target.value)}
                   />
@@ -392,10 +396,10 @@ export default function Battery() {
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
                 >
-                  <option value="All">{lang.formatMessage({id: "bms_all_status"})}</option>
-                  <option value="Normal">{lang.formatMessage({id: "bms_status_normal"})}</option>
-                  <option value="Warning">{lang.formatMessage({id: "bms_status_warning"})}</option>
-                  <option value="Fault">{lang.formatMessage({id: "bms_status_fault"})}</option>
+                  <option value="All">{lang.formatMessage({ id: "bms_all_status" })}</option>
+                  <option value="Normal">{lang.formatMessage({ id: "bms_status_normal" })}</option>
+                  <option value="Warning">{lang.formatMessage({ id: "bms_status_warning" })}</option>
+                  <option value="Fault">{lang.formatMessage({ id: "bms_status_fault" })}</option>
                 </select>
               </div>
             </div>
@@ -405,12 +409,12 @@ export default function Battery() {
                   <tr>
                     <th className="DAT_Battery_RackList_Table_Main_Head_Th">Rack</th>
                     <th className="DAT_Battery_RackList_Table_Main_Head_Th"> {lang.formatMessage({ id: "bms_status" })}</th>
-                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({id: "bms_voltage"})}</th>
-                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({id: "bms_current"})}</th>
+                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({ id: "bms_voltage" })}</th>
+                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({ id: "bms_current" })}</th>
                     <th className="DAT_Battery_RackList_Table_Main_Head_Th">SOC</th>
                     <th className="DAT_Battery_RackList_Table_Main_Head_Th">SOH</th>
-                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({id: "bms_temp"})}</th>
-                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({id: "bms_cycles"})}</th>
+                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({ id: "bms_temp" })}</th>
+                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({ id: "bms_cycles" })}</th>
                   </tr>
                 </thead>
                 <tbody className="DAT_Battery_RackList_Table_Main_Body">
@@ -448,7 +452,13 @@ export default function Battery() {
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="DAT_Modal_Overlay_Box_Header">
-                  <h2>{selectedRack.id} - {lang.formatMessage({id: "bms_rack_detail"})}</h2>
+                  <h2>{selectedRack.id} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
+                  <button
+                    className="DAT_Modal_Overlay_Box_Header_Close"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    ✕
+                  </button>
                 </div>
 
                 {/* KPI GRID */}
@@ -465,37 +475,37 @@ export default function Battery() {
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_temp"})}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_temp" })}:</span>
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.temperature}°C</span>
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_max_temp"})}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_temp" })}:</span>
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.maxTemp}°C</span>
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_min_cell"})}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_min_cell" })}:</span>
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.minCellV}</span>
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_max_cell"})}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_cell" })}:</span>
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.maxCellV}</span>
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_voltage"})}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_voltage" })}:</span>
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.voltage}V</span>
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_current"})}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_current" })}:</span>
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.current}A</span>
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({id: "bms_cycles"})}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_cycles" })}:</span>
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.cycles}</span>
                   </div>
 
@@ -520,9 +530,6 @@ export default function Battery() {
                   })}
                 </div>
 
-                <div className="DAT_Modal_Overlay_Box_Footer">
-                  <button onClick={() => setIsModalOpen(false)}>{lang.formatMessage({id: "bms_close"})}</button>
-                </div>
               </div>
             </div>
           )}
@@ -558,17 +565,17 @@ export default function Battery() {
                         <div className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header">
                           <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Title">{cell.id}</span>
                           <div className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status">
-                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Label">{lang.formatMessage({id: "bms_status"})}:</span>
-                            <span className={cell.status === "Normal" ? `DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value` : "DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value_High"}>{lang.formatMessage({id: `bms_status_${cell.status.toLowerCase()}`})}</span>
+                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Label">{lang.formatMessage({ id: "bms_status" })}:</span>
+                            <span className={cell.status === "Normal" ? `DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value` : "DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value_High"}>{lang.formatMessage({ id: `bms_status_${cell.status.toLowerCase()}` })}</span>
                           </div>
                         </div>
                         <div className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats">
                           <div className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item">
-                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({id: "bms_voltage"})}:</span>
+                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({ id: "bms_voltage" })}:</span>
                             <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.voltage}V</span>
                           </div>
                           <div className="">
-                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({id: "bms_temp"})}:</span>
+                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({ id: "bms_temp" })}:</span>
                             <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.temperature}°C</span>
                           </div>
                         </div>
