@@ -19,6 +19,8 @@ import SystemSettingsPage from "./components/Screen/SystemSettings/SystemSetting
 import RolePage from "./components/Screen/Role/Role";
 import UserInfoPage from "./components/Screen/UserInfo/UserInfo";
 import AlarmPage from "./components/Screen/Alarm/Alarm";
+import UserRecovery from "./components/Screen/UserRecovery/UserRecovery"
+// import RoleEdit from "./components/Screen/RoleEdit/RoleEdit"
 import { io } from "socket.io-client";
 import { signal } from "@preact/signals-react";
 // import { callApi } from "./components/Api/Api";
@@ -78,7 +80,7 @@ function AppRoutes() {
         }
       />
 
-      <Route element={<ProtectedRoute />}> 
+      <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -87,9 +89,11 @@ function AppRoutes() {
           <Route path="/alarm" element={<AlarmPage />} />
           <Route path="/energy-report" element={<EnergyReportPage />} />
           <Route path="/roles" element={<RolePage />} />
+          {/* <Route path="/roles/:id" element={<RoleEdit />} /> */}
           <Route path="/user-info" element={<UserInfoPage />} />
           <Route path="/users" element={<UserManagementPage />} />
           <Route path="/settings" element={<SystemSettingsPage />} />
+          <Route path="/user-recovery" element={<UserRecovery />} />
         </Route>
       </Route>
     </Routes>

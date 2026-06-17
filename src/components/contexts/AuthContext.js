@@ -42,14 +42,14 @@ export function AuthProvider({ children }) {
   };
 
   const formatUser = (apiUser = {}) => {
-    const normalizedRole = String(apiUser.role_ || apiUser.role || "").trim().toLowerCase();
+    const normalizedRole = String(apiUser.rolename_ || apiUser.rolename || "").trim().toLowerCase();
 
     return {
       id: apiUser.id_ || apiUser.id,
       name: apiUser.full_name_ || apiUser.name_ || apiUser.name || apiUser.username_ || apiUser.username || "",
       username: apiUser.username_ || apiUser.username || "",
       email: apiUser.email_ || apiUser.email || "",
-      role: normalizedRole,
+      rolename: normalizedRole,
       phone: apiUser.phone_ || "",
       address: apiUser.address_ || "",
       avatar: apiUser.avatar_ || null,

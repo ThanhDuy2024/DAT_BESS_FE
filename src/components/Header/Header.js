@@ -185,7 +185,7 @@ export default function Header({ onAlarmClick }) {
                     {currentUser?.name}
                   </span>
                   <span className="DAT_Header_right_user_info_role">
-                    {currentUser?.role}
+                    {currentUser?.rolename}
                   </span>
                 </div>
               </button>

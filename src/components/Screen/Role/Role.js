@@ -6,12 +6,16 @@ import { TbRvTruck } from 'react-icons/tb';
 import { CiEdit } from "react-icons/ci";
 import Modal from '../../Modal/Modal';
 import { callApi } from '../../Api/Api';
+import { useNavigate } from "react-router-dom";
+
 export default function Role() {
   const lang = useIntl();
   const [addRoleModal, setAddRoleModal] = useState(false);
   const [roleName, setRoleName] = useState();
   const [status, setStatus] = useState("active");
   const [roles, setRoles] = useState([]);
+  const navigate = useNavigate();
+
   const openNew = () => {
     setAddRoleModal(true);
   };
@@ -22,8 +26,8 @@ export default function Role() {
         roleName: roleName,
         status: status,
       });
-      
-      if(response.status === false) {
+
+      if (response.status === false) {
         console.log(response.msg);
       } else {
         setAddRoleModal(false);
@@ -36,7 +40,7 @@ export default function Role() {
   const getAllRole = async () => {
     try {
       const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/getAllRoles`);
-      if(response.status === false) {
+      if (response.status === false) {
         console.log(response.msg);
       } else {
         setRoles(response.data);
@@ -106,12 +110,13 @@ export default function Role() {
                     <tr className='DAT_RoleSetting_Container_Table_Main_Row' key={item.id}>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">ROLE-{item.id >= 10 ? `0${item.id}` : `00${item.id}`}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.roleName}</td>
-                      <td className={`DAT_RoleSetting_Container_Table_Main_Cell--${item.status}`}>{item.status == "active" ? lang.formatMessage({id: "statusActive_role"}) : lang.formatMessage({id: "statusInactive_role"})}</td>
+                      <td className={`DAT_RoleSetting_Container_Table_Main_Cell--${item.status}`}>{item.status == "active" ? lang.formatMessage({ id: "statusActive_role" }) : lang.formatMessage({ id: "statusInactive_role" })}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdAt}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdBy}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">
                         <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
-                          <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'>
+                          <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                            onClick={() => navigate(`/roles/${item.id}`)}>
                             {lang.formatMessage({ id: "role_edit_button" })}
                           </button>
                           <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'>
