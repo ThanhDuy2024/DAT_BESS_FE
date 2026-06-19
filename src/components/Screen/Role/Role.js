@@ -14,6 +14,11 @@ export default function Role() {
   const [roleName, setRoleName] = useState();
   const [status, setStatus] = useState("active");
   const [roles, setRoles] = useState([]);
+  const [totalPage, setTotalPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("id");
+  const [filterStatus, setFilterStatus] = useState("");
   const navigate = useNavigate();
 
   const openNew = () => {
@@ -37,13 +42,14 @@ export default function Role() {
     }
   }
 
-  const getAllRole = async () => {
+  const getAllRole = async (current, search, filterStatus) => {
     try {
-      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/getAllRoles`);
+      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/getAllRoles?search=${search}&status=${filterStatus}&sort=${sort}&page=${current}`);
       if (response.status === false) {
         console.log(response.msg);
       } else {
         setRoles(response.data);
+        setTotalPage(response.totalPage);
       };
     } catch (error) {
       console.log(error);
@@ -51,8 +57,8 @@ export default function Role() {
   }
 
   useEffect(() => {
-    getAllRole();
-  }, [addRoleModal])
+    getAllRole(currentPage, search, filterStatus);
+  }, [addRoleModal, currentPage, search, filterStatus, sort])
   return (
     <>
       <div className="DAT_RoleSetting">
@@ -70,17 +76,33 @@ export default function Role() {
               className="DAT_RoleSetting_Card_Actions_FilterInput"
               style={{ width: 220 }}
               placeholder={lang.formatMessage({ id: "role_search" })}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <select
               className="DAT_RoleSetting_Card_Actions_FilterSelect"
               style={{ width: 140 }}
+              onChange={(e) => setFilterStatus(e.target.value)}
             >
+              <option value="">
+                {lang.formatMessage({ id: "all_role" })}
+              </option>
               <option value="active">
                 {lang.formatMessage({ id: "statusActive_role" })}
               </option>
               <option value="inactive">
                 {lang.formatMessage({ id: "statusInactive_role" })}
               </option>
+            </select>
+            <select
+              className="DAT_RoleSetting_Card_Actions_FilterSelect"
+              style={{ width: 100 }}
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
+              <option value="" disabled selected>{lang.formatMessage({ id: "sort_default" })}</option>
+              <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+              <option value="asc">{lang.formatMessage({ id: "sort_asc" })}</option>
+              <option value="desc">{lang.formatMessage({ id: "sort_desc" })}</option>
             </select>
             <button
               className="DAT_RoleSetting_Card_Actions_Button_Primary"
@@ -131,6 +153,32 @@ export default function Role() {
               </tbody>
             </table>
           </div>
+          {totalPage > 1 && (
+            <div className="DAT_RoleSetting_Container_Pagination">
+              <button
+                className="DAT_RoleSetting_Container_Pagination_Btn DAT_RoleSetting_Container_Pagination_Btn--prev"
+                onClick={() => setCurrentPage(currentPage === 1 ? totalPage : currentPage - 1)}
+              >
+                &lt;
+              </button>
+              {Array.from({ length: totalPage }, (_, index) => (
+                <button
+                  key={index}
+                  className={`DAT_RoleSetting_Container_Pagination_Btn${(index + 1) === currentPage ? " DAT_RoleSetting_Container_Pagination_Btn--active" : ""}`}
+
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button
+                className="DAT_RoleSetting_Container_Pagination_Btn DAT_RoleSetting_Container_Pagination_Btn--next"
+                onClick={() => setCurrentPage(currentPage == totalPage ? 1 : currentPage + 1)}
+              >
+                &gt;
+              </button>
+            </div>
+          )}
         </div>
 
         <Modal

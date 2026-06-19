@@ -135,7 +135,7 @@ export default function UserRecovery() {
                                                 {item.roleName}
                                             </td>
                                             <td className="DAT_UserRecovery_Container_Table_Main_Cell">
-                                                {item.status}
+                                                {item.status === 'deleted' ? "Deleted" : ""}
                                             </td>
 
                                             <td className="DAT_UserRecovery_Container_Table_Main_Cell">
