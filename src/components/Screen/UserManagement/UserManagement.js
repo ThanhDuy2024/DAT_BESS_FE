@@ -69,7 +69,7 @@ export default function UserManagement() {
   const loadUser = async () => {
     let res = await callApi(
       "post",
-      process.env.REACT_APP_APIDEV + "/data/getAllUser",
+      `${process.env.REACT_APP_APIDEV}/data/getAllUser`,
       {},
     );
 
@@ -107,8 +107,8 @@ export default function UserManagement() {
   };
 
   useEffect(() => {
-    loadUser();
-  }, [addUser]);
+    loadUser(role);
+  }, [addUser, role]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -648,7 +648,7 @@ export default function UserManagement() {
                 <option value="locked">{lang.formatMessage({ id: "statusLocked_role" })}</option>
               </select>
               <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => navigate("/user-recovery")}>
-                Khôi phục
+                {lang.formatMessage({ id: "user_button_recovery" })}
               </button>
               <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => { setAddUser(!addUser); setStep(1); setError(""); }}>
                 {lang.formatMessage({ id: "add_user" })}
@@ -800,7 +800,7 @@ export default function UserManagement() {
                         <td className="DAT_UserManagement_Container_Table_Main_Cell">{user.userName}</td>
                         <td className="DAT_UserManagement_Container_Table_Main_Cell">{user.email}</td>
                         <td className="DAT_UserManagement_Container_Table_Main_Cell">{user.roleName}</td>
-                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                        <td className={`DAT_UserManagement_Container_Table_Main_Cell--${user.status}`}>
                           {user.status === "active" ? "Active" : "Locked"}
                         </td>
                         <td className="DAT_UserManagement_Container_Table_Main_Cell">

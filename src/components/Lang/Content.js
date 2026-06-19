@@ -414,7 +414,19 @@ const enMessages = {
   resend_otp_after: "Resend OTP after",
   alarm_wrong_current_password: "Wrong current password.",
   confirm_password: "Confirm password",
-  login_error: "Invalid username or password."
+  login_error: "Invalid username or password.",
+  alarm_fullname: "Please enter Full name",
+  alarm_username: "Please enter username",
+  user_button_recovery: "Recovery",
+  confirm_recovery: "Confirm Recovery",
+  description_recovery: "Are you sure to recovery this user?",
+  return_user_management: "Return user management",
+  user_deleted_at_table: "Delete At",
+  user_recovery_title: "User recovery",
+  sort_default: "Sort by deletion date",
+  sort_id: "Sort Default",
+  sort_asc: "Oldest to newest",
+  sort_desc: "Newest to oldest"
 };
 
 const viMessages = {
@@ -842,6 +854,19 @@ const viMessages = {
   role_modal_save: "Lưu vai trò",
   role_modal_full_name: "Tên vai trò",
   role_modal_status: "Trạng thái",
+  alarm_fullname: "Vui lòng nhập họ và tên",
+  alarm_username: "Vui lòng nhập tên tài khoản",
+  user_button_recovery: "Khôi phục",
+  confirm_recovery: "Xác nhận khôi phục",
+  description_recovery: "Bạn có chắc muốn khôi phục người dùng này không ?",
+  return_user_management: "Quay lại trang quản lý",
+  user_deleted_at_table: "Ngày xóa",
+  user_recovery_title: "Khôi phục người dùng",
+  sort_default: "Sắp xếp theo ngày xóa",
+  sort_id: "Sắp xếp như cũ",
+  sort_asc: "Từ cũ đến mới",
+  sort_desc: "Từ mới đến cũ"
+
 };
 
 export const messages = {
