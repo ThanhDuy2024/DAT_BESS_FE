@@ -426,7 +426,8 @@ const enMessages = {
   sort_default: "Sort by deletion date",
   sort_id: "Sort Default",
   sort_asc: "Oldest to newest",
-  sort_desc: "Newest to oldest"
+  sort_desc: "Newest to oldest",
+  role_edit_title: "Role Edit & Permission"
 };
 
 const viMessages = {
