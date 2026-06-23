@@ -9,6 +9,7 @@ import { LuUsers, LuUserPlus, LuMenu, LuUser } from "react-icons/lu";
 import { callApi, From } from "../../Api/Api";
 import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const emptyUser = {
   id: "",
@@ -21,6 +22,7 @@ const emptyUser = {
 };
 
 export default function UserManagement() {
+  const { currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("All");
@@ -817,12 +819,14 @@ export default function UserManagement() {
                                 <div className="DAT_UserManagement_Pop_MenuItem" onClick={() => { openEdit(user); setOpenMenu(null); }}>
                                   {lang.formatMessage({ id: "user_edit_button" })}
                                 </div>
-                                <div className="DAT_UserManagement_Pop_MenuItem" style={{ color: "red" }}
-                                  onClick={() => {
-                                    setDeleteUser(true); setOpenMenu(null); setDeleteUserId(user.id);
-                                  }}>
-                                  {lang.formatMessage({ id: "user_delete_button" })}
-                                </div>
+                                {currentUser.id !== user.id && (
+                                  <div className="DAT_UserManagement_Pop_MenuItem" style={{ color: "red" }}
+                                    onClick={() => {
+                                      setDeleteUser(true); setOpenMenu(null); setDeleteUserId(user.id);
+                                    }}>
+                                    {lang.formatMessage({ id: "user_delete_button" })}
+                                  </div>
+                                )}
 
                               </div>
                             )}

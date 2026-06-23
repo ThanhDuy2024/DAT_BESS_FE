@@ -427,7 +427,9 @@ const enMessages = {
   sort_id: "Sort Default",
   sort_asc: "Oldest to newest",
   sort_desc: "Newest to oldest",
-  role_edit_title: "Role Edit & Permission"
+  role_edit_title: "Role Edit & Permission",
+  number_of_user: "Number of user",
+  users: "Users"
 };
 
 const viMessages = {
@@ -866,8 +868,10 @@ const viMessages = {
   sort_default: "Sắp xếp theo ngày xóa",
   sort_id: "Sắp xếp như cũ",
   sort_asc: "Từ cũ đến mới",
-  sort_desc: "Từ mới đến cũ"
-
+  sort_desc: "Từ mới đến cũ",
+  number_of_user: "Số người sở hữu",
+  users: "Người dùng",
+  role_edit_title: "Chỉnh sửa vai trò & cấp quyền"
 };
 
 export const messages = {

@@ -8,6 +8,7 @@ import Modal from '../../Modal/Modal';
 import { callApi } from '../../Api/Api';
 import { LuUsers, LuUserPlus, LuMenu, LuUser } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function UserRecovery() {
     const lang = useIntl();
@@ -24,7 +25,7 @@ export default function UserRecovery() {
         try {
             const response = await callApi(
                 "post",
-                `${process.env.REACT_APP_APIDEV}/data/recoveryList?search=${search}&sort=${sort}&page=${currentPage}`
+                `${process.env.REACT_APP_APIDEV}/data/recoveryList?search=${search}&sort=${sort}&page=${currentPage ? currentPage : 1}`
             );
             if (response.status === true) {
                 setUserRecoveryList(response.data);
@@ -34,7 +35,7 @@ export default function UserRecovery() {
         } catch (error) {
             console.log(error);
         }
-    };
+    }; 
 
     const handleRecovery = async (userId) => {
         try {
@@ -47,7 +48,7 @@ export default function UserRecovery() {
             );
             if (response.status === true) {
                 setOpenRecoveryModal(-1)
-                loadUserRecovery();
+                loadUserRecovery(search, sort, currentPage);
             }
         } catch (error) {
             console.log(error);

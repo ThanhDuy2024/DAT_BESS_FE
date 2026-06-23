@@ -123,6 +123,7 @@ export default function Role() {
                   <th>{lang.formatMessage({ id: "role_status_tabel" })}</th>
                   <th>{lang.formatMessage({ id: "role_create_at_table" })}</th>
                   <th>{lang.formatMessage({ id: "role_create_by_table" })}</th>
+                  <th>{lang.formatMessage({ id: "number_of_user" })}</th>
                   <th>{lang.formatMessage({ id: "role_action_table" })}</th>
                 </tr>
               </thead>
@@ -135,6 +136,7 @@ export default function Role() {
                       <td className={`DAT_RoleSetting_Container_Table_Main_Cell--${item.status}`}>{item.status == "active" ? lang.formatMessage({ id: "statusActive_role" }) : lang.formatMessage({ id: "statusInactive_role" })}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdAt}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdBy}</td>
+                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.numberOfUser} {lang.formatMessage({ id: "users" })}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">
                         <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
                           <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
