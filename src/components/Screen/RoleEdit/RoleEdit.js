@@ -27,9 +27,7 @@ export default function RoleEdit() {
 
             return {
                 ...prev,
-                [module]: current.includes(action)
-                    ? current.filter((p) => p !== action)
-                    : [...current, action],
+                [module]: current.includes(action) ? current.filter((p) => p !== action) : [...current, action],
             };
         });
     };

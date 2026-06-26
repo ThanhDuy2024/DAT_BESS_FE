@@ -18,6 +18,8 @@ export default function Role() {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("id");
+  const [deleteRole, setDeleteRole] = useState(false);
+  const [deleteRoleId, setDeleteRoleId] = useState(false);
   const [filterStatus, setFilterStatus] = useState("");
   const navigate = useNavigate();
 
@@ -59,6 +61,30 @@ export default function Role() {
   useEffect(() => {
     getAllRole(currentPage, search, filterStatus);
   }, [addRoleModal, currentPage, search, filterStatus, sort])
+
+  const handleDelete = async () => {
+      if (!deleteRole) return;
+      try {
+        const res = await callApi(
+          "post",
+          `${process.env.REACT_APP_APIDEV}/data/deleteRole`,
+          {
+            roleId: deleteRoleId,
+          }
+        );
+
+        if (res.status) {
+          getAllRole(currentPage, search, filterStatus);
+          setDeleteRole(null); // Đóng modal sau khi xóa thành công
+        } else {
+          console.log(res.msg);
+        }
+      } catch (error) {
+        console.log(error);
+        alert("Có lỗi xảy ra khi xóa!");
+      }
+    };
+
   return (
     <>
       <div className="DAT_RoleSetting">
@@ -143,11 +169,65 @@ export default function Role() {
                             onClick={() => navigate(`/roles/${item.id}`)}>
                             {lang.formatMessage({ id: "role_edit_button" })}
                           </button>
-                          <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'>
+                          <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                            onClick={() => {setDeleteRole(true); setDeleteRoleId(item.id)}}
+                          >
                             {lang.formatMessage({ id: "role_delete_button" })}
                           </button>
                         </div>
+                        {deleteRole && (
+                          <div className="DAT_RoleSetting_Modal" onClick={() => { setDeleteRole(false) }}>
+                            <div className="DAT_RoleSetting_Modal_Container">
+                              <div className="DAT_RoleSetting_Modal_Container_Header">
+                                <div className="DAT_RoleSetting_Modal_Container_Header_Title">
+                                  {lang.formatMessage({
+                                    id: "confirm_delete",
+                                  })}{" "}
+                                </div>
+                                <div className="DAT_RoleSetting_Modal_Container_Header_Close">
+                                  <svg
+                                    stroke="currentColor"
+                                    fill="currentColor"
+                                    strokeWidth="0"
+                                    viewBox="0 0 512 512"
+                                    height="25"
+                                    width="25"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    onClick={() => setDeleteRole(false)}
+                                  >
+                                    <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
+                                  </svg>
+                                </div>
+                              </div>
 
+                              <div className="DAT_RoleSetting_Modal_Container_Main">
+                                {lang.formatMessage({
+                                  id: "description_delete_role",
+                                })}
+                              </div>
+
+                              <div className="DAT_RoleSetting_Modal_Container_Foot">
+                                <button
+                                  className="DAT_RoleSetting_Modal_Container_Foot_Btn_Cancel"
+                                  onClick={() => setDeleteRole(null)}
+                                >
+                                  {lang.formatMessage({ id: "cancel" })}
+                                </button>
+
+                                <button
+                                  className="DAT_RoleSetting_Modal_Container_Foot_Btn_Delete"
+                                  onClick={() => {
+                                    handleDelete()
+                                  }}
+                                >
+                                  {lang.formatMessage({
+                                    id: "user_delete_button",
+                                  })}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )

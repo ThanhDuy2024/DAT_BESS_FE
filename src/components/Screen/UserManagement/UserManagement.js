@@ -316,7 +316,7 @@ export default function UserManagement() {
           { email: emailInput }
         );
         if (res.status === false) {
-          setError(lang.formatMessage({ id: "alarm_email_notfound" }));
+          setError(lang.formatMessage({ id: "alarm_email_exist" }));
         } else {
           setStep(3);
           setCountdown(60);
@@ -328,7 +328,7 @@ export default function UserManagement() {
         setError("Mật khẩu xác nhận không trùng khớp!");
       }
     } catch (error) {
-      setError(lang.formatMessage({ id: "alarm_email_notfound" }));
+      setError(lang.formatMessage({ id: "alarm_email_exist" }));
     }
   };
 
@@ -718,7 +718,7 @@ export default function UserManagement() {
                           {error && <div className="DAT_UserManagement_Modal_Container_Main_Error">{error}</div>}
                         </div>
                         <div className="DAT_UserManagement_Modal_Container_Foot">
-                          <button type="button" className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary" onClick={() => setStep(1)}>
+                          <button type="button" className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary" onClick={() => { setStep(1); setError("") }}>
                             {lang.formatMessage({ id: "go_back" })}
                           </button>
                           <button type="submit" className="DAT_UserManagement_Modal_Container_Foot_Button_Primary">

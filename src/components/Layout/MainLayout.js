@@ -21,35 +21,34 @@ export default function MainLayout() {
     setIsAlarmModalOpen((prev) => !prev);
   };
 
-const alarmPanel =
-  !isMobile && isAlarmModalOpen ? (
-    <div
-      className={`DAT_NotificationPanel_Layer ${
-        sidebarCollapsed
-          ? "DAT_NotificationPanel_Layer_Collapsed"
-          : ""
-      }`}
-    >
-      <button
-        type="button"
-        className="DAT_NotificationPanel_Layer_Backdrop"
-        onClick={() => setIsAlarmModalOpen(false)}
-        aria-label={lang.formatMessage({ id: "modal_close_aria" })}
-      />
+  const alarmPanel =
+    !isMobile && isAlarmModalOpen ? (
+      <div
+        className={`DAT_NotificationPanel_Layer ${sidebarCollapsed
+            ? "DAT_NotificationPanel_Layer_Collapsed"
+            : ""
+          }`}
+      >
+        <button
+          type="button"
+          className="DAT_NotificationPanel_Layer_Backdrop"
+          onClick={() => setIsAlarmModalOpen(false)}
+          aria-label={lang.formatMessage({ id: "modal_close_aria" })}
+        />
 
-      <section className="DAT_NotificationPanel">
-        <div className="DAT_NotificationPanel_Header">
-          <div className="DAT_NotificationPanel_Header_Title">
-            {lang.formatMessage({ id: "notification" })}
+        <section className="DAT_NotificationPanel">
+          <div className="DAT_NotificationPanel_Header">
+            <div className="DAT_NotificationPanel_Header_Title">
+              {lang.formatMessage({ id: "notification" })}
+            </div>
           </div>
-        </div>
 
-        <div className="DAT_NotificationPanel_Body">
-          <Alarm asPanel />
-        </div>
-      </section>
-    </div>
-  ) : null;
+          <div className="DAT_NotificationPanel_Body">
+            <Alarm asPanel />
+          </div>
+        </section>
+      </div>
+    ) : null;
   return (
     <div
       className={

@@ -418,6 +418,24 @@
           }
         }
 
+        &_Error {
+          padding: 10px 12px;
+          border-radius: 8px;
+          background: rgba(180, 33, 33, 0.32);
+          color: rgba(255, 255, 255, 1);
+          font-size: 15.2px;
+        }
+
+        &_Resend {
+          margin-top: 5px;
+
+          &_Active {
+            color: var(--primary);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+          }
+        }
+
         // input {
         //   border-radius: 5px;
         //   -webkit-box-sizing: border-box;
@@ -580,7 +598,7 @@
     &_MenuLast {
       position: absolute;
       right: 50px;
-      top: -100px;
+      top: -50px;
       margin-top: 6px;
       background: var(--card-bg);
       border: 1px solid var(--border-light);
