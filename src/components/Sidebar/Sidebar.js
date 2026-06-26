@@ -15,6 +15,7 @@ import {
 } from "react-icons/lu";
 import { GoLaw } from "react-icons/go";
 import "./Sidebar.scss";
+import { useAuth } from "../contexts/AuthContext";
 
 const menuGroups = [
   {
@@ -95,8 +96,28 @@ const menuGroups = [
 
 export default function Sidebar({ collapsed, onToggle }) {
   const lang = useIntl();
+  const { currentUser } = useAuth();
   const [activeMobileGroup, setActiveMobileGroup] = useState(null);
 
+  // Hàm helper lọc các items được phép xem dựa vào quyền của currentUser
+  const filterAllowedItems = (items) => {
+    return items.filter((item) => {
+      // 1. Nếu là admin tối cao, luôn luôn hiển thị tất cả menu
+      if (currentUser?.rolename === "administrator") return true;
+
+      // 2. Ngoại lệ: Trang thông tin cá nhân ai đăng nhập cũng có quyền xem công khai
+      if (item.path === "/user-info") return true;
+
+      // 3. Xử lý bóc tách moduleKey từ path (ví dụ: "/pcs" -> "pcs", "/energy-report" -> "energy-report")
+      const moduleKey = item.path.replace("/", ""); 
+      const userPermissions = currentUser?.permission?.[moduleKey] || [];
+
+      // 4. Kiểm tra quyền xem từ mảng API gửi về
+      return userPermissions.includes("read") || userPermissions.includes("view");
+    });
+  };
+
+  // --- GIAO DIỆN MOBILE ---
   if (isMobile) {
     return (
       <>
@@ -109,13 +130,17 @@ export default function Sidebar({ collapsed, onToggle }) {
 
         <div className="DAT_SidebarMobile">
           {menuGroups.map((group, index) => {
-            const hasSingleItem = group.items.length === 1;
+            // Lọc danh sách items được phép hiển thị trên Mobile
+            const allowedMobileItems = filterAllowedItems(group.items);
+            if (allowedMobileItems.length === 0) return null;
+
+            const hasSingleItem = allowedMobileItems.length === 1;
 
             return (
               <div key={group.labelId} className="DAT_SidebarMobile_Group">
                 {!hasSingleItem && activeMobileGroup === index && (
                   <div className="DAT_SidebarMobile_Group_Popup">
-                    {group.items.map((item) => (
+                    {allowedMobileItems.map((item) => (
                       <NavLink
                         key={item.path}
                         to={item.path}
@@ -140,7 +165,7 @@ export default function Sidebar({ collapsed, onToggle }) {
 
                 {hasSingleItem ? (
                   <NavLink
-                    to={group.items[0].path}
+                    to={allowedMobileItems[0].path}
                     className={({ isActive }) =>
                       isActive
                         ? "DAT_SidebarMobile_Group_Button_Active"
@@ -187,6 +212,7 @@ export default function Sidebar({ collapsed, onToggle }) {
     );
   }
 
+  // --- GIAO DIỆN DESKTOP ---
   return (
     <aside
       className={
@@ -216,6 +242,12 @@ export default function Sidebar({ collapsed, onToggle }) {
 
       <nav className="DAT_Sidebar_Nav">
         {menuGroups.map((group) => {
+          // Lọc danh sách items được phép hiển thị trên Desktop
+          const allowedItems = filterAllowedItems(group.items);
+
+          // Nếu nhóm menu này không có item nào được phép hiển thị, ẩn luôn cả nhóm
+          if (allowedItems.length === 0) return null;
+
           return (
             <div key={group.labelId} className="DAT_Sidebar_Nav_Group">
               {!collapsed && (
@@ -224,7 +256,7 @@ export default function Sidebar({ collapsed, onToggle }) {
                 </div>
               )}
 
-              {group.items.map((item) => (
+              {allowedItems.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}

@@ -29,7 +29,7 @@ export default function Role() {
 
   const handleCreateRole = async () => {
     try {
-      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/createRole`, {
+      const response = await callApi("post", `${process.env.REACT_APP_API}/data/createRole`, {
         roleName: roleName,
         status: status,
       });
@@ -46,7 +46,7 @@ export default function Role() {
 
   const getAllRole = async (current, search, filterStatus) => {
     try {
-      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/getAllRoles?search=${search}&status=${filterStatus}&sort=${sort}&page=${current}`);
+      const response = await callApi("get", `${process.env.REACT_APP_API}/data/getAllRoles?search=${search}&status=${filterStatus}&sort=${sort}&page=${current}`);
       if (response.status === false) {
         console.log(response.msg);
       } else {
@@ -67,7 +67,7 @@ export default function Role() {
       try {
         const res = await callApi(
           "post",
-          `${process.env.REACT_APP_APIDEV}/data/deleteRole`,
+          `${process.env.REACT_APP_API}/data/deleteRole`,
           {
             roleId: deleteRoleId,
           }

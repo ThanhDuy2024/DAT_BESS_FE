@@ -24,8 +24,8 @@ export default function UserRecovery() {
     const loadUserRecovery = async (search, sort, currentPage) => {
         try {
             const response = await callApi(
-                "post",
-                `${process.env.REACT_APP_APIDEV}/data/recoveryList?search=${search}&sort=${sort}&page=${currentPage ? currentPage : 1}`
+                "get",
+                `${process.env.REACT_APP_API}/data/recoveryList?search=${search}&sort=${sort}&page=${currentPage ? currentPage : 1}`
             );
             if (response.status === true) {
                 setUserRecoveryList(response.data);
@@ -41,7 +41,7 @@ export default function UserRecovery() {
         try {
             const response = await callApi(
                 "post",
-                `${process.env.REACT_APP_APIDEV}/data/recovery`,
+                `${process.env.REACT_APP_API}/data/recovery`,
                 {
                     userId: userId
                 }

@@ -429,7 +429,12 @@ const enMessages = {
   sort_desc: "Newest to oldest",
   role_edit_title: "Role Edit & Permission",
   number_of_user: "Number of user",
-  users: "Users"
+  users: "Users",
+  alarm_email_exist: "Email are Existed",
+  description_delete_role: "Are you sure to recovery this role?",
+  role_edit_title: "Role edit",
+  return_roles_management: "Return Roles Management",
+  view_details: "View details",
 };
 
 const viMessages = {
@@ -871,7 +876,12 @@ const viMessages = {
   sort_desc: "Từ mới đến cũ",
   number_of_user: "Số người sở hữu",
   users: "Người dùng",
-  role_edit_title: "Chỉnh sửa vai trò & cấp quyền"
+  role_edit_title: "Chỉnh sửa vai trò & cấp quyền",
+  alarm_email_exist: "email đã tồn tại",
+  description_delete_role: "Bạn có chắc muốn xóa vai trò này không?",
+  role_edit_title: "Chỉnh sửa vai trò",
+  return_roles_management: "Quay lại quản lý vai trò",
+  view_details: "Xem chi tiết",
 };
 
 export const messages = {

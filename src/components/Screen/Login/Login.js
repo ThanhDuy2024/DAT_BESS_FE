@@ -106,7 +106,7 @@ export default function Login() {
       return;
     }
     try {
-      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/renderOtp`, {
+      const res = await callApi("post", `${process.env.REACT_APP_API}/data/renderOtp`, {
         email: email
       });
       if (res.status === false) {
@@ -135,7 +135,7 @@ export default function Login() {
     }
     const otpCode = otp.join("");
     try {
-      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/verifyOtp`, {
+      const res = await callApi("post", `${process.env.REACT_APP_API}/data/verifyOtp`, {
         otp: otpCode
       });
       if (res.status === false) {
@@ -166,7 +166,7 @@ export default function Login() {
 
     if (password === confirmPassword) {
       try {
-        const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/changePasswordWithOtp`, {
+        const res = await callApi("post", `${process.env.REACT_APP_API}/data/changePasswordWithOtp`, {
           password: password,
           email: email
         });
@@ -199,7 +199,7 @@ export default function Login() {
     setCountdown(60);
     const emailOtp = email
     try {
-      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/renderOtp`, {
+      const res = await callApi("post", `${process.env.REACT_APP_API}/data/renderOtp`, {
         email: emailOtp
       });
       if (res.status === false) {

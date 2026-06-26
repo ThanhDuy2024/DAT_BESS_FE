@@ -49,7 +49,7 @@ export const convertToDoublewordAndFloat = (cal, type, scale) => {
     : parseFloat(doubleword * (scale || 1)).toFixed(1);
 };
 
-function ProtectedRoute({ permission }) {
+const ProtectedRoute = ({ permission }) => {
   const { isAuthenticated, authLoading } = useAuth();
   const location = useLocation();
   if (authLoading) {
@@ -62,10 +62,28 @@ function ProtectedRoute({ permission }) {
   return <Outlet />;
 }
 
-function PublicOnlyRoute({ children }) {
+const PublicOnlyRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   console.log(isAuthenticated);
   return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
+}
+
+const ProtectedPermission = (props) => {
+  const { currentUser } = useAuth();
+  console.log(currentUser);
+  const permissions = {
+    roles: ["view", "create", "update", "deleted"]
+  };
+
+  const permisisonArray = permissions[props.permission] || [];
+
+  const hasPermission = permisisonArray.includes('view');
+
+  if(hasPermission) {
+    return <Outlet />; 
+  } else {
+    return <Navigate to="/dashboard" replace />;
+  }
 }
 
 function AppRoutes() {
@@ -88,12 +106,17 @@ function AppRoutes() {
           <Route path="/pcs" element={<PCSPage />} />
           <Route path="/alarm" element={<AlarmPage />} />
           <Route path="/energy-report" element={<EnergyReportPage />} />
-          <Route path="/roles" element={<RolePage />} />
-          <Route path="/roles/:id" element={<RoleEdit />} />
           <Route path="/user-info" element={<UserInfoPage />} />
-          <Route path="/users" element={<UserManagementPage />} />
           <Route path="/settings" element={<SystemSettingsPage />} />
+
+          <Route element={<ProtectedPermission permission="roles"/>}>
+            <Route path="/roles" element={<RolePage />} />
+            <Route path="/roles/:id" element={<RoleEdit />} />
+          </Route>
+
+          <Route path="/users" element={<UserManagementPage />} />
           <Route path="/user-recovery" element={<UserRecovery />} />
+
         </Route>
       </Route>
     </Routes>

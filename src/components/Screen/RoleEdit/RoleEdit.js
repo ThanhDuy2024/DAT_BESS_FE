@@ -1,52 +1,100 @@
 import { LuSettings } from "react-icons/lu";
 import { useIntl } from "react-intl"
 import './RoleEdit.scss'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom';
+import { callApi } from "../../Api/Api";
 
 const permissions = {
-    Dashboard: ["View", "Create", "Update", "Delete"],
-    User: ["View", "Create", "Update", "Delete"],
-    PCS: ["View", "Create", "Update", "Delete"],
-    Battery: ["View", "Create", "Update", "Delete"],
-    Alarm: ["View", "Create", "Update", "Delete"],
-    Report: ["View", "Create", "Update", "Delete"],
-    Role: ["View", "Create", "Update", "Delete"],
-    System: ["View", "Create", "Update", "Delete"],
+    dashboard: ["View", "Create", "Update", "Delete"],
+    users: ["View", "Create", "Update", "Delete"],
+    pcs: ["View", "Create", "Update", "Delete"],
+    battery: ["View", "Create", "Update", "Delete"],
+    alarm: ["View", "Create", "Update", "Delete"],
+    "energy-report": ["View", "Create", "Update", "Delete"],
+    roles: ["View", "Create", "Update", "Delete"],
+    settings: ["View", "Create", "Update", "Delete"],
 };
 
 export default function RoleEdit() {
     const lang = useIntl();
+    const { id } = useParams();
     const [selected, setSelected] = useState({});
     const [roleName, setRoleName] = useState("");
     const [status, setStatus] = useState("active");
 
-    //AI generate
+    const loadRoleDetail = async (id) => {
+        try {
+            const res = await callApi('get', `${process.env.REACT_APP_APIDEV}/data/roleDetail/${id}`, {});
+            if (res && res.status === true) {
+                setRoleName(res.data.roleName || "");
+                setStatus(res.data.status || "active");
+                
+                setSelected(res.data.permission || {});
+            }
+        } catch (error) {
+            console.log("Error loading role detail:", error);
+        }
+    }
+
     const togglePermission = (module, action) => {
+        let apiAction = action.toLowerCase();
+        if (apiAction === 'view') {
+            apiAction = 'read';
+        }
+
         setSelected((prev) => {
-            const current = prev[module] || [];
+            // Đảm bảo prev luôn là một object để tránh lỗi sập trang
+            const safePrev = prev || {};
+            const current = safePrev[module] || [];
+
+            const updatedActions = current.includes(apiAction)
+                ? current.filter((p) => p !== apiAction) // Bỏ chọn nếu đã có
+                : [...current, apiAction];              // Thêm vào nếu chưa có
 
             return {
-                ...prev,
-                [module]: current.includes(action) ? current.filter((p) => p !== action) : [...current, action],
+                ...safePrev,
+                [module]: updatedActions,
             };
         });
     };
 
-    const handleSubmit = () => {
-        // Xóa module rỗng
-        const result = Object.fromEntries(
-            Object.entries(selected).filter(
-                ([_, value]) => value.length
+    const handleSubmit = async () => {
+        // Xóa các module rỗng không có quyền nào
+        const cleanPermissions = Object.fromEntries(
+            Object.entries(selected || {}).filter(
+                ([_, value]) => value && value.length
             )
         );
 
-        console.log(result);
+        const payload = {
+            id: id,
+            roleName: roleName,
+            status: status,
+            permission: cleanPermissions
+        };
 
-        alert(JSON.stringify(result, null, 2));
+        try {
+            const res = await callApi('post', `${process.env.REACT_APP_APIDEV}/data/roleUpdate`, payload);
+            if (res && res.status === true) {
+                alert("Update role successfully!");
+                loadRoleDetail(id);
+            } else {
+                alert("Update failed: " + (res?.message || "Unknown error"));
+            }
+        } catch (error) {
+            console.log("Error saving permission:", error);
+            alert("An error occurred while saving.");
+        }
     };
-    //AI generate
-    return (
 
+    useEffect(() => {
+        if (id) {
+            loadRoleDetail(id);
+        }
+    }, [id]);
+
+    return (
         <>
             <div className="DAT_RoleEdit">
                 <div className="DAT_RoleEdit_HeaderCard">
@@ -64,51 +112,31 @@ export default function RoleEdit() {
             <div className="DAT_RoleEdit_Permission">
                 {/* ROLE INFO */}
                 <div className="DAT_RoleEdit_Permission_Role-Info">
-
                     <h2 className="DAT_RoleEdit_Permission_Role-Info_Section-Title">
                         Role Information
                     </h2>
 
                     <div className="DAT_RoleEdit_Permission_Role-Info_Role-Form">
-
                         <div className="DAT_RoleEdit_Permission_Role-Info_Role-Form_Form-Group">
-                            <label>
-                                Role Name
-                            </label>
-
+                            <label>Role Name</label>
                             <input
                                 type="text"
                                 placeholder="Enter role name"
                                 value={roleName}
-                                onChange={(e) =>
-                                    setRoleName(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setRoleName(e.target.value)}
                             />
                         </div>
 
                         <div className="DAT_RoleEdit_Permission_Role-Info_Role-Form_Form-Group">
                             <label>Status</label>
-
                             <select
                                 value={status}
-                                onChange={(e) =>
-                                    setStatus(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setStatus(e.target.value)}
                             >
-                                <option value="active">
-                                    Active
-                                </option>
-
-                                <option value="inactive">
-                                    Inactive
-                                </option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
                             </select>
                         </div>
-
                     </div>
                 </div>
 
@@ -117,46 +145,40 @@ export default function RoleEdit() {
                 </h2>
 
                 <div className="DAT_RoleEdit_Permission_List">
-                    {Object.entries(permissions).map(
-                        ([module, actions]) => (
-                            <div
-                                className="DAT_RoleEdit_Permission_List_Group"
-                                key={module}
-                            >
-                                <div className="DAT_RoleEdit_Permission_List_Group_Name">
-                                    {module} Permission
-                                </div>
-
-                                <div className="DAT_RoleEdit_Permission_List_Group_Actions">
-                                    {actions.map((action) => (
-                                        <label
-                                            className="DAT_RoleEdit_Permission_List_Group_Actions_Item"
-                                            key={action}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={
-                                                    selected[module]?.includes(
-                                                        action
-                                                    ) || false
-                                                }
-                                                onChange={() =>
-                                                    togglePermission(
-                                                        module,
-                                                        action
-                                                    )
-                                                }
-                                            />
-
-                                            <span className="checkbox" />
-
-                                            <span>{action}</span>
-                                        </label>
-                                    ))}
-                                </div>
+                    {Object.entries(permissions).map(([module, actions]) => (
+                        <div className="DAT_RoleEdit_Permission_List_Group" key={module}>
+                            <div className="DAT_RoleEdit_Permission_List_Group_Name">
+                                {module.toUpperCase()} PERMISSION
                             </div>
-                        )
-                    )}
+
+                            <div className="DAT_RoleEdit_Permission_List_Group_Actions">
+                                {actions.map((action) => (
+                                    <label
+                                        className="DAT_RoleEdit_Permission_List_Group_Actions_Item"
+                                        key={action}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            checked={
+                                                (() => {
+                                                    const savedActions = selected?.[module] || [];
+                                                    let currentAction = action.toLowerCase();
+                                                    if (currentAction === 'view') {
+                                                        currentAction = 'read';
+                                                    }
+
+                                                    return savedActions.includes(currentAction);
+                                                })()
+                                            }
+                                            onChange={() => togglePermission(module, action)}
+                                        />
+                                        <span className="checkbox" />
+                                        <span>{action}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
                 <div className="DAT_RoleEdit_Permission_Footer">

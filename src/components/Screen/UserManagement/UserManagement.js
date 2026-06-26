@@ -71,7 +71,7 @@ export default function UserManagement() {
   const loadUser = async () => {
     let res = await callApi(
       "post",
-      `${process.env.REACT_APP_APIDEV}/data/getAllUser`,
+      `${process.env.REACT_APP_API}/data/getAllUser`,
       {},
     );
 
@@ -82,7 +82,7 @@ export default function UserManagement() {
         userName: item.username_,
         email: item.email_,
         roleId: item.roleid_,
-        roleName: normalizeValue(item.rolename_),
+        roleName: item.rolename_,
         status: normalizeValue(item.status_),
         created: item.created_at_,
       }));
@@ -204,7 +204,7 @@ export default function UserManagement() {
 
       const response = await callApi(
         "post",
-        `${process.env.REACT_APP_APIDEV}/data/updateUser`,
+        `${process.env.REACT_APP_API}/data/updateUser`,
         payload
       );
 
@@ -228,7 +228,7 @@ export default function UserManagement() {
       const nextStatus = currentStatus === "active" ? "locked" : "active";
       const res = await callApi(
         "post",
-        process.env.REACT_APP_APIDEV + "/data/updateUser",
+        process.env.REACT_APP_API + "/data/updateUser",
         {
           action: "updateStatus",
           id: id,
@@ -252,7 +252,7 @@ export default function UserManagement() {
     try {
       const res = await callApi(
         "post",
-        `${process.env.REACT_APP_APIDEV}/data/deleteUser`,
+        `${process.env.REACT_APP_API}/data/deleteUser`,
         {
           userId: deleteUserId,
         }
@@ -312,7 +312,7 @@ export default function UserManagement() {
       if (passwordInput === confirmPassword) {
         const res = await callApi(
           "post",
-          `${process.env.REACT_APP_APIDEV}/data/renderOtpWhenCreateUser`,
+          `${process.env.REACT_APP_API}/data/renderOtpWhenCreateUser`,
           { email: emailInput }
         );
         if (res.status === false) {
@@ -337,7 +337,7 @@ export default function UserManagement() {
     try {
       const res = await callApi(
         "post",
-        `${process.env.REACT_APP_APIDEV}/data/renderOtpWhenCreateUser`,
+        `${process.env.REACT_APP_API}/data/renderOtpWhenCreateUser`,
         { email: email }
       );
       if (res.status === false) {
@@ -362,7 +362,7 @@ export default function UserManagement() {
     try {
       const res = await callApi(
         "post",
-        `${process.env.REACT_APP_APIDEV}/data/createUser`,
+        `${process.env.REACT_APP_API}/data/createUser`,
         {
           otp: otpCode,
           email: email,
@@ -388,8 +388,8 @@ export default function UserManagement() {
   const loadRole = async () => {
     try {
       const response = await callApi(
-        "post",
-        `${process.env.REACT_APP_APIDEV}/data/getAllRoles?status=active`
+        "get",
+        `${process.env.REACT_APP_API}/data/getAllRoles?status=active`
       );
       if (response.status === true) {
         setRoles(response?.data || []);

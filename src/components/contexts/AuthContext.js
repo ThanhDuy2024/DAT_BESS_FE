@@ -65,7 +65,7 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/getUser`, {});
+      const res = await callApi("post", `${process.env.REACT_APP_API}/data/getUser`, {});
 
       if (res?.status && res.data?.length) {
         setCurrentUser(formatUser(res.data[0]));
@@ -86,7 +86,7 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (identifier, password, remember) => {
     try {
-      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/login`, {
+      const res = await callApi("post", `${process.env.REACT_APP_API}/data/login`, {
         account: identifier.trim(),
         password,
       });
