@@ -270,6 +270,399 @@
 
   }
 
+  &_Solar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &_Section {
+      padding: 16px;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      background: var(--card-bg);
+      transition: opacity 0.2s;
+
+      &--action {
+        background: var(--gray-100, #f8f9fa);
+      }
+
+      &_Header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &_Title {
+          font-size: 16px;
+          font-weight: var(--font-weight-semibold);
+          color: var(--text-primary);
+        }
+      }
+
+      &_Label {
+        font-size: 13px;
+        font-weight: var(--font-weight-medium);
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+      }
+    }
+
+    &_PowerDisplay {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+      transition: opacity 0.2s;
+
+      &_Card {
+        flex: 1;
+        padding: 12px 16px;
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        &--solar {
+          background: linear-gradient(135deg, #fffbe6 0%, #fff3cc 100%);
+          border: 1px solid #ffe58f;
+        }
+
+        &--grid {
+          background: linear-gradient(135deg, #e6f4ff 0%, #cce8ff 100%);
+          border: 1px solid #91caff;
+        }
+
+        &_Label {
+          font-size: 12px;
+          color: var(--text-secondary);
+          font-weight: var(--font-weight-medium);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        &_Value {
+          font-size: 26px;
+          font-weight: var(--font-weight-semibold);
+          color: var(--text-primary);
+          line-height: 1.2;
+
+          span {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: normal;
+            margin-left: 4px;
+          }
+        }
+      }
+    }
+
+    &_TimeRow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      &_Field {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        span {
+          font-size: 14px;
+          color: var(--text-body);
+          font-weight: var(--font-weight-medium);
+          white-space: nowrap;
+        }
+
+        input[type='time'] {
+          height: 36px;
+          padding: 0 10px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          font-size: 15px;
+          color: var(--text-body);
+          background: var(--card-bg);
+          outline: none;
+          transition: border-color var(--transition-fast);
+
+          &:focus {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-focus);
+          }
+        }
+      }
+
+      &_Sep {
+        color: var(--text-secondary);
+        font-size: 18px;
+        user-select: none;
+      }
+    }
+
+    &_Row3 {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+
+      &_Field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label {
+          font-size: 13px;
+          color: var(--text-secondary);
+          font-weight: var(--font-weight-medium);
+        }
+
+        &_Input {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+
+          input[type='number'] {
+            width: 90px;
+            height: 36px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            color: var(--text-body);
+            background: var(--card-bg);
+            outline: none;
+            transition: border-color var(--transition-fast);
+
+            &:focus {
+              border-color: var(--primary);
+              box-shadow: var(--shadow-focus);
+            }
+          }
+
+          span {
+            font-size: 13px;
+            color: var(--text-secondary);
+          }
+        }
+      }
+    }
+
+    &_ActionRow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      &_Text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        &_Title {
+          font-size: 15px;
+          font-weight: var(--font-weight-semibold);
+
+          &--charge {
+            color: #16a34a;
+          }
+
+          &--discharge {
+            color: #dc2626;
+          }
+        }
+
+        &_Note {
+          font-size: 13px;
+          color: var(--text-secondary);
+        }
+      }
+    }
+
+    // Toggle switch
+    &_Toggle {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+      cursor: pointer;
+
+      input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+
+        &:checked + span {
+          background: var(--primary);
+        }
+
+        &:checked + span::before {
+          transform: translateX(22px);
+        }
+      }
+
+      span {
+        position: absolute;
+        inset: 0;
+        background: #d1d5db;
+        border-radius: 26px;
+        transition: background 0.25s;
+
+        &::before {
+          content: '';
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          left: 3px;
+          top: 3px;
+          background: white;
+          border-radius: 50%;
+          transition: transform 0.25s;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+  }
+
+  &_Sys {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &_Toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+
+      &_Btn {
+        padding: 7px 18px;
+        border: 1px solid transparent;
+        border-radius: var(--radius-md);
+        font-size: 13px;
+        font-weight: var(--font-weight-medium);
+        cursor: pointer;
+        transition: all var(--transition-base);
+
+        &--read {
+          background: var(--card-bg);
+          color: var(--text-body);
+          border-color: var(--border);
+          &:hover { background: var(--gray-200); }
+        }
+
+        &--write {
+          background: var(--primary);
+          color: #fff;
+          &:hover { background: var(--primary-hover); box-shadow: 0 4px 12px rgba(11, 25, 103, 0.22); }
+        }
+      }
+    }
+
+    &_Group {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+
+      &_Header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 16px;
+        background: #f0f4ff;
+        cursor: pointer;
+        user-select: none;
+        transition: background var(--transition-fast);
+
+        &:hover { background: #e4ecff; }
+
+        &_Title {
+          flex: 1;
+          font-size: 14px;
+          font-weight: var(--font-weight-semibold);
+          color: var(--text-primary);
+        }
+
+        &_Badge {
+          font-size: 11px;
+          color: #6b7ade;
+          background: #dde4ff;
+          border-radius: 20px;
+          padding: 2px 8px;
+          font-weight: var(--font-weight-medium);
+        }
+
+        &_Arrow {
+          font-size: 11px;
+          color: var(--text-secondary);
+        }
+      }
+
+      &_Body {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        background: var(--card-bg);
+      }
+    }
+
+    &_Row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border-light);
+      border-right: 1px solid var(--border-light);
+      transition: background var(--transition-fast);
+
+      &:hover { background: #f5f8ff; }
+
+      &_Label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        flex: 1;
+        min-width: 0;
+
+        &_Addr {
+          flex-shrink: 0;
+          font-size: 10px;
+          color: #6b7ade;
+          background: #eef1ff;
+          border-radius: 4px;
+          padding: 1px 5px;
+          font-family: monospace;
+          letter-spacing: 0.5px;
+        }
+
+        &_Name {
+          font-size: 13px;
+          color: var(--text-body);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      &_Control {
+        flex-shrink: 0;
+
+        input[type='number'],
+        select {
+          width: 150px;
+          height: 28px;
+          padding: 0 8px;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          font-size: 13px;
+          color: var(--text-body);
+          background: var(--card-bg);
+          outline: none;
+          transition: border-color var(--transition-fast);
+
+          &:focus { border-color: var(--primary); box-shadow: var(--shadow-focus); }
+        }
+
+        input[type='number'] { text-align: right; }
+      }
+    }
+  }
+
   &_Grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

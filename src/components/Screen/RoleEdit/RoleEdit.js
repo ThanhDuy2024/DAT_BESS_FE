@@ -26,7 +26,7 @@ export default function RoleEdit() {
 
     const loadRoleDetail = async (id) => {
         try {
-            const res = await callApi('get', `${process.env.REACT_APP_APIDEV}/data/roleDetail/${id}`, {});
+            const res = await callApi('get', `${process.env.REACT_APP_API}/data/roleDetail/${id}`, {});
             if (res && res.status === true) {
                 setRoleName(res.data.roleName || "");
                 setStatus(res.data.status || "active");
@@ -76,7 +76,7 @@ export default function RoleEdit() {
         };
 
         try {
-            const res = await callApi('post', `${process.env.REACT_APP_APIDEV}/data/roleUpdate`, payload);
+            const res = await callApi('post', `${process.env.REACT_APP_API}/data/roleUpdate`, payload);
             if (res && res.status === true) {
                 toast.success(lang.formatMessage({ id: "toast_updated" }))
                 loadRoleDetail(id);

@@ -7,12 +7,13 @@ import { CiEdit } from "react-icons/ci";
 import Modal from '../../Modal/Modal';
 import { callApi } from '../../Api/Api';
 import { LuUsers, LuUserPlus, LuMenu, LuUser } from "react-icons/lu";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 
 export default function UserRecovery() {
     const lang = useIntl();
+    const { currentUser } = useAuth();
     const [userRecoveryList, setUserRecoveryList] = useState([]);
     const [openRecoveryModal, setOpenRecoveryModal] = useState();
     const [search, setSearch] = useState("");
@@ -24,6 +25,10 @@ export default function UserRecovery() {
 
     const loadUserRecovery = async (search, sort, currentPage) => {
         try {
+            const permission = currentUser.permissions["users"].includes("recovery");
+            if(!permission) {
+                return navigate("/dashboard"); 
+            }
             const response = await callApi(
                 "get",
                 `${process.env.REACT_APP_API}/data/recoveryList?search=${search}&sort=${sort}&page=${currentPage ? currentPage : 1}`

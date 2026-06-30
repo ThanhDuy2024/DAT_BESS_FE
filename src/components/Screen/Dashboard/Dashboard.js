@@ -26,7 +26,7 @@ export default function Dashboard() {
         "post",
         process.env.REACT_APP_API + "/data/readBess",
         {
-          level: "pcslevel",
+          level: "bmslevel", //chinh pcslevel va bmslevel o day
         },
       );
 
@@ -71,15 +71,15 @@ export default function Dashboard() {
     if (!step) return;
     console.log("Connecting to Socket.IO server...");
     socket.value.emit("BESS_SUBSCRIBE", {
-      level: "pcslevel",
+      level: "bmslevel", //day nua
     });
 
-    // socket.value.emit("BESS_SUBSCRIBE_MANY", {
-    //     levels: ["pcslevel"],
-    // });
+    socket.value.emit("BESS_SUBSCRIBE_MANY", {
+        levels: ["bmslevel", "rack1level_04", "rack1cellvoltagelevel_04"], //day nua
+    });
 
     socket.value.on("BESS_DATA", (payload) => {
-      // console.log(payload.level, payload.data);
+      console.log(payload.level, payload.data);
 
       Object.keys(payload.data).map((keyName, i) => {
         setData((data) => ({ ...data, [keyName]: payload.data[keyName] }));
@@ -88,12 +88,12 @@ export default function Dashboard() {
 
     return () => {
       socket.value.emit("BESS_UNSUBSCRIBE", {
-        level: "pcslevel",
+        level: "bmslevel",
       });
 
-      // socket.value.emit("BESS_UNSUBSCRIBE_MANY", {
-      //     levels: ["pcslevel", "bmslevel"],
-      // });
+      socket.value.emit("BESS_UNSUBSCRIBE_MANY", {
+          levels: ["bmslevel"],
+      });
       socket.value.off("BESS_DATA");
     };
   }, [step]);

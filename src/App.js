@@ -72,10 +72,6 @@ const PublicOnlyRoute = ({ children }) => {
 
 const ProtectedPermission = (props) => {
   const { currentUser } = useAuth();
-  console.log(currentUser)
-  if (!currentUser || !currentUser.permissions) {
-    return <div>Loading permissions...</div>;
-  }
 
   const permissions = currentUser.permissions;
   const permisisonArray = permissions[props.permission] || [];
@@ -136,9 +132,6 @@ function AppRoutes() {
 
             <Route element={<ProtectedPermission permission="users" />}>
               <Route path="/users" element={<UserManagementPage />} />
-            </Route>
-
-            <Route element={<ProtectedPermission permission="recovery" />}>
               <Route path="/user-recovery" element={<UserRecovery />} />
             </Route>
 
