@@ -24,6 +24,8 @@ import UserRecovery from "./components/Screen/UserRecovery/UserRecovery"
 import RoleEdit from "./components/Screen/RoleEdit/RoleEdit"
 import { io } from "socket.io-client";
 import { signal } from "@preact/signals-react";
+import { useEffect } from "react";
+import { useState } from "react";
 // import { callApi } from "./components/Api/Api";
 export const socket = signal(io.connect(process.env.REACT_APP_API));
 
@@ -65,20 +67,19 @@ const ProtectedRoute = ({ permission }) => {
 
 const PublicOnlyRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  console.log(isAuthenticated);
   return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
 }
 
 const ProtectedPermission = (props) => {
   const { currentUser } = useAuth();
-  console.log(currentUser);
-  const permissions = {
-    roles: ["view", "create", "update", "deleted"]
-  };
+  console.log(currentUser)
+  if (!currentUser || !currentUser.permissions) {
+    return <div>Loading permissions...</div>;
+  }
 
+  const permissions = currentUser.permissions;
   const permisisonArray = permissions[props.permission] || [];
-
-  const hasPermission = permisisonArray.includes('view');
+  const hasPermission = permisisonArray.includes('view') || permisisonArray.includes('read');
 
   if (hasPermission) {
     return <Outlet />;
@@ -86,11 +87,10 @@ const ProtectedPermission = (props) => {
     return <Navigate to="/dashboard" replace />;
   }
 }
-
 function AppRoutes() {
   return (
     <>
-      <Toaster position="top-right" richColors/>
+      <Toaster position="top-right" richColors />
       <Routes>
         <Route
           path="/login"
@@ -104,21 +104,45 @@ function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/battery" element={<BatteryPage />} />
-            <Route path="/pcs" element={<PCSPage />} />
-            <Route path="/alarm" element={<AlarmPage />} />
-            <Route path="/energy-report" element={<EnergyReportPage />} />
-            <Route path="/user-info" element={<UserInfoPage />} />
-            <Route path="/settings" element={<SystemSettingsPage />} />
+
+            <Route element={<ProtectedPermission permission="dashboard" />}>
+              <Route path="/dashboard" element={<DashboardPage />} />
+            </Route>
+
+            <Route element={<ProtectedPermission permission="battery" />}>
+              <Route path="/battery" element={<BatteryPage />} />
+            </Route>
+
+            <Route element={<ProtectedPermission permission="pcs" />}>
+              <Route path="/pcs" element={<PCSPage />} />
+            </Route>
+
+            <Route element={<ProtectedPermission permission="alarm" />}>
+              <Route path="/alarm" element={<AlarmPage />} />
+            </Route>
+
+            <Route element={<ProtectedPermission permission="energy-report" />}>
+              <Route path="/energy-report" element={<EnergyReportPage />} />
+            </Route>
+
+            <Route element={<ProtectedPermission permission="settings" />}>
+              <Route path="/settings" element={<SystemSettingsPage />} />
+            </Route>
 
             <Route element={<ProtectedPermission permission="roles" />}>
               <Route path="/roles" element={<RolePage />} />
               <Route path="/roles/:id" element={<RoleEdit />} />
             </Route>
 
-            <Route path="/users" element={<UserManagementPage />} />
-            <Route path="/user-recovery" element={<UserRecovery />} />
+            <Route element={<ProtectedPermission permission="users" />}>
+              <Route path="/users" element={<UserManagementPage />} />
+            </Route>
+
+            <Route element={<ProtectedPermission permission="recovery" />}>
+              <Route path="/user-recovery" element={<UserRecovery />} />
+            </Route>
+
+            <Route path="/user-info" element={<UserInfoPage />} />
 
           </Route>
         </Route>

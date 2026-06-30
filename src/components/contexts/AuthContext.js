@@ -54,7 +54,7 @@ export function AuthProvider({ children }) {
       address: apiUser.address_ || "",
       avatar: apiUser.avatar_ || null,
       status: apiUser.status_,
-      permissions: apiUser.data_ || apiUser.permissions || {},
+      permissions: apiUser.data_ || apiUser.permission_ || {},
     };
   };
 
@@ -86,6 +86,7 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (identifier, password, remember) => {
     try {
+
       const res = await callApi("post", `${process.env.REACT_APP_API}/data/login`, {
         account: identifier.trim(),
         password,
@@ -94,15 +95,20 @@ export function AuthProvider({ children }) {
       if (!res?.status) return { success: false, error: res?.mess || "Login failed" };
 
       const userData = formatUser(res.data || {});
-      setCurrentUser(userData);
 
+      // 2. Lưu token vào storage
       setStoredToken(res.accessToken || res.token || "", remember);
+
+      // 3. Cập nhật UserData
+      setCurrentUser(userData);
+      loadUser();
 
       return { success: true };
     } catch {
       return { success: false, error: "System Err" };
     }
   }, []);
+
 
   const logout = useCallback(() => {
     setCurrentUser(null);

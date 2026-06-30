@@ -22,6 +22,13 @@ const emptyUser = {
   status: "active",
 };
 
+const defaultPermissions = {
+  read: 'read',
+  update: "update",
+  create: "create",
+  delete: "delete",
+  recovery: "recovery",
+}
 export default function UserManagement() {
   const { currentUser } = useAuth();
   const [users, setUsers] = useState([]);
@@ -216,7 +223,7 @@ export default function UserManagement() {
         setForm(emptyUser);
         loadUser();
       } else {
-        toast.error(lang.formatMessage({ id: "toast_error"}), {
+        toast.error(lang.formatMessage({ id: "toast_error" }), {
           description: response.msg
         })
       }
@@ -262,11 +269,11 @@ export default function UserManagement() {
       );
 
       if (res.status) {
-        toast.success(lang.formatMessage({ id: "toast_deleted"}))
+        toast.success(lang.formatMessage({ id: "toast_deleted" }))
         loadUser();
         setDeleteUser(null); // Đóng modal sau khi xóa thành công
       } else {
-        toast.error(lang.formatMessage({id: "toast_error"}))
+        toast.error(lang.formatMessage({ id: "toast_error" }))
         console.log(res.msg);
       }
     } catch (error) {
@@ -407,6 +414,8 @@ export default function UserManagement() {
   useEffect(() => {
     loadRole();
   }, []);
+
+
 
   const renderModalFormBody = () => (
     <div className="DAT_UserManagement_Form_Grid">
@@ -654,12 +663,16 @@ export default function UserManagement() {
                 <option value="active">{lang.formatMessage({ id: "statusActive_role" })}</option>
                 <option value="locked">{lang.formatMessage({ id: "statusLocked_role" })}</option>
               </select>
-              <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => navigate("/user-recovery")}>
-                {lang.formatMessage({ id: "user_button_recovery" })}
-              </button>
-              <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => { setAddUser(!addUser); setStep(1); setError(""); }}>
-                {lang.formatMessage({ id: "add_user" })}
-              </button>
+              {currentUser.permissions["users"].includes(defaultPermissions.recovery) && (
+                <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => navigate("/user-recovery")}>
+                  {lang.formatMessage({ id: "user_button_recovery" })}
+                </button>
+              )}
+              {currentUser.permissions["users"].includes(defaultPermissions.create) && (
+                <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => { setAddUser(!addUser); setStep(1); setError(""); }}>
+                  {lang.formatMessage({ id: "add_user" })}
+                </button>
+              )}
 
               {addUser && (
                 <>
@@ -794,7 +807,9 @@ export default function UserManagement() {
                     <th>{lang.formatMessage({ id: "user_role_table" })}</th>
                     <th>{lang.formatMessage({ id: "user_status_table" })}</th>
                     <th>{lang.formatMessage({ id: "user_create_at_table" })}</th>
-                    <th>{lang.formatMessage({ id: "user_action_table" })}</th>
+                    {(currentUser.permissions["users"].includes(defaultPermissions.delete) || currentUser.permissions["users"].includes(defaultPermissions.update)) && (
+                      <th>{lang.formatMessage({ id: "user_action_table" })}</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="DAT_UserManagement_Container_Table_Main_Body">
@@ -813,83 +828,87 @@ export default function UserManagement() {
                         <td className="DAT_UserManagement_Container_Table_Main_Cell">
                           {user.created ? new Date(user.created).toLocaleString("vi-VN") : "-"}
                         </td>
-                        <td className="DAT_UserManagement_Container_Table_Main_Cell">
-                          <div className="DAT_UserManagement_Container_Table_Actions" ref={userRef}>
-                            <button className="DAT_UserManagement_Container_Table_Actions_Button_GhostSm" onClick={() => setOpenMenu(openMenu === user.id ? null : user.id)}>
-                              <LuMenu />
-                            </button>
+                        {(currentUser.permissions["users"].includes(defaultPermissions.delete) || currentUser.permissions["users"].includes(defaultPermissions.update)) && (
+                          <td className="DAT_UserManagement_Container_Table_Main_Cell">
+                            <div className="DAT_UserManagement_Container_Table_Actions" ref={userRef}>
+                              <button className="DAT_UserManagement_Container_Table_Actions_Button_GhostSm" onClick={() => setOpenMenu(openMenu === user.id ? null : user.id)}>
+                                <LuMenu />
+                              </button>
 
-                            {openMenu === user.id && (
-                              <div className={`DAT_UserManagement_Pop_Menu ${isLastItem ? "DAT_UserManagement_Pop_MenuLast" : ""}`} onMouseDown={(e) => e.stopPropagation()}>
-                                <div className="DAT_UserManagement_Pop_MenuItem" onClick={() => { openEdit(user); setOpenMenu(null); }}>
-                                  {lang.formatMessage({ id: "user_edit_button" })}
-                                </div>
-                                {currentUser.id !== user.id && (
-                                  <div className="DAT_UserManagement_Pop_MenuItem" style={{ color: "red" }}
-                                    onClick={() => {
-                                      setDeleteUser(true); setOpenMenu(null); setDeleteUserId(user.id);
-                                    }}>
-                                    {lang.formatMessage({ id: "user_delete_button" })}
-                                  </div>
-                                )}
-
-                              </div>
-                            )}
-                            {deleteUser && (
-                              <div className="DAT_UserManagement_Modal" onClick={() => { setDeleteUser(false) }}>
-                                <div className="DAT_UserManagement_Modal_Container">
-                                  <div className="DAT_UserManagement_Modal_Container_Header">
-                                    <div className="DAT_UserManagement_Modal_Container_Header_Title">
-                                      {lang.formatMessage({
-                                        id: "confirm_delete",
-                                      })}{" "}
+                              {openMenu === user.id && (
+                                <div className={`DAT_UserManagement_Pop_Menu ${isLastItem ? "DAT_UserManagement_Pop_MenuLast" : ""}`} onMouseDown={(e) => e.stopPropagation()}>
+                                  {currentUser.permissions["users"].includes(defaultPermissions.update) && (
+                                    <div className="DAT_UserManagement_Pop_MenuItem" onClick={() => { openEdit(user); setOpenMenu(null); }}>
+                                      {lang.formatMessage({ id: "user_edit_button" })}
                                     </div>
-                                    <div className="DAT_UserManagement_Modal_Container_Header_Close">
-                                      <svg
-                                        stroke="currentColor"
-                                        fill="currentColor"
-                                        strokeWidth="0"
-                                        viewBox="0 0 512 512"
-                                        height="25"
-                                        width="25"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        onClick={() => setDeleteUser(false)}
-                                      >
-                                        <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
-                                      </svg>
-                                    </div>
-                                  </div>
-
-                                  <div className="DAT_UserManagement_Modal_Container_Main">
-                                    {lang.formatMessage({
-                                      id: "description_delete",
-                                    })}
-                                  </div>
-
-                                  <div className="DAT_UserManagement_Modal_Container_Foot">
-                                    <button
-                                      className="DAT_UserManagement_Modal_Container_Foot_Btn_Cancel"
-                                      onClick={() => setDeleteUser(null)}
-                                    >
-                                      {lang.formatMessage({ id: "cancel" })}
-                                    </button>
-
-                                    <button
-                                      className="DAT_UserManagement_Modal_Container_Foot_Btn_Delete"
+                                  )}
+                                  {currentUser.id !== user.id && currentUser.permissions["users"].includes(defaultPermissions.delete) && (
+                                    <div className="DAT_UserManagement_Pop_MenuItem" style={{ color: "red" }}
                                       onClick={() => {
-                                        handleDelete()
-                                      }}
-                                    >
+                                        setDeleteUser(true); setOpenMenu(null); setDeleteUserId(user.id);
+                                      }}>
+                                      {lang.formatMessage({ id: "user_delete_button" })}
+                                    </div>
+                                  )}
+
+                                </div>
+                              )}
+                              {deleteUser && (
+                                <div className="DAT_UserManagement_Modal" onClick={() => { setDeleteUser(false) }}>
+                                  <div className="DAT_UserManagement_Modal_Container">
+                                    <div className="DAT_UserManagement_Modal_Container_Header">
+                                      <div className="DAT_UserManagement_Modal_Container_Header_Title">
+                                        {lang.formatMessage({
+                                          id: "confirm_delete",
+                                        })}{" "}
+                                      </div>
+                                      <div className="DAT_UserManagement_Modal_Container_Header_Close">
+                                        <svg
+                                          stroke="currentColor"
+                                          fill="currentColor"
+                                          strokeWidth="0"
+                                          viewBox="0 0 512 512"
+                                          height="25"
+                                          width="25"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          onClick={() => setDeleteUser(false)}
+                                        >
+                                          <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
+                                        </svg>
+                                      </div>
+                                    </div>
+
+                                    <div className="DAT_UserManagement_Modal_Container_Main">
                                       {lang.formatMessage({
-                                        id: "user_delete_button",
+                                        id: "description_delete",
                                       })}
-                                    </button>
+                                    </div>
+
+                                    <div className="DAT_UserManagement_Modal_Container_Foot">
+                                      <button
+                                        className="DAT_UserManagement_Modal_Container_Foot_Btn_Cancel"
+                                        onClick={() => setDeleteUser(null)}
+                                      >
+                                        {lang.formatMessage({ id: "cancel" })}
+                                      </button>
+
+                                      <button
+                                        className="DAT_UserManagement_Modal_Container_Foot_Btn_Delete"
+                                        onClick={() => {
+                                          handleDelete()
+                                        }}
+                                      >
+                                        {lang.formatMessage({
+                                          id: "user_delete_button",
+                                        })}
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                              )}
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     );
                   })}

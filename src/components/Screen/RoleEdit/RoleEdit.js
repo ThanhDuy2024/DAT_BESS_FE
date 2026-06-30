@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 const permissions = {
     dashboard: ["View", "Create", "Update", "Delete"],
-    users: ["View", "Create", "Update", "Delete"],
+    users: ["View", "Create", "Update", "Delete", "Recovery"],
     pcs: ["View", "Create", "Update", "Delete"],
     battery: ["View", "Create", "Update", "Delete"],
     alarm: ["View", "Create", "Update", "Delete"],

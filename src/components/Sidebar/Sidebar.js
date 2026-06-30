@@ -110,7 +110,7 @@ export default function Sidebar({ collapsed, onToggle }) {
 
       // 3. Xử lý bóc tách moduleKey từ path (ví dụ: "/pcs" -> "pcs", "/energy-report" -> "energy-report")
       const moduleKey = item.path.replace("/", ""); 
-      const userPermissions = currentUser?.permission?.[moduleKey] || [];
+      const userPermissions = currentUser?.permissions?.[moduleKey] || [];
 
       // 4. Kiểm tra quyền xem từ mảng API gửi về
       return userPermissions.includes("read") || userPermissions.includes("view");

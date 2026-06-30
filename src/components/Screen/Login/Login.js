@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 import { LuEye, LuEyeOff, LuGlobe, LuLock, LuUser, LuMail } from "react-icons/lu";
 import { RiArrowGoBackLine, RiLockPasswordLine } from "react-icons/ri";
 
@@ -89,7 +89,9 @@ export default function Login() {
     setLoading(false);
 
     if (result.success) {
-      navigate("/dashboard");
+      navigate("/dashboard", {
+        replace: true
+      });
       return;
     }
 

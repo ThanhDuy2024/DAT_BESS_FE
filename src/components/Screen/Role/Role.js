@@ -8,9 +8,18 @@ import Modal from '../../Modal/Modal';
 import { callApi } from '../../Api/Api';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
+import { useAuth } from '../../contexts/AuthContext';
+
+const defaultPermissions = {
+  read: 'read',
+  update: "update",
+  create: "create",
+  delete: "delete",
+}
 
 export default function Role() {
   const lang = useIntl();
+  const { currentUser } = useAuth();
   const [addRoleModal, setAddRoleModal] = useState(false);
   const [roleName, setRoleName] = useState();
   const [status, setStatus] = useState("active");
@@ -39,7 +48,7 @@ export default function Role() {
         toast.error(lang.formatMessage({ id: "toast_existed_role" }))
         console.log(response.msg);
       } else {
-        toast.success(lang.formatMessage({ id: "toast_created"}))
+        toast.success(lang.formatMessage({ id: "toast_created" }))
         setAddRoleModal(false);
       };
     } catch (error) {
@@ -66,28 +75,28 @@ export default function Role() {
   }, [addRoleModal, currentPage, search, filterStatus, sort])
 
   const handleDelete = async () => {
-      if (!deleteRole) return;
-      try {
-        const res = await callApi(
-          "post",
-          `${process.env.REACT_APP_API}/data/deleteRole`,
-          {
-            roleId: deleteRoleId,
-          }
-        );
-
-        if (res.status) {
-          toast.success(lang.formatMessage({ id: "toast_deleted" }))
-          getAllRole(currentPage, search, filterStatus);
-          setDeleteRole(null); // Đóng modal sau khi xóa thành công
-        } else {
-          toast.error(lang.formatMessage({ id: "toast_error"}))
+    if (!deleteRole) return;
+    try {
+      const res = await callApi(
+        "post",
+        `${process.env.REACT_APP_API}/data/deleteRole`,
+        {
+          roleId: deleteRoleId,
         }
-      } catch (error) {
-        console.log(error);
-        alert("Có lỗi xảy ra khi xóa!");
+      );
+
+      if (res.status) {
+        toast.success(lang.formatMessage({ id: "toast_deleted" }))
+        getAllRole(currentPage, search, filterStatus);
+        setDeleteRole(null); // Đóng modal sau khi xóa thành công
+      } else {
+        toast.error(lang.formatMessage({ id: "toast_error" }))
       }
-    };
+    } catch (error) {
+      console.log(error);
+      alert("Có lỗi xảy ra khi xóa!");
+    }
+  };
 
   return (
     <>
@@ -134,12 +143,14 @@ export default function Role() {
               <option value="asc">{lang.formatMessage({ id: "sort_asc" })}</option>
               <option value="desc">{lang.formatMessage({ id: "sort_desc" })}</option>
             </select>
-            <button
-              className="DAT_RoleSetting_Card_Actions_Button_Primary"
-              onClick={openNew}
-            >
-              {lang.formatMessage({ id: "add_role" })}
-            </button>
+            {currentUser.permissions["roles"].includes(defaultPermissions.create) && (
+              <button
+                className="DAT_RoleSetting_Card_Actions_Button_Primary"
+                onClick={openNew}
+              >
+                {lang.formatMessage({ id: "add_role" })}
+              </button>
+            )}
           </div>
         </div>
 
@@ -154,7 +165,9 @@ export default function Role() {
                   <th>{lang.formatMessage({ id: "role_create_at_table" })}</th>
                   <th>{lang.formatMessage({ id: "role_create_by_table" })}</th>
                   <th>{lang.formatMessage({ id: "number_of_user" })}</th>
-                  <th>{lang.formatMessage({ id: "role_action_table" })}</th>
+                  {(currentUser.permissions["roles"].includes(defaultPermissions.update) || currentUser.permissions["roles"].includes(defaultPermissions.delete)) && (
+                    <th>{lang.formatMessage({ id: "role_action_table" })}</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="DAT_RoleSetting_Container_Table_Main_Body">
@@ -167,72 +180,80 @@ export default function Role() {
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdAt}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdBy}</td>
                       <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.numberOfUser} {lang.formatMessage({ id: "users" })}</td>
-                      <td className="DAT_RoleSetting_Container_Table_Main_Cell">
-                        <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
-                          <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
-                            onClick={() => navigate(`/roles/${item.id}`)}>
-                            {lang.formatMessage({ id: "role_edit_button" })}
-                          </button>
-                          <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
-                            onClick={() => {setDeleteRole(true); setDeleteRoleId(item.id)}}
-                          >
-                            {lang.formatMessage({ id: "role_delete_button" })}
-                          </button>
-                        </div>
-                        {deleteRole && (
-                          <div className="DAT_RoleSetting_Modal" onClick={() => { setDeleteRole(false) }}>
-                            <div className="DAT_RoleSetting_Modal_Container">
-                              <div className="DAT_RoleSetting_Modal_Container_Header">
-                                <div className="DAT_RoleSetting_Modal_Container_Header_Title">
-                                  {lang.formatMessage({
-                                    id: "confirm_delete",
-                                  })}{" "}
+                      {(currentUser.permissions["roles"].includes(defaultPermissions.update) || currentUser.permissions["roles"].includes(defaultPermissions.dele)) && (
+                        <td className="DAT_RoleSetting_Container_Table_Main_Cell">
+                          <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
+                            {currentUser.permissions["roles"].includes(defaultPermissions.update) && (
+                              <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                                onClick={() => navigate(`/roles/${item.id}`)}>
+                                {lang.formatMessage({ id: "role_edit_button" })}
+                              </button>
+                            )}
+                            {currentUser.permissions["roles"].includes(defaultPermissions.delete) && (
+                              <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                                onClick={() => { setDeleteRole(true); setDeleteRoleId(item.id) }}
+                              >
+                                {lang.formatMessage({ id: "role_delete_button" })}
+                              </button>
+                            )}
+                          </div>
+
+                          {deleteRole && (
+                            <div className="DAT_RoleSetting_Modal" onClick={() => { setDeleteRole(false) }}>
+                              <div className="DAT_RoleSetting_Modal_Container">
+                                <div className="DAT_RoleSetting_Modal_Container_Header">
+                                  <div className="DAT_RoleSetting_Modal_Container_Header_Title">
+                                    {lang.formatMessage({
+                                      id: "confirm_delete",
+                                    })}{" "}
+                                  </div>
+                                  <div className="DAT_RoleSetting_Modal_Container_Header_Close">
+                                    <svg
+                                      stroke="currentColor"
+                                      fill="currentColor"
+                                      strokeWidth="0"
+                                      viewBox="0 0 512 512"
+                                      height="25"
+                                      width="25"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      onClick={() => setDeleteRole(false)}
+                                    >
+                                      <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
+                                    </svg>
+                                  </div>
                                 </div>
-                                <div className="DAT_RoleSetting_Modal_Container_Header_Close">
-                                  <svg
-                                    stroke="currentColor"
-                                    fill="currentColor"
-                                    strokeWidth="0"
-                                    viewBox="0 0 512 512"
-                                    height="25"
-                                    width="25"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    onClick={() => setDeleteRole(false)}
-                                  >
-                                    <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
-                                  </svg>
-                                </div>
-                              </div>
 
-                              <div className="DAT_RoleSetting_Modal_Container_Main">
-                                {lang.formatMessage({
-                                  id: "description_delete_role",
-                                })}
-                              </div>
-
-                              <div className="DAT_RoleSetting_Modal_Container_Foot">
-                                <button
-                                  className="DAT_RoleSetting_Modal_Container_Foot_Btn_Cancel"
-                                  onClick={() => setDeleteRole(null)}
-                                >
-                                  {lang.formatMessage({ id: "cancel" })}
-                                </button>
-
-                                <button
-                                  className="DAT_RoleSetting_Modal_Container_Foot_Btn_Delete"
-                                  onClick={() => {
-                                    handleDelete()
-                                  }}
-                                >
+                                <div className="DAT_RoleSetting_Modal_Container_Main">
                                   {lang.formatMessage({
-                                    id: "user_delete_button",
+                                    id: "description_delete_role",
                                   })}
-                                </button>
+                                </div>
+
+                                <div className="DAT_RoleSetting_Modal_Container_Foot">
+                                  <button
+                                    className="DAT_RoleSetting_Modal_Container_Foot_Btn_Cancel"
+                                    onClick={() => setDeleteRole(null)}
+                                  >
+                                    {lang.formatMessage({ id: "cancel" })}
+                                  </button>
+
+                                  <button
+                                    className="DAT_RoleSetting_Modal_Container_Foot_Btn_Delete"
+                                    onClick={() => {
+                                      handleDelete()
+                                    }}
+                                  >
+                                    {lang.formatMessage({
+                                      id: "user_delete_button",
+                                    })}
+                                  </button>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )}
-                      </td>
+                          )}
+                        </td>
+                      )}
+
                     </tr>
                   )
                 })}
