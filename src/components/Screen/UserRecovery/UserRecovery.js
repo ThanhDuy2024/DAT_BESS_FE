@@ -9,6 +9,7 @@ import { callApi } from '../../Api/Api';
 import { LuUsers, LuUserPlus, LuMenu, LuUser } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'sonner';
 
 export default function UserRecovery() {
     const lang = useIntl();
@@ -35,7 +36,7 @@ export default function UserRecovery() {
         } catch (error) {
             console.log(error);
         }
-    }; 
+    };
 
     const handleRecovery = async (userId) => {
         try {
@@ -47,10 +48,12 @@ export default function UserRecovery() {
                 }
             );
             if (response.status === true) {
+                toast.success(lang.formatMessage({ id: "toast_recovery" }))
                 setOpenRecoveryModal(-1)
                 loadUserRecovery(search, sort, currentPage);
             }
         } catch (error) {
+            toast.success(lang.formatMessage({ id: "toast_error" }))
             console.log(error);
         }
     }
@@ -210,7 +213,7 @@ export default function UserRecovery() {
                     </div>
                     {showPagination > 1 && (
                         <div className="DAT_UserRecovery_Container_Pagination">
-                            <button 
+                            <button
                                 className="DAT_UserRecovery_Container_Pagination_Btn DAT_UserRecovery_Container_Pagination_Btn--prev"
                                 onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : totalPage)}
                             >
@@ -220,16 +223,16 @@ export default function UserRecovery() {
                                 <button
                                     key={index}
                                     className={`DAT_UserRecovery_Container_Pagination_Btn${(index + 1) === currentPage ? " DAT_UserRecovery_Container_Pagination_Btn--active" : ""}`}
-                                    onClick={() => setCurrentPage(index+1)}
+                                    onClick={() => setCurrentPage(index + 1)}
                                 >
                                     {index + 1}
                                 </button>
                             ))}
-                            <button 
+                            <button
                                 className="DAT_UserRecovery_Container_Pagination_Btn DAT_UserRecovery_Container_Pagination_Btn--next"
                                 onClick={() => setCurrentPage(currentPage < showPagination ? currentPage + 1 : 1)}
                             >
-                                
+
                                 &gt;
                             </button>
                         </div>

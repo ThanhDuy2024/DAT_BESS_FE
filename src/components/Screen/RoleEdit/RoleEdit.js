@@ -4,6 +4,7 @@ import './RoleEdit.scss'
 import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import { callApi } from "../../Api/Api";
+import { toast } from "sonner";
 
 const permissions = {
     dashboard: ["View", "Create", "Update", "Delete"],
@@ -77,10 +78,10 @@ export default function RoleEdit() {
         try {
             const res = await callApi('post', `${process.env.REACT_APP_APIDEV}/data/roleUpdate`, payload);
             if (res && res.status === true) {
-                alert("Update role successfully!");
+                toast.success(lang.formatMessage({ id: "toast_updated" }))
                 loadRoleDetail(id);
             } else {
-                alert("Update failed: " + (res?.message || "Unknown error"));
+                toast.error(lang.formatMessage({ id: "toast_error" }))
             }
         } catch (error) {
             console.log("Error saving permission:", error);

@@ -435,6 +435,12 @@ const enMessages = {
   role_edit_title: "Role edit",
   return_roles_management: "Return Roles Management",
   view_details: "View details",
+  toast_updated: "Update successful",
+  toast_error: "Error system",
+  toast_deleted: "Delete successful",
+  toast_created: "Create successful",
+  toast_recovery: "Recovery successful",
+  toast_existed_role: "Role has exited"
 };
 
 const viMessages = {
@@ -882,6 +888,12 @@ const viMessages = {
   role_edit_title: "Chỉnh sửa vai trò",
   return_roles_management: "Quay lại quản lý vai trò",
   view_details: "Xem chi tiết",
+  toast_updated: "Cập nhật thành công",
+  toast_error: "Lỗi hệ thống",
+  toast_deleted: "Xóa thành công",
+  toast_created: "Tạo thành công",
+  toast_recovery: "Khôi phục thành công",
+  toast_existed_role: "Vai trò này đã tồn tại"
 };
 
 export const messages = {

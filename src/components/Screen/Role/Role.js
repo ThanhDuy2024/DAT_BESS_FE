@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import './Role.scss'
 import { useIntl } from 'react-intl';
 import { LuSettings } from 'react-icons/lu';
-import { TbRvTruck } from 'react-icons/tb';
+import { TbBrandOnlyfans, TbRvTruck } from 'react-icons/tb';
 import { CiEdit } from "react-icons/ci";
 import Modal from '../../Modal/Modal';
 import { callApi } from '../../Api/Api';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'sonner';
 
 export default function Role() {
   const lang = useIntl();
@@ -35,8 +36,10 @@ export default function Role() {
       });
 
       if (response.status === false) {
+        toast.error(lang.formatMessage({ id: "toast_existed_role" }))
         console.log(response.msg);
       } else {
+        toast.success(lang.formatMessage({ id: "toast_created"}))
         setAddRoleModal(false);
       };
     } catch (error) {
@@ -74,10 +77,11 @@ export default function Role() {
         );
 
         if (res.status) {
+          toast.success(lang.formatMessage({ id: "toast_deleted" }))
           getAllRole(currentPage, search, filterStatus);
           setDeleteRole(null); // Đóng modal sau khi xóa thành công
         } else {
-          console.log(res.msg);
+          toast.error(lang.formatMessage({ id: "toast_error"}))
         }
       } catch (error) {
         console.log(error);

@@ -7,6 +7,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import { Toaster, toast } from 'sonner'
 import { AuthProvider, useAuth } from "./components/contexts/AuthContext";
 import MainLayout from "./components/Layout/MainLayout";
 import LoginPage from "./components/Screen/Login/Login";
@@ -79,8 +80,8 @@ const ProtectedPermission = (props) => {
 
   const hasPermission = permisisonArray.includes('view');
 
-  if(hasPermission) {
-    return <Outlet />; 
+  if (hasPermission) {
+    return <Outlet />;
   } else {
     return <Navigate to="/dashboard" replace />;
   }
@@ -88,38 +89,41 @@ const ProtectedPermission = (props) => {
 
 function AppRoutes() {
   return (
-    <Routes>
-      <Route
-        path="/login"
-        element={
-          <PublicOnlyRoute>
-            <LoginPage />
-          </PublicOnlyRoute>
-        }
-      />
+    <>
+      <Toaster position="top-right" richColors/>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <PublicOnlyRoute>
+              <LoginPage />
+            </PublicOnlyRoute>
+          }
+        />
 
-      <Route element={<ProtectedRoute />}>
-        <Route element={<MainLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/battery" element={<BatteryPage />} />
-          <Route path="/pcs" element={<PCSPage />} />
-          <Route path="/alarm" element={<AlarmPage />} />
-          <Route path="/energy-report" element={<EnergyReportPage />} />
-          <Route path="/user-info" element={<UserInfoPage />} />
-          <Route path="/settings" element={<SystemSettingsPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/battery" element={<BatteryPage />} />
+            <Route path="/pcs" element={<PCSPage />} />
+            <Route path="/alarm" element={<AlarmPage />} />
+            <Route path="/energy-report" element={<EnergyReportPage />} />
+            <Route path="/user-info" element={<UserInfoPage />} />
+            <Route path="/settings" element={<SystemSettingsPage />} />
 
-          <Route element={<ProtectedPermission permission="roles"/>}>
-            <Route path="/roles" element={<RolePage />} />
-            <Route path="/roles/:id" element={<RoleEdit />} />
+            <Route element={<ProtectedPermission permission="roles" />}>
+              <Route path="/roles" element={<RolePage />} />
+              <Route path="/roles/:id" element={<RoleEdit />} />
+            </Route>
+
+            <Route path="/users" element={<UserManagementPage />} />
+            <Route path="/user-recovery" element={<UserRecovery />} />
+
           </Route>
-
-          <Route path="/users" element={<UserManagementPage />} />
-          <Route path="/user-recovery" element={<UserRecovery />} />
-
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
+    </>
   );
 }
 

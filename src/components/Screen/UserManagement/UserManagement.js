@@ -10,6 +10,7 @@ import { callApi, From } from "../../Api/Api";
 import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { toast } from "sonner";
 
 const emptyUser = {
   id: "",
@@ -209,13 +210,15 @@ export default function UserManagement() {
       );
 
       if (response.status === true) {
-        console.log("Update successfully!");
+        toast.success(lang.formatMessage({ id: "toast_updated" }))
         setShowModal(false);
         setEditing(null);
         setForm(emptyUser);
         loadUser();
       } else {
-        alert(response.mess || "Cập nhật thất bại");
+        toast.error(lang.formatMessage({ id: "toast_error"}), {
+          description: response.msg
+        })
       }
     } catch (error) {
       console.log("FULL ERROR:", error);
@@ -259,14 +262,15 @@ export default function UserManagement() {
       );
 
       if (res.status) {
+        toast.success(lang.formatMessage({ id: "toast_deleted"}))
         loadUser();
         setDeleteUser(null); // Đóng modal sau khi xóa thành công
       } else {
+        toast.error(lang.formatMessage({id: "toast_error"}))
         console.log(res.msg);
       }
     } catch (error) {
       console.log(error);
-      alert("Có lỗi xảy ra khi xóa!");
     }
   };
 
@@ -376,6 +380,7 @@ export default function UserManagement() {
       if (res.status === false) {
         setError(lang.formatMessage({ id: "alarm_wrong_otp" }));
       } else {
+        toast.success(lang.formatMessage({ id: "toast_created" }))
         setAddUser(false);
         setOtp(["", "", "", "", "", ""]);
         loadUser();
