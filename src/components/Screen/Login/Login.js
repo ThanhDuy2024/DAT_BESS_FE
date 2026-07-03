@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { replace, useNavigate } from "react-router-dom";
-import { LuEye, LuEyeOff, LuGlobe, LuLock, LuUser, LuMail } from "react-icons/lu";
+import { LuEye, LuEyeOff, LuGlobe, LuLock, LuUser, LuMail, LuAccessibility } from "react-icons/lu";
 import { RiArrowGoBackLine, RiLockPasswordLine } from "react-icons/ri";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -10,12 +10,14 @@ import { useIntl } from "react-intl";
 import "./Login.scss";
 import { callApi } from "../../Api/Api";
 import { isMobile } from "react-device-detect"
+import { SystemContext } from "../../contexts/SystemContext";
 
 export default function Login() {
   const lang = useIntl();
   const { locale, setLocale } = useLanguage();
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { systemDispatch } = useContext(SystemContext)
   const backgroundStyle = {
     backgroundImage: `linear-gradient(rgba(7, 15, 32, 0.28), rgba(7, 15, 32, 0.42)), url(https://embody.com.vn/BG/728_0/1/tontaynam.jpg)`,
   };
@@ -65,13 +67,33 @@ export default function Login() {
       return;
     }
 
-    console.log(identifier, password)
-
     setLoading(true);
-    const result = await login(identifier, password, remember);
+    const res = await callApi('post', `${process.env.REACT_APP_API}/data/login`, {
+      account: identifier,
+      password: password,
+    })
     setLoading(false);
 
-    if (result.success) {
+    if (res.status === true) {
+      if (remember) {
+        localStorage.setItem("token", JSON.stringify(res.token));
+      } else {
+        sessionStorage.setItem("token", JSON.stringify(res.token));
+      }
+      systemDispatch({
+        type: "LOAD_USR",
+        payload: {
+          userId: res.data.id_,
+          username: res.data.username_,
+          name: res.data.full_name_,
+          email: res.data.email_,
+          phone: res.data.phone_ || "",
+          address: res.data.address_ || "",
+          roleName: res.data.rolename_,
+          permissions: res.data.permission_,
+          status: true
+        }
+      })
       navigate("/dashboard");
       return;
     }
@@ -374,13 +396,13 @@ export default function Login() {
                           autoFocus
                         />
                         <button
-                        type="button"
-                        className="DAT_LoginMobile_Card_Form_Field_Action"
-                        onClick={() => setShowNewPassword((prev) => !prev)}
-                        aria-label="Hien hoac an mat khau"
-                      >
-                        {showNewPassword ? <LuEyeOff /> : <LuEye />}
-                      </button>
+                          type="button"
+                          className="DAT_LoginMobile_Card_Form_Field_Action"
+                          onClick={() => setShowNewPassword((prev) => !prev)}
+                          aria-label="Hien hoac an mat khau"
+                        >
+                          {showNewPassword ? <LuEyeOff /> : <LuEye />}
+                        </button>
                       </div>
                       <div className="DAT_ForgotMobile_Card_Form_Label">{lang.formatMessage({ id: "confirm_password" })}</div>
                       <div className="DAT_ForgotMobile_Card_Form_Field">
@@ -394,13 +416,13 @@ export default function Login() {
                           autoFocus
                         />
                         <button
-                        type="button"
-                        className="DAT_LoginMobile_Card_Form_Field_Action"
-                        onClick={() => setShowConfirmPassword((prev) => !prev)}
-                        aria-label="Hien hoac an mat khau"
-                      >
-                        {showConfirmPassword ? <LuEyeOff /> : <LuEye />}
-                      </button>
+                          type="button"
+                          className="DAT_LoginMobile_Card_Form_Field_Action"
+                          onClick={() => setShowConfirmPassword((prev) => !prev)}
+                          aria-label="Hien hoac an mat khau"
+                        >
+                          {showConfirmPassword ? <LuEyeOff /> : <LuEye />}
+                        </button>
                       </div>
                       {error && <div className="DAT_LoginMobile_Card_Form_Error">{error}</div>}
 
@@ -649,13 +671,13 @@ export default function Login() {
                           autoFocus
                         />
                         <button
-                        type="button"
-                        className="DAT_Login_Card_Form_Field_Action"
-                        onClick={() => setShowNewPassword((prev) => !prev)}
-                        aria-label="Hien hoac an mat khau"
-                      >
-                        {showNewPassword ? <LuEyeOff /> : <LuEye />}
-                      </button>
+                          type="button"
+                          className="DAT_Login_Card_Form_Field_Action"
+                          onClick={() => setShowNewPassword((prev) => !prev)}
+                          aria-label="Hien hoac an mat khau"
+                        >
+                          {showNewPassword ? <LuEyeOff /> : <LuEye />}
+                        </button>
                       </div>
                       <div className="DAT_Forgot_Card_Form_Label">{lang.formatMessage({ id: "confirm_password" })}</div>
                       <div className="DAT_Forgot_Card_Form_Field">
@@ -669,13 +691,13 @@ export default function Login() {
                           autoFocus
                         />
                         <button
-                        type="button"
-                        className="DAT_Login_Card_Form_Field_Action"
-                        onClick={() => setShowConfirmPassword((prev) => !prev)}
-                        aria-label="Hien hoac an mat khau"
-                      >
-                        {showConfirmPassword ? <LuEyeOff /> : <LuEye />}
-                      </button>
+                          type="button"
+                          className="DAT_Login_Card_Form_Field_Action"
+                          onClick={() => setShowConfirmPassword((prev) => !prev)}
+                          aria-label="Hien hoac an mat khau"
+                        >
+                          {showConfirmPassword ? <LuEyeOff /> : <LuEye />}
+                        </button>
                       </div>
                       {error && <div className="DAT_Login_Card_Form_Error">{error}</div>}
 

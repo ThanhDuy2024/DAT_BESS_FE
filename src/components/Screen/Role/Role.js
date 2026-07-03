@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './Role.scss'
 import './RoleMobile.scss'
 import { useIntl } from 'react-intl';
@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
 import { isMobile } from "react-device-detect";
+import { SystemContext } from '../../contexts/SystemContext';
 
 const defaultPermissions = {
   read: 'read',
@@ -22,7 +23,7 @@ const defaultPermissions = {
 
 export default function Role() {
   const lang = useIntl();
-  const { currentUser } = useAuth();
+  const { permissions } = useContext(SystemContext);
   const [addRoleModal, setAddRoleModal] = useState(false);
   const [roleName, setRoleName] = useState();
   const [status, setStatus] = useState("active");
@@ -394,7 +395,7 @@ export default function Role() {
                 <option value="asc">{lang.formatMessage({ id: "sort_asc" })}</option>
                 <option value="desc">{lang.formatMessage({ id: "sort_desc" })}</option>
               </select>
-              {currentUser.permissions["roles"].includes(defaultPermissions.create) && (
+              {permissions["roles"].includes(defaultPermissions.create) && (
                 <button
                   className="DAT_RoleSetting_Card_Actions_Button_Primary"
                   onClick={() => setModalType("add")}
@@ -416,7 +417,7 @@ export default function Role() {
                     <th>{lang.formatMessage({ id: "role_create_at_table" })}</th>
                     <th>{lang.formatMessage({ id: "role_create_by_table" })}</th>
                     <th>{lang.formatMessage({ id: "number_of_user" })}</th>
-                    {(currentUser.permissions["roles"].includes(defaultPermissions.update) || currentUser.permissions["roles"].includes(defaultPermissions.delete)) && (
+                    {(permissions["roles"].includes(defaultPermissions.update) || permissions["roles"].includes(defaultPermissions.delete)) && (
                       <th>{lang.formatMessage({ id: "role_action_table" })}</th>
                     )}
                   </tr>
@@ -431,16 +432,16 @@ export default function Role() {
                         <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdAt}</td>
                         <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.createdBy}</td>
                         <td className="DAT_RoleSetting_Container_Table_Main_Cell">{item.numberOfUser} {lang.formatMessage({ id: "users" })}</td>
-                        {(currentUser.permissions["roles"].includes(defaultPermissions.update) || currentUser.permissions["roles"].includes(defaultPermissions.dele)) && (
+                        {(permissions["roles"].includes(defaultPermissions.update) || permissions["roles"].includes(defaultPermissions.dele)) && (
                           <td className="DAT_RoleSetting_Container_Table_Main_Cell">
                             <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
-                              {currentUser.permissions["roles"].includes(defaultPermissions.update) && (
+                              {permissions["roles"].includes(defaultPermissions.update) && (
                                 <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
                                   onClick={() => navigate(`/roles/${item.id}`)}>
                                   {lang.formatMessage({ id: "role_edit_button" })}
                                 </button>
                               )}
-                              {currentUser.permissions["roles"].includes(defaultPermissions.delete) && (
+                              {permissions["roles"].includes(defaultPermissions.delete) && (
                                 <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
                                   onClick={() => { setModalType("delete"); setDeleteRoleId(item.id) }}
                                 >

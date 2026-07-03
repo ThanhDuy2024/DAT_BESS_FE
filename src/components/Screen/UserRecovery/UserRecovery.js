@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './UserRecovery.scss'
 import './UserRecoveryMobile.scss'
 import { useIntl } from 'react-intl';
@@ -14,11 +14,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import { isMobile } from "react-device-detect";
+import { SystemContext } from '../../contexts/SystemContext';
 
 export default function UserRecovery() {
     const lang = useIntl();
-    const { currentUser } = useAuth();
-
+    const { permissions } = useContext(SystemContext);
     const [userRecoveryList, setUserRecoveryList] = useState([]);
     const [openRecoveryModal, setOpenRecoveryModal] = useState();
     const [search, setSearch] = useState("");
@@ -32,7 +32,7 @@ export default function UserRecovery() {
 
     const loadUserRecovery = async (search, sort, currentPage) => {
         try {
-            const permission = currentUser.permissions["users"].includes("recovery");
+            const permission = permissions["users"].includes("recovery");
             if (!permission) {
                 return navigate("/dashboard");
             }

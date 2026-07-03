@@ -11,7 +11,6 @@ import { useAuth } from "../contexts/AuthContext";
 
 export default function MainLayout() {
   const lang = useIntl();
-  const { currentUser } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false);
 

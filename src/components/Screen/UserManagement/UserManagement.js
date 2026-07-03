@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, useContext } from "react";
 
 import Modal from "../../Modal/Modal";
 import StatusBadge from "../../Modal/StatusBadge";
@@ -12,6 +12,7 @@ import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "sonner";
+import { SystemContext } from "../../contexts/SystemContext";
 
 const emptyUser = {
   id: "",
@@ -31,7 +32,7 @@ const defaultPermissions = {
   recovery: "recovery",
 }
 export default function UserManagement() {
-  const { currentUser } = useAuth();
+  const { userId, permissions } = useContext(SystemContext);
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("All");
@@ -459,6 +460,7 @@ export default function UserManagement() {
       </div>
     )
   }
+
   const renderModalAddStep1 = () => {
     return (
       <form className="DAT_UserManagement_Modal_Container_Main"
@@ -491,6 +493,7 @@ export default function UserManagement() {
       </form>
     )
   }
+
   const renderModalAddStep2 = () => {
     return (
       <form className="DAT_UserManagement_Modal_Container_Main"
@@ -509,6 +512,7 @@ export default function UserManagement() {
       </form>
     )
   }
+
   const renderModalAddStep3 = () => {
     return (
       <form id="step3" className="DAT_UserManagement_Modal_Container_Main" onSubmit={handleSubmitStep3} key={modalType}>
@@ -539,6 +543,7 @@ export default function UserManagement() {
       </form>
     )
   }
+
   const renderBody = () => {
     switch (modalType) {
       case "add1":
@@ -557,6 +562,7 @@ export default function UserManagement() {
         return null;
     }
   };
+
   const renderFooter = () => {
     switch (modalType) {
       case "add1":
@@ -598,12 +604,12 @@ export default function UserManagement() {
       case "view":
         return (
           <>
-            {currentUser.permissions["users"].includes(defaultPermissions.update) && (
+            {permissions["users"].includes(defaultPermissions.update) && (
               <div className="DAT_UserManagementMobile_Modal_Container_Foot_Button_Primary" onClick={() => { openEdit(selectedUser); }}>
                 {lang.formatMessage({ id: "user_edit_button" })}
               </div>
             )}
-            {currentUser.id !== selectedUser.id && currentUser.permissions["users"].includes(defaultPermissions.delete) && (
+            {userId !== selectedUser.id && permissions["users"].includes(defaultPermissions.delete) && (
               <div className="DAT_UserManagementMobile_Modal_Container_Foot_Btn_Delete"
                 onClick={() => {
                   setModalType("delete"); setDeleteUserId(selectedUser.id);
@@ -741,7 +747,7 @@ export default function UserManagement() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              {currentUser.permissions["users"].includes(defaultPermissions.create) && (
+              {permissions["users"].includes(defaultPermissions.create) && (
                 <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => { setModalType("add1"); setStep(1); setError(""); }}>
                   <LuUserPlus />
                 </button>
@@ -767,7 +773,7 @@ export default function UserManagement() {
                 <option value="active">{lang.formatMessage({ id: "statusActive_role" })}</option>
                 <option value="locked">{lang.formatMessage({ id: "statusLocked_role" })}</option>
               </select>
-              {currentUser.permissions["users"].includes(defaultPermissions.recovery) && (
+              {permissions["users"].includes(defaultPermissions.recovery) && (
                 <button className="DAT_UserManagementMobile_Card_Actions_Button_Primary" onClick={() => navigate("/user-recovery")}>
                   {lang.formatMessage({ id: "user_button_recovery" })}
                 </button>
@@ -848,12 +854,12 @@ export default function UserManagement() {
                 <option value="active">{lang.formatMessage({ id: "statusActive_role" })}</option>
                 <option value="locked">{lang.formatMessage({ id: "statusLocked_role" })}</option>
               </select>
-              {currentUser.permissions["users"].includes(defaultPermissions.recovery) && (
+              {permissions["users"].includes(defaultPermissions.recovery) && (
                 <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => navigate("/user-recovery")}>
                   {lang.formatMessage({ id: "user_button_recovery" })}
                 </button>
               )}
-              {currentUser.permissions["users"].includes(defaultPermissions.create) && (
+              {permissions["users"].includes(defaultPermissions.create) && (
                 <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => { setModalType("add1"); setStep(1); setError(""); }}>
                   {lang.formatMessage({ id: "add_user" })}
                 </button>
@@ -873,7 +879,7 @@ export default function UserManagement() {
                     <th>{lang.formatMessage({ id: "user_role_table" })}</th>
                     <th>{lang.formatMessage({ id: "user_status_table" })}</th>
                     <th>{lang.formatMessage({ id: "user_create_at_table" })}</th>
-                    {(currentUser.permissions["users"].includes(defaultPermissions.delete) || currentUser.permissions["users"].includes(defaultPermissions.update)) && (
+                    {(permissions["users"].includes(defaultPermissions.delete) || permissions["users"].includes(defaultPermissions.update)) && (
                       <th>{lang.formatMessage({ id: "user_action_table" })}</th>
                     )}
                   </tr>
@@ -894,7 +900,7 @@ export default function UserManagement() {
                         <td className="DAT_UserManagement_Container_Table_Main_Cell">
                           {user.created ? new Date(user.created).toLocaleString("vi-VN") : "-"}
                         </td>
-                        {(currentUser.permissions["users"].includes(defaultPermissions.delete) || currentUser.permissions["users"].includes(defaultPermissions.update)) && (
+                        {(permissions["users"].includes(defaultPermissions.delete) || permissions["users"].includes(defaultPermissions.update)) && (
                           <td className="DAT_UserManagement_Container_Table_Main_Cell">
                             <div className="DAT_UserManagement_Container_Table_Actions" ref={userRef}>
                               <button className="DAT_UserManagement_Container_Table_Actions_Button_GhostSm" onClick={() => setOpenMenu(openMenu === user.id ? null : user.id)}>
@@ -903,12 +909,12 @@ export default function UserManagement() {
 
                               {openMenu === user.id && (
                                 <div className={`DAT_UserManagement_Pop_Menu ${isLastItem ? "DAT_UserManagement_Pop_MenuLast" : ""}`} onMouseDown={(e) => e.stopPropagation()}>
-                                  {currentUser.permissions["users"].includes(defaultPermissions.update) && (
+                                  {permissions["users"].includes(defaultPermissions.update) && (
                                     <div className="DAT_UserManagement_Pop_MenuItem" onClick={() => { openEdit(user); setOpenMenu(null); }}>
                                       {lang.formatMessage({ id: "user_edit_button" })}
                                     </div>
                                   )}
-                                  {currentUser.id !== user.id && currentUser.permissions["users"].includes(defaultPermissions.delete) && (
+                                  {userId !== user.id && permissions["users"].includes(defaultPermissions.delete) && (
                                     <div className="DAT_UserManagement_Pop_MenuItem" style={{ color: "red" }}
                                       onClick={() => {
                                         setModalType("delete"); setOpenMenu(null); setDeleteUserId(user.id);

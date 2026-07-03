@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { LuBatteryCharging, LuDownload, LuZap, LuCpu } from "react-icons/lu";
 import {
   Chart as ChartJS,
@@ -26,6 +26,7 @@ import {
 import { socket } from "../../../App";
 import "./PCS.scss";
 import { isMobile } from "react-device-detect";
+import { SystemContext } from "../../contexts/SystemContext";
 
 ChartJS.register(
   CategoryScale,
@@ -183,6 +184,16 @@ const PCS = (props) => {
     5: "Chg.derate",
     6: "Disch.derate",
   }
+
+    const {username, status,systemDispatch} = useContext(SystemContext)
+  
+    useEffect(() => {
+        console.log(username, status)
+  
+        // systemDispatch({type:'LOAD_USR',payload:{username:'loc',status:true}})
+  
+    }, [])
+  
 
   useEffect(() => {
 

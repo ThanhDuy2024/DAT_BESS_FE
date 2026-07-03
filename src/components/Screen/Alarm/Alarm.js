@@ -9,7 +9,6 @@ import {
 } from "react-icons/lu";
 import Modal from "../../Modal/Modal";
 import StatusBadge from "../../Modal/StatusBadge";
-import { useAuth } from "../../contexts/AuthContext";
 import { mockAlarms } from "../../data/mockData";
 import "./Alarm.scss";
 import { useIntl } from "react-intl";
@@ -75,7 +74,6 @@ const getAlarmMeasures = (alarm) => {
 
 export default function Alarm({ asModal = false, asPanel = false }) {
   const lang = useIntl();
-  const { hasPermission } = useAuth();
   const [alarms, setAlarms] = useState(
     mockAlarms.filter((alarm) => allowedDevices.includes(alarm.device)),
   );
@@ -260,26 +258,6 @@ export default function Alarm({ asModal = false, asPanel = false }) {
                           >
                             <LuEye />
                           </button>
-
-                          {hasPermission("ack_alarm") &&
-                            a.status === "Active" && (
-                              <button
-                                className="DAT_AlarmMobile_Main_Btn_Ack"
-                                onClick={() => handleAck(a.id)}
-                              >
-                                {lang.formatMessage({ id: "ack_alarm" })}
-                              </button>
-                            )}
-
-                          {hasPermission("clear_alarm") &&
-                            a.status === "Acknowledged" && (
-                              <button
-                                className="DAT_AlarmMobile_Main_Btn_Clear"
-                                onClick={() => handleClear(a.id)}
-                              >
-                                {lang.formatMessage({ id: "clear_alarm" })}
-                              </button>
-                            )}
                         </div>
                       </div>
                     </div>
@@ -461,23 +439,6 @@ export default function Alarm({ asModal = false, asPanel = false }) {
                       >
                         <LuEye />
                       </button>
-                      {hasPermission("ack_alarm") && a.status === "Active" && (
-                        <button
-                          className="DAT_Alarm_Main_Table_Ack"
-                          onClick={() => handleAck(a.id)}
-                        >
-                          {lang.formatMessage({ id: "ack_alarm" })}
-                        </button>
-                      )}
-                      {hasPermission("clear_alarm") &&
-                        a.status === "Acknowledged" && (
-                          <button
-                            className="DAT_Alarm_Main_Table_Clear"
-                            onClick={() => handleClear(a.id)}
-                          >
-                            {lang.formatMessage({ id: "clear_alarm" })}
-                          </button>
-                        )}
                     </td>
                     <td>{a.time}</td>
                   </tr>

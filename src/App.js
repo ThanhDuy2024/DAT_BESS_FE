@@ -6,9 +6,9 @@ import {
   Route,
   Routes,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { Toaster, toast } from 'sonner'
-import { AuthProvider, useAuth } from "./components/contexts/AuthContext";
 import MainLayout from "./components/Layout/MainLayout";
 import LoginPage from "./components/Screen/Login/Login";
 import DashboardPage from "./components/Screen/Dashboard/Dashboard";
@@ -24,9 +24,10 @@ import UserRecovery from "./components/Screen/UserRecovery/UserRecovery"
 import RoleEdit from "./components/Screen/RoleEdit/RoleEdit"
 import { io } from "socket.io-client";
 import { signal } from "@preact/signals-react";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useState } from "react";
-// import { callApi } from "./components/Api/Api";
+import { SystemContext } from "./components/contexts/SystemContext";
+import { callApi } from "./components/Api/Api";
 export const socket = signal(io.connect(process.env.REACT_APP_API));
 
 export function toInt16(raw) {
@@ -52,29 +53,67 @@ export const convertToDoublewordAndFloat = (cal, type, scale) => {
     : parseFloat(doubleword * (scale || 1)).toFixed(1);
 };
 
-const ProtectedRoute = ({ permission }) => {
-  const { isAuthenticated, authLoading } = useAuth();
-  const location = useLocation();
-  if (authLoading) {
-    return null;
-  }
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+const ProtectedRoute = () => {
+  const navigate = useNavigate();
+  const { status, systemDispatch } = useContext(SystemContext);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      if (status && status.status === true) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const res = await callApi("post", `${process.env.REACT_APP_API}/data/getUser`, {});
+        if (res.status === true) {
+          systemDispatch({
+            type: "LOAD_USR",
+            payload: {
+              userId: res.data[0].id_,
+              username: res.data[0].username_,
+              name: res.data[0].full_name_,
+              email: res.data[0].email_,
+              phone: res.data[0].phone_ || "",
+              address: res.data[0].address_ || "",
+              roleName: res.data[0].rolename_,
+              permissions: res.data[0].permission_,
+              status: true
+            }
+          });
+        } else {
+          navigate("/login");
+        }
+      } catch (error) {
+        navigate("/login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUser();
+  }, [status, systemDispatch, navigate]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return <Outlet />;
-}
+};
 
 const PublicOnlyRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
+  const { status } = useContext(SystemContext);
+  return status ? <Navigate to="/dashboard" replace /> : children;
 }
 
 const ProtectedPermission = (props) => {
-  const { currentUser } = useAuth();
-
-  const permissions = currentUser.permissions;
-  const permisisonArray = permissions[props.permission] || [];
+  const { permissions } = useContext(SystemContext);
+  if (!permissions) {
+    return <Navigate to="/login" replace />
+  }
+  const permissionsRaw = permissions;
+  const permisisonArray = permissionsRaw[props.permission] || [];
   const hasPermission = permisisonArray.includes('view') || permisisonArray.includes('read');
 
   if (hasPermission) {
@@ -146,10 +185,8 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   );
 }

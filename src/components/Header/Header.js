@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LuBell, LuLogOut } from "react-icons/lu";
 import { FaEarthAsia } from "react-icons/fa6";
@@ -7,11 +7,12 @@ import { useAuth } from "../contexts/AuthContext";
 import { useLanguage } from "../Lang/LanguageProvider";
 import "./Header.scss";
 import { isMobile } from "react-device-detect";
+import { SystemContext } from "../contexts/SystemContext";
 
 export default function Header({ onAlarmClick }) {
   const lang = useIntl();
   const { locale, setLocale } = useLanguage();
-  const { currentUser, logout } = useAuth();
+  const { name, roleName, systemDispatch } = useContext(SystemContext);
   const navigate = useNavigate();
   const [showLanMenu, setShowLanMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -35,8 +36,15 @@ export default function Header({ onAlarmClick }) {
   };
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    systemDispatch({
+      type: "LOAD_USR",
+      payload: {
+        status: false,
+      }
+    })
+    return navigate("/login");
   };
 
   return (
@@ -96,16 +104,8 @@ export default function Header({ onAlarmClick }) {
                 onClick={() => setShowUserMenu(!showUserMenu)}
               >
                 <div className="DAT_HeaderMobile_right_user_avatar">
-                  {currentUser?.name?.charAt(0) || "U"}
+                  {name?.charAt(0) || "U"}
                 </div>
-                {/* <div className="DAT_HeaderMobile_right_user_info">
-                  <span className="DAT_HeaderMobile_right_user_info_name">
-                    {currentUser?.name}
-                  </span>
-                  <span className="DAT_HeaderMobile_right_user_info_role">
-                    {currentUser?.role}
-                  </span>
-                </div> */}
               </button>
               {showUserMenu && (
                 <div className="DAT_HeaderMobile_right_dropdown_menu DAT_Header_right_dropdown_menu_user">
@@ -178,14 +178,14 @@ export default function Header({ onAlarmClick }) {
                 onClick={() => setShowUserMenu(!showUserMenu)}
               >
                 <div className="DAT_Header_right_user_avatar">
-                  {currentUser?.name?.charAt(0) || "U"}
+                  {name?.charAt(0) || "U"}
                 </div>
                 <div className="DAT_Header_right_user_info">
                   <span className="DAT_Header_right_user_info_name">
-                    {currentUser?.name}
+                    {name}
                   </span>
                   <span className="DAT_Header_right_user_info_role">
-                    {currentUser?.rolename}
+                    {roleName}
                   </span>
                 </div>
               </button>

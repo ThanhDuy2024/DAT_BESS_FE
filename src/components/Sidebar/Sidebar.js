@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useIntl } from "react-intl";
 import { isMobile } from "react-device-detect";
@@ -15,7 +15,7 @@ import {
 } from "react-icons/lu";
 import { GoLaw } from "react-icons/go";
 import "./Sidebar.scss";
-import { useAuth } from "../contexts/AuthContext";
+import { SystemContext } from "../contexts/SystemContext";
 
 const menuGroups = [
   {
@@ -96,21 +96,22 @@ const menuGroups = [
 
 export default function Sidebar({ collapsed, onToggle }) {
   const lang = useIntl();
-  const { currentUser } = useAuth();
+  const { roleName, permissions } = useContext(SystemContext);
+
   const [activeMobileGroup, setActiveMobileGroup] = useState(null);
 
   // Hàm helper lọc các items được phép xem dựa vào quyền của currentUser
   const filterAllowedItems = (items) => {
     return items.filter((item) => {
       // 1. Nếu là admin tối cao, luôn luôn hiển thị tất cả menu
-      if (currentUser?.rolename === "administrator") return true;
+      if (roleName === "administrator") return true;
 
       // 2. Ngoại lệ: Trang thông tin cá nhân ai đăng nhập cũng có quyền xem công khai
       if (item.path === "/user-info") return true;
 
       // 3. Xử lý bóc tách moduleKey từ path (ví dụ: "/pcs" -> "pcs", "/energy-report" -> "energy-report")
       const moduleKey = item.path.replace("/", ""); 
-      const userPermissions = currentUser?.permissions?.[moduleKey] || [];
+      const userPermissions = permissions?.[moduleKey] || [];
 
       // 4. Kiểm tra quyền xem từ mảng API gửi về
       return userPermissions.includes("read") || userPermissions.includes("view");

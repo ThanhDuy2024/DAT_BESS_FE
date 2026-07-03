@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./UserInfo.scss";
 import { useAuth } from "../../contexts/AuthContext";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { LuUserPen } from "react-icons/lu";
 import { useIntl } from "react-intl";
 import { callApi } from "../../Api/Api";
+import { SystemContext } from "../../contexts/SystemContext";
+import { toast } from "sonner";
 
 export default function UserInfo() {
   const lang = useIntl();
-  const { currentUser, loadUser } = useAuth();
-
+  const { userId, username, name, email, phone, address, systemDispatch } = useContext(SystemContext);
   const [changeInfor, setChangeInfor] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
   const [showPasswordCurrent, setShowPasswordCurrent] = useState(false);
@@ -31,16 +32,42 @@ export default function UserInfo() {
     setChangeInfor(true);
   };
 
+  const loadUser = async () => {
+    try {
+      const res = await callApi("post", `${process.env.REACT_APP_API}/data/getUser`, {});
+      if (res.status === true) {
+        systemDispatch({
+          type: "LOAD_USR",
+          payload: {
+            userId: res.data[0].id_,
+            username: res.data[0].username_,
+            name: res.data[0].full_name_,
+            email: res.data[0].email_,
+            phone: res.data[0].phone_ || "",
+            address: res.data[0].address_ || "",
+            roleName: res.data[0].rolename_,
+            permissions: res.data[0].permission_,
+            status: true
+          }
+        });
+      } else {
+        toast.error("Error System!")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleSave = async () => {
     let editFieldFormat = editField === "Phone Number" ? "Phone" : editField;
-    if(editFieldFormat.toLowerCase() === "tên") {
+    if (editFieldFormat.toLowerCase() === "tên") {
       editFieldFormat = "name"
-    } else if(editFieldFormat.toLowerCase() === "số điện thoại") {
+    } else if (editFieldFormat.toLowerCase() === "số điện thoại") {
       editFieldFormat = "phone"
     } else if (editFieldFormat.toLowerCase() === "địa chỉ") {
       editFieldFormat = "address"
     };
-    
+
     try {
       const response = await callApi("post", `${process.env.REACT_APP_API}/data/changeUserInfo`, {
         action: editFieldFormat,
@@ -164,7 +191,7 @@ export default function UserInfo() {
               {lang.formatMessage({ id: "avatar" })}
             </div>
             <div className="DAT_UserInfor_Container_Row_Content_Avt">
-              {currentUser?.name?.charAt(0) || "U"}
+              {name?.charAt(0) || "U"}
             </div>
           </div>
           <div className="DAT_UserInfor_Container_Row_Btn"></div>
@@ -176,12 +203,12 @@ export default function UserInfo() {
               {lang.formatMessage({ id: "name" })}
             </div>
             <div className="DAT_UserInfor_Container_Row_Content_Label">
-              {displayValue(currentUser?.name)}
+              {displayValue(name)}
             </div>
           </div>
           <div
             className="DAT_UserInfor_Container_Row_Btn"
-            onClick={() => handleOpenModal(lang.formatMessage({ id: "name" }), currentUser?.name || "")}
+            onClick={() => handleOpenModal(lang.formatMessage({ id: "name" }), name || "")}
             aria-label="Change Name"
           >
             {lang.formatMessage({ id: "change" })}
@@ -192,7 +219,7 @@ export default function UserInfo() {
           <div className="DAT_UserInfor_Container_Row_Content">
             <div className="DAT_UserInfor_Container_Row_Content_Title">Email</div>
             <div className="DAT_UserInfor_Container_Row_Content_Label">
-              {displayValue(currentUser?.email)}
+              {displayValue(email)}
             </div>
           </div>
           <div
@@ -209,13 +236,13 @@ export default function UserInfo() {
               {lang.formatMessage({ id: "phone_number" })}
             </div>
             <div className="DAT_UserInfor_Container_Row_Content_Label">
-              {displayValue(currentUser?.phone)}
+              {displayValue(phone)}
             </div>
           </div>
           <div
             className="DAT_UserInfor_Container_Row_Btn"
             onClick={() =>
-              handleOpenModal(lang.formatMessage({ id: "phone_number" }), currentUser?.phone || "")
+              handleOpenModal(lang.formatMessage({ id: "phone_number" }), phone || "")
             }
           >
             {lang.formatMessage({ id: "change" })}
@@ -228,12 +255,12 @@ export default function UserInfo() {
               {lang.formatMessage({ id: "address" })}
             </div>
             <div className="DAT_UserInfor_Container_Row_Content_Label">
-              {displayValue(currentUser?.address)}
+              {displayValue(address)}
             </div>
           </div>
           <div
             className="DAT_UserInfor_Container_Row_Btn"
-            onClick={() => handleOpenModal(lang.formatMessage({ id: "address" }), currentUser?.address || "")}
+            onClick={() => handleOpenModal(lang.formatMessage({ id: "address" }), address || "")}
           >
             {lang.formatMessage({ id: "change" })}
           </div>
