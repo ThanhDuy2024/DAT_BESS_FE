@@ -251,7 +251,6 @@ const enMessages = {
   user_locked_button: "Locked",
   user_unlock_button: "Unlock",
   user_edit_button: "Edit",
-
   role_id_table: "Role Id",
   role_name_table: "Role Name",
   role_status_tabel: "Status",
@@ -263,8 +262,6 @@ const enMessages = {
   role_modal_save: "Save role",
   role_modal_full_name: "Role name",
   role_modal_status: "Status",
-
-
   energy_report: "Energy Report",
   ack_alarm: "ack",
   clear_alarm: " clear",
@@ -440,7 +437,27 @@ const enMessages = {
   toast_deleted: "Delete successful",
   toast_created: "Create successful",
   toast_recovery: "Recovery successful",
-  toast_existed_role: "Role has exited"
+  toast_existed_role: "Role has exited",
+  role_information: "Role Information",
+  role_name: "Role name",
+  permission_management: "Permission Management",
+  dashboard_permission: "Dashboard Permission",
+  users_permission: "User Management Permission",
+  pcs_permission: "PCS Permission",
+  battery_permission: "Battery Permission",
+  settings_permission: "Settings Permission",
+  alarm_permission: "Alarm Permission",
+  roles_permission: "Roles Permission",
+  energy_report_permission: "Energy Report Permission",
+  save_permission: "Save Permission",
+  view: "View",
+  create: "Create",
+  delete: "delete",
+  recovery: "Recovery",
+  role_modal_view_title: "Role Details",
+  alarm_username_wrong: "Username must not contain special characters or spaces.",
+  alarm_username_wrong_number: "Username must contain at least one letter.",
+  alarm_password_number: "Password must contain at least 8 character."
 };
 
 const viMessages = {
@@ -893,7 +910,28 @@ const viMessages = {
   toast_deleted: "Xóa thành công",
   toast_created: "Tạo thành công",
   toast_recovery: "Khôi phục thành công",
-  toast_existed_role: "Vai trò này đã tồn tại"
+  toast_existed_role: "Vai trò này đã tồn tại",
+  role_information: "Thông tin vai trò",
+  role_name: "Tên vai trò",
+  permission_management: "Quản lý vai trò",
+  dashboard_permission: "Quyền Dashboard",
+  users_permission: "Quyền quản lý người dùng",
+  pcs_permission: "Quyền PCS",
+  battery_permission: "Quyền Battery",
+  settings_permission: "Quyền Settings",
+  alarm_permission: "Quyền Cảnh báo",
+  roles_permission: "Quyền quản lý vai trò",
+  energy_report_permission: "Quyền báo cáo năng lượng",
+  save_permission: "Lưu vai trò",
+  view: "Xem",
+  create: "Tạo",
+  delete: "Xóa",
+  recovery: "Khôi phục",
+  role_modal_view_title: "Chi tiết vai trò",
+  alarm_username_wrong: "Tên tài khoản không được gồm kí tự đặc biệt và khoảng trắng.",
+  alarm_username_wrong_number: "Tên tài khoản phải gồm ít nhất một chữ cái.",
+  alarm_password_number: "Mật khẩu phải ít nhất 8 kí tự",
+
 };
 
 export const messages = {

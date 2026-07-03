@@ -407,10 +407,8 @@
 
             &_Main {
                 align-items: center;
-                border-bottom: 1px solid rgba(198, 197, 197, 0.5);
                 font-size: 14px;
                 justify-content: center;
-                padding: 16px;
 
                 &_Row {
                     display: flex;
@@ -487,13 +485,12 @@
                 }
 
                 &_Btn_Delete {
-                    background-color: var(--primary);
+                    background-color: var(--danger-dark);
                     border: none;
                     border-radius: 5px;
                     color: var(--card-bg);
                     cursor: pointer;
                     padding: 8px 16px;
-                    margin-left: 6px;
                 }
 
                 &_Button_GhostSm {
@@ -555,6 +552,28 @@
                     margin-left: 6px;
 
 
+                }
+
+                &_Button_Primary {
+                    background: var(--primary);
+                    color: rgba(255, 255, 255, 1);
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: var(--space-sm);
+                    padding: 10px 20px;
+                    border: 1px solid transparent;
+                    border-radius: var(--radius-md);
+                    font-size: var(--font-size-base);
+                    font-weight: var(--font-weight-medium);
+                    line-height: 1.4;
+                    white-space: nowrap;
+                    transition: all var(--transition-base);
+
+                    &:hover {
+                        background: var(--primary-hover);
+                        box-shadow: 0 4px 12px rgba(11, 25, 103, 0.22);
+                    }
                 }
             }
         }

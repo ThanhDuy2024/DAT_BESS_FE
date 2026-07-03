@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
+
 import Modal from "../../Modal/Modal";
 import StatusBadge from "../../Modal/StatusBadge";
 import "./UserManagement.scss";
@@ -53,7 +54,7 @@ export default function UserManagement() {
   const [countdown, setCountdown] = useState(60);
   const [roles, setRoles] = useState([]);
   const [deleteUserId, setDeleteUserId] = useState();
-
+  const [modalType, setModalType] = useState(null);
   const navigate = useNavigate();
   const otpRefs = useRef([]);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -82,7 +83,6 @@ export default function UserManagement() {
       `${process.env.REACT_APP_API}/data/getAllUser`,
       {},
     );
-
     if (res.status === true) {
       const list = res.data.map((item) => ({
         id: item.id_,
@@ -194,7 +194,7 @@ export default function UserManagement() {
       role: user.roleId,
       status: user.status,
     });
-    setShowModal(true);
+    setModalType("edit");
   };
 
   const saveUser = async () => {
@@ -258,7 +258,6 @@ export default function UserManagement() {
   };
 
   const handleDelete = async () => {
-    if (!deleteUser) return;
     try {
       const res = await callApi(
         "post",
@@ -271,7 +270,7 @@ export default function UserManagement() {
       if (res.status) {
         toast.success(lang.formatMessage({ id: "toast_deleted" }))
         loadUser();
-        setDeleteUser(null); // Đóng modal sau khi xóa thành công
+        setModalType(null); // Đóng modal sau khi xóa thành công
       } else {
         toast.error(lang.formatMessage({ id: "toast_error" }))
         console.log(res.msg);
@@ -289,7 +288,7 @@ export default function UserManagement() {
       setError(lang.formatMessage({ id: "alarm_fullname" }));
       return;
     }
-    setStep(2);
+    setModalType("add2")
     setFullName(fullName);
   };
 
@@ -310,16 +309,31 @@ export default function UserManagement() {
       setError(lang.formatMessage({ id: "alarm_username" }));
       return;
     }
+    const convertDigit = Number(usernameInput);
+
+    if (!Number.isNaN(convertDigit)) {
+      setError(lang.formatMessage({ id: "alarm_username_wrong_number" }));
+      return;
+    }
+    const regex = /[^\w]/;
+    if (regex.test(usernameInput)) {
+      setError(lang.formatMessage({ id: "alarm_username_wrong" }))
+      return;
+    }
     if (!passwordInput) {
       setError(lang.formatMessage({ id: "alarm_password" }));
       return;
     }
     if (!confirmPassword) {
       setError(lang.formatMessage({ id: "alarm_confirm_password" }));
-      return;
+      return; 
     }
 
     try {
+      if(passwordInput.length < 8 || confirmPassword.length < 8 ){
+        setError(lang.formatMessage({ id: "alarm_password_number" }));
+        return;
+      }
       if (passwordInput === confirmPassword) {
         const res = await callApi(
           "post",
@@ -329,7 +343,7 @@ export default function UserManagement() {
         if (res.status === false) {
           setError(lang.formatMessage({ id: "alarm_email_exist" }));
         } else {
-          setStep(3);
+          setModalType("add3")
           setCountdown(60);
           setEmail(emailInput);
           setPassword(passwordInput);
@@ -340,6 +354,7 @@ export default function UserManagement() {
       }
     } catch (error) {
       setError(lang.formatMessage({ id: "alarm_email_exist" }));
+      console.log(error);
     }
   };
 
@@ -388,7 +403,7 @@ export default function UserManagement() {
         setError(lang.formatMessage({ id: "alarm_wrong_otp" }));
       } else {
         toast.success(lang.formatMessage({ id: "toast_created" }))
-        setAddUser(false);
+        setModalType(null)
         setOtp(["", "", "", "", "", ""]);
         loadUser();
       }
@@ -415,7 +430,223 @@ export default function UserManagement() {
     loadRole();
   }, []);
 
+  const renderTitle = () => {
+    switch (modalType) {
+      case "add1":
+      case "add2":
+      case "add3":
+        return lang.formatMessage({ id: "user_modal_add_title" });
+      case "view":
+        return `${lang.formatMessage({ id: "user_information" })} USR-${String(selectedUser.id).padStart(3, "0")}`
+      case "edit":
+        return lang.formatMessage({ id: "user_modal_edit_title" });
+      case "delete":
+        return lang.formatMessage({ id: "confirm_delete" });
+      default:
+        return "";
+    }
+  };
 
+  const renderModalViewMobile = () => {
+    return (
+      <div className="DAT_UserManagementMobile_Modal_Container_Main">
+        {userInfo.map((item, index) => (
+          <div key={index} className="DAT_UserManagementMobile_Modal_Container_Main_Row">
+            <div className="DAT_UserManagementMobile_Modal_Container_Main_Row_Label">{item.label}</div>
+            <div className="DAT_UserManagementMobile_Modal_Container_Main_Row_Value">{item.value || "-"}</div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+  const renderModalAddStep1 = () => {
+    return (
+      <form className="DAT_UserManagement_Modal_Container_Main"
+        onSubmit={handleSubmitStep1}
+        id="step1"
+        key={modalType}
+      >
+        <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "user_modal_full_name" })}</label>
+        <div className="DAT_UserManagement_Modal_Container_Main_Box">
+          <input name="fullname" type="text" />
+        </div>
+        <div className="DAT_UserManagement_Modal_Container_Main_Form">
+          <div className="DAT_UserManagement_Modal_Container_Main_Form_Item">
+            <label className="DAT_UserManagement_Modal_Container_Main_Form_Item_Label">{lang.formatMessage({ id: "user_modal_role" })}</label>
+            <select className="DAT_UserManagement_Modal_Container_Main_Form_Item_Select" onChange={(e) => setRoleUser(e.target.value)} value={roleUser}>
+              {roles.map((item) => (
+                <option key={item.id} value={item.id}>{item.roleName}</option>
+              ))}
+            </select>
+          </div>
+          <div className="DAT_UserManagement_Modal_Container_Main_Form_Item">
+            <label className="DAT_UserManagement_Modal_Container_Main_Form_Item_Label">{lang.formatMessage({ id: "user_modal_status" })}</label>
+            <select className="DAT_UserManagement_Modal_Container_Main_Form_Item_Select" onChange={(e) => setStatusUser(e.target.value)} value={statusUser}>
+              <option value="active">Active</option>
+              <option value="locked">Locked</option>
+            </select>
+          </div>
+        </div>
+        {error && <div className="DAT_UserManagement_Modal_Container_Main_Error">{error}</div>}
+      </form>
+    )
+  }
+  const renderModalAddStep2 = () => {
+    return (
+      <form className="DAT_UserManagement_Modal_Container_Main"
+        onSubmit={handleSubmitStep2}
+        id="step2"
+        key={modalType}>
+        <label className="DAT_UserManagement_Modal_Container_Main_Label">Email</label>
+        <div className="DAT_UserManagement_Modal_Container_Main_Box"><input name="email" type="email" /></div>
+        <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "username" })}</label>
+        <div className="DAT_UserManagement_Modal_Container_Main_Box"><input name="username" type="text" /></div>
+        <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "password" })}</label>
+        <div className="DAT_UserManagement_Modal_Container_Main_Box"><input name="password" type="password" /></div>
+        <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "confirm_password" })}</label>
+        <div className="DAT_UserManagement_Modal_Container_Main_Box"><input name="confirmpassword" type="password" /></div>
+        {error && <div className="DAT_UserManagement_Modal_Container_Main_Error">{error}</div>}
+      </form>
+    )
+  }
+  const renderModalAddStep3 = () => {
+    return (
+      <form id="step3" className="DAT_UserManagement_Modal_Container_Main" onSubmit={handleSubmitStep3} key={modalType}>
+        <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "input_otp" })}</label>
+        <div className="DAT_UserManagement_Modal_Container_Main_Otp">
+          {otp.map((digit, index) => (
+            <input
+              className="DAT_UserManagement_Modal_Container_Main_Otp_Input"
+              key={index}
+              value={otp[index]}
+              ref={(el) => (otpRefs.current[index] = el)}
+              onChange={(e) => handleOtpChange(index, e.target.value)}
+              maxLength={1}
+              onKeyDown={(e) => handleOtpKeyDown(index, e)}
+            />
+          ))}
+        </div>
+        {countdown > 0 ? (
+          <div className="DAT_UserManagement_Modal_Container_Main_Resend">
+            {lang.formatMessage({ id: "resend_otp_after" })} {countdown}s
+          </div>
+        ) : (
+          <div className="DAT_UserManagement_Modal_Container_Main_Resend DAT_UserManagement_Modal_Container_Main_Resend_Active" onClick={handleOtpAgain}>
+            {lang.formatMessage({ id: "resend_otp" })}
+          </div>
+        )}
+        {error && <div className="DAT_UserManagement_Modal_Container_Main_Error">{error}</div>}
+      </form>
+    )
+  }
+  const renderBody = () => {
+    switch (modalType) {
+      case "add1":
+        return renderModalAddStep1();
+      case "add2":
+        return renderModalAddStep2();
+      case "add3":
+        return renderModalAddStep3();
+      case "view":
+        return renderModalViewMobile();
+      case "edit":
+        return renderModalFormBody();
+      case "delete":
+        return lang.formatMessage({ id: "description_delete_user" })
+      default:
+        return null;
+    }
+  };
+  const renderFooter = () => {
+    switch (modalType) {
+      case "add1":
+        return (
+          <>
+            <button type="button" className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary" onClick={() => setModalType(null)}>
+              {lang.formatMessage({ id: "modal_cancel" })}
+            </button>
+            <button className="DAT_UserManagement_Modal_Container_Foot_Button_Primary"
+              type="submit"
+              form="step1">
+              {lang.formatMessage({ id: "next" })}
+            </button>
+          </>
+        )
+      case "add2":
+        return (
+          <>
+            <button type="button" className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary" onClick={() => { setModalType("add1"); setError("") }}>
+              {lang.formatMessage({ id: "go_back" })}
+            </button>
+            <button type="submit" className="DAT_UserManagement_Modal_Container_Foot_Button_Primary"
+              form="step2">
+              {lang.formatMessage({ id: "next" })}
+            </button>
+          </>
+        )
+      case "add3":
+        return (
+          <>
+            <button type="button" className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary" onClick={() => setModalType("add2")}>
+              {lang.formatMessage({ id: "go_back" })}
+            </button>
+            <button className="DAT_UserManagement_Modal_Container_Foot_Button_Primary" type="submit" form="step3">
+              {lang.formatMessage({ id: "user_modal_add_title" })}
+            </button>
+          </>
+        )
+      case "view":
+        return (
+          <>
+            {currentUser.permissions["users"].includes(defaultPermissions.update) && (
+              <div className="DAT_UserManagementMobile_Modal_Container_Foot_Button_Primary" onClick={() => { openEdit(selectedUser); }}>
+                {lang.formatMessage({ id: "user_edit_button" })}
+              </div>
+            )}
+            {currentUser.id !== selectedUser.id && currentUser.permissions["users"].includes(defaultPermissions.delete) && (
+              <div className="DAT_UserManagementMobile_Modal_Container_Foot_Btn_Delete"
+                onClick={() => {
+                  setModalType("delete"); setDeleteUserId(selectedUser.id);
+                }}>
+                {lang.formatMessage({ id: "user_delete_button" })}
+              </div>
+            )}
+          </>
+        )
+      case "edit":
+        return (
+          <>
+            <div className="DAT_UserManagement_Modal_Container_Foot_Button_Primary" onClick={() => { saveUser() }}>
+              {lang.formatMessage({ id: "user_save_button" })}
+            </div>
+          </>
+        );
+      case "delete":
+        return (
+          <>
+            <button
+              className="DAT_RoleSetting_Modal_Container_Foot_Btn_Cancel"
+              onClick={() => setModalType(null)}
+            >
+              {lang.formatMessage({ id: "cancel" })}
+            </button>
+
+            <button
+              className="DAT_RoleSetting_Modal_Container_Foot_Btn_Delete"
+              onClick={() => {
+                handleDelete()
+              }}
+            >
+              {lang.formatMessage({
+                id: "user_delete_button",
+              })}
+            </button>
+          </>
+        )
+      default:
+        return null;
+    }
+  };
 
   const renderModalFormBody = () => (
     <div className="DAT_UserManagement_Form_Grid">
@@ -510,12 +741,11 @@ export default function UserManagement() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <button
-                className="DAT_UserManagementMobile_Card_Actions_Button_Primary"
-                onClick={openNew}
-              >
-                <LuUserPlus />
-              </button>
+              {currentUser.permissions["users"].includes(defaultPermissions.create) && (
+                <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => { setModalType("add1"); setStep(1); setError(""); }}>
+                  <LuUserPlus />
+                </button>
+              )}
               <select
                 className="DAT_UserManagementMobile_Card_Actions_FilterSelect"
                 style={{ width: 140 }}
@@ -537,7 +767,13 @@ export default function UserManagement() {
                 <option value="active">{lang.formatMessage({ id: "statusActive_role" })}</option>
                 <option value="locked">{lang.formatMessage({ id: "statusLocked_role" })}</option>
               </select>
+              {currentUser.permissions["users"].includes(defaultPermissions.recovery) && (
+                <button className="DAT_UserManagementMobile_Card_Actions_Button_Primary" onClick={() => navigate("/user-recovery")}>
+                  {lang.formatMessage({ id: "user_button_recovery" })}
+                </button>
+              )}
             </div>
+
           </div>
 
           <div className="DAT_UserManagementMobile_Container">
@@ -554,7 +790,7 @@ export default function UserManagement() {
                   className="DAT_UserManagementMobile_Container_Card_Button"
                   onClick={() => {
                     setSelectedUser(user);
-                    setIsModalOpen(true);
+                    setModalType("view");
                   }}
                 >
                   {lang.formatMessage({ id: "view_details" })}
@@ -563,64 +799,13 @@ export default function UserManagement() {
             ))}
           </div>
 
-          {isModalOpen && selectedUser && (
-            <div className="DAT_UserManagementMobile_Modal">
-              <div className="DAT_UserManagementMobile_Modal_Container">
-                <div className="DAT_UserManagementMobile_Modal_Container_Header">
-                  <div className="DAT_UserManagementMobile_Modal_Container_Header_Title">
-                    {lang.formatMessage({ id: "user_information" })} USR-{String(selectedUser.id).padStart(3, "0")}
-                  </div>
-                  <div className="DAT_UserManagementMobile_Modal_Container_Header_Close" onClick={() => setIsModalOpen(false)}>
-                    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" height="25" width="25">
-                      <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="DAT_UserManagementMobile_Modal_Container_Main">
-                  {userInfo.map((item, index) => (
-                    <div key={index} className="DAT_UserManagementMobile_Modal_Container_Main_Row">
-                      <div className="DAT_UserManagementMobile_Modal_Container_Main_Row_Label">{item.label}</div>
-                      <div className="DAT_UserManagementMobile_Modal_Container_Main_Row_Value">{item.value || "-"}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="DAT_UserManagementMobile_Modal_Container_Foot">
-                  <button
-                    className="DAT_UserManagementMobile_Modal_Container_Foot_Button_GhostSm"
-                    style={{ color: "var(--text-primary)", backgroundColor: "var(--primary-light)" }}
-                    onClick={() => {
-                      openEdit(selectedUser);
-                      setIsModalOpen(false);
-                    }}
-                  >
-                    {lang.formatMessage({ id: "user_edit_button" })}
-                  </button>
-                  <div className="DAT_UserManagementMobile_Pop_MenuItem_Delete" onClick={() => { handleDelete(selectedUser.id); setIsModalOpen(false); }}>
-                    {lang.formatMessage({ id: "user_delete_button" })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           <Modal
-            isOpen={showModal}
-            onClose={() => { setShowModal(false); setEditing(null); }}
-            title={editing ? lang.formatMessage({ id: "user_modal_edit_title" }) : lang.formatMessage({ id: "user_modal_add_title" })}
-            footer={
-              <>
-                <button className="DAT_UserManagement_Modal_Footer_Button_Secondary" onClick={() => { setShowModal(false); setEditing(null); }}>
-                  {lang.formatMessage({ id: "modal_cancel" })}
-                </button>
-                <button className="DAT_UserManagement_Modal_Footer_Button_Primary" onClick={saveUser}>
-                  {lang.formatMessage({ id: "user_modal_save_user" })}
-                </button>
-              </>
-            }
+            isOpen={modalType !== null}
+            onClose={() => setModalType(null)}
+            title={renderTitle()}
+            footer={renderFooter()}
           >
-            {renderModalFormBody()}
+            {renderBody()}
           </Modal>
         </div>
       ) : (
@@ -669,128 +854,9 @@ export default function UserManagement() {
                 </button>
               )}
               {currentUser.permissions["users"].includes(defaultPermissions.create) && (
-                <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => { setAddUser(!addUser); setStep(1); setError(""); }}>
+                <button className="DAT_UserManagement_Card_Actions_Button_Primary" onClick={() => { setModalType("add1"); setStep(1); setError(""); }}>
                   {lang.formatMessage({ id: "add_user" })}
                 </button>
-              )}
-
-              {addUser && (
-                <>
-                  {step === 1 && (
-                    <div className="DAT_UserManagement_Modal" onClick={(e) => e.target === e.currentTarget && setAddUser(false)}>
-                      <form className="DAT_UserManagement_Modal_Container" onSubmit={handleSubmitStep1}>
-                        <div className="DAT_UserManagement_Modal_Container_Header">
-                          <div className="DAT_UserManagement_Modal_Container_Header_Title">{lang.formatMessage({ id: "user_modal_add_title" })}</div>
-                        </div>
-                        <div className="DAT_UserManagement_Modal_Container_Main">
-                          <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "user_modal_full_name" })}</label>
-                          <div className="DAT_UserManagement_Modal_Container_Main_Box">
-                            <input name="fullname" type="text" />
-                          </div>
-                          <div className="DAT_UserManagement_Modal_Container_Main_Form">
-                            <div className="DAT_UserManagement_Modal_Container_Main_Form_Item">
-                              <label className="DAT_UserManagement_Modal_Container_Main_Form_Item_Label">{lang.formatMessage({ id: "user_modal_role" })}</label>
-                              <select className="DAT_UserManagement_Modal_Container_Main_Form_Item_Select" onChange={(e) => setRoleUser(e.target.value)} value={roleUser}>
-                                {roles.map((item) => (
-                                  <option key={item.id} value={item.id}>{item.roleName}</option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="DAT_UserManagement_Modal_Container_Main_Form_Item">
-                              <label className="DAT_UserManagement_Modal_Container_Main_Form_Item_Label">{lang.formatMessage({ id: "user_modal_status" })}</label>
-                              <select className="DAT_UserManagement_Modal_Container_Main_Form_Item_Select" onChange={(e) => setStatusUser(e.target.value)} value={statusUser}>
-                                <option value="active">Active</option>
-                                <option value="locked">Locked</option>
-                              </select>
-                            </div>
-                          </div>
-                          {error && <div className="DAT_UserManagement_Modal_Container_Main_Error">{error}</div>}
-                        </div>
-                        <div className="DAT_UserManagement_Modal_Container_Foot">
-                          <button type="button" className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary" onClick={() => setAddUser(false)}>
-                            {lang.formatMessage({ id: "modal_cancel" })}
-                          </button>
-                          <button className="DAT_UserManagement_Modal_Container_Foot_Button_Primary" type="submit">
-                            {lang.formatMessage({ id: "next" })}
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  )}
-
-                  {step === 2 && (
-                    <div className="DAT_UserManagement_Modal" onClick={(e) => e.target === e.currentTarget && setAddUser(false)}>
-                      <form className="DAT_UserManagement_Modal_Container" onSubmit={handleSubmitStep2}>
-                        <div className="DAT_UserManagement_Modal_Container_Header">
-                          <div className="DAT_UserManagement_Modal_Container_Header_Title">{lang.formatMessage({ id: "user_modal_add_title" })}</div>
-                        </div>
-                        <div className="DAT_UserManagement_Modal_Container_Main">
-                          <label className="DAT_UserManagement_Modal_Container_Main_Label">Email</label>
-                          <div className="DAT_UserManagement_Modal_Container_Main_Box"><input name="email" type="email" /></div>
-                          <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "username" })}</label>
-                          <div className="DAT_UserManagement_Modal_Container_Main_Box"><input name="username" type="text" /></div>
-                          <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "password" })}</label>
-                          <div className="DAT_UserManagement_Modal_Container_Main_Box"><input name="password" type="password" /></div>
-                          <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "confirm_password" })}</label>
-                          <div className="DAT_UserManagement_Modal_Container_Main_Box"><input name="confirmpassword" type="password" /></div>
-                          {error && <div className="DAT_UserManagement_Modal_Container_Main_Error">{error}</div>}
-                        </div>
-                        <div className="DAT_UserManagement_Modal_Container_Foot">
-                          <button type="button" className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary" onClick={() => { setStep(1); setError("") }}>
-                            {lang.formatMessage({ id: "go_back" })}
-                          </button>
-                          <button type="submit" className="DAT_UserManagement_Modal_Container_Foot_Button_Primary">
-                            {lang.formatMessage({ id: "next" })}
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  )}
-
-                  {step === 3 && (
-                    <div className="DAT_UserManagement_Modal" onClick={(e) => e.target === e.currentTarget && setAddUser(false)}>
-                      <form className="DAT_UserManagement_Modal_Container" onSubmit={handleSubmitStep3}>
-                        <div className="DAT_UserManagement_Modal_Container_Header">
-                          <div className="DAT_UserManagement_Modal_Container_Header_Title">{lang.formatMessage({ id: "user_modal_add_title" })}</div>
-                        </div>
-                        <div className="DAT_UserManagement_Modal_Container_Main">
-                          <label className="DAT_UserManagement_Modal_Container_Main_Label">{lang.formatMessage({ id: "input_otp" })}</label>
-                          <div className="DAT_UserManagement_Modal_Container_Main_Otp">
-                            {otp.map((digit, index) => (
-                              <input
-                                className="DAT_UserManagement_Modal_Container_Main_Otp_Input"
-                                key={index}
-                                value={otp[index]}
-                                ref={(el) => (otpRefs.current[index] = el)}
-                                onChange={(e) => handleOtpChange(index, e.target.value)}
-                                maxLength={1}
-                                onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                              />
-                            ))}
-                          </div>
-                          {countdown > 0 ? (
-                            <div className="DAT_UserManagement_Modal_Container_Main_Resend">
-                              {lang.formatMessage({ id: "resend_otp_after" })} {countdown}s
-                            </div>
-                          ) : (
-                            <div className="DAT_UserManagement_Modal_Container_Main_Resend DAT_UserManagement_Modal_Container_Main_Resend_Active" onClick={handleOtpAgain}>
-                              {lang.formatMessage({ id: "resend_otp" })}
-                            </div>
-                          )}
-                          {error && <div className="DAT_UserManagement_Modal_Container_Main_Error">{error}</div>}
-                        </div>
-                        <div className="DAT_UserManagement_Modal_Container_Foot">
-                          <button type="button" className="DAT_UserManagement_Modal_Container_Foot_Button_Secondary" onClick={() => setStep(2)}>
-                            {lang.formatMessage({ id: "go_back" })}
-                          </button>
-                          <button className="DAT_UserManagement_Modal_Container_Foot_Button_Primary" type="submit">
-                            {lang.formatMessage({ id: "user_modal_add_title" })}
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  )}
-                </>
               )}
             </div>
           </div>
@@ -845,7 +911,7 @@ export default function UserManagement() {
                                   {currentUser.id !== user.id && currentUser.permissions["users"].includes(defaultPermissions.delete) && (
                                     <div className="DAT_UserManagement_Pop_MenuItem" style={{ color: "red" }}
                                       onClick={() => {
-                                        setDeleteUser(true); setOpenMenu(null); setDeleteUserId(user.id);
+                                        setModalType("delete"); setOpenMenu(null); setDeleteUserId(user.id);
                                       }}>
                                       {lang.formatMessage({ id: "user_delete_button" })}
                                     </div>
@@ -918,21 +984,12 @@ export default function UserManagement() {
           </div>
 
           <Modal
-            isOpen={showModal}
-            onClose={() => { setShowModal(false); setEditing(null); }}
-            title={editing ? lang.formatMessage({ id: "user_modal_edit_title" }) : lang.formatMessage({ id: "user_modal_add_title" })}
-            footer={
-              <>
-                <button className="DAT_UserManagement_Modal_Footer_Button_Secondary" onClick={() => { setShowModal(false); setEditing(null); }}>
-                  {lang.formatMessage({ id: "modal_cancel" })}
-                </button>
-                <button className="DAT_UserManagement_Modal_Footer_Button_Primary" onClick={saveUser}>
-                  {lang.formatMessage({ id: "user_modal_save_user" })}
-                </button>
-              </>
-            }
+            isOpen={modalType !== null}
+            onClose={() => setModalType(null)}
+            title={renderTitle()}
+            footer={renderFooter()}
           >
-            {renderModalFormBody()}
+            {renderBody()}
           </Modal>
         </div>
       )}

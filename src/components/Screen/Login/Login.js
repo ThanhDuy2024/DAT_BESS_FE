@@ -65,6 +65,8 @@ export default function Login() {
       return;
     }
 
+    console.log(identifier, password)
+
     setLoading(true);
     const result = await login(identifier, password, remember);
     setLoading(false);
@@ -85,7 +87,7 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    const result = await login("Khách", "12345", true);
+    const result = await login("demo_user", "abc12345", true);
     setLoading(false);
 
     if (result.success) {

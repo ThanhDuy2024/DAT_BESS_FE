@@ -282,6 +282,7 @@
                             border: 1px solid transparent;
                             border-color: var(--border);
                             color: var(--primary);
+                            white-space: nowrap;
 
                             &:hover {
                                 border-color: var(--primary);

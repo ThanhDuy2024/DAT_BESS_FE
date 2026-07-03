@@ -327,10 +327,8 @@
 
       &_Main {
         align-items: center;
-        border-bottom: 1px solid rgba(198, 197, 197, 0.5);
         font-size: 14px;
         justify-content: center;
-        padding: 16px;
         background-color: var(--card-bg);
 
         &_Otp {
@@ -369,7 +367,7 @@
             }
 
             &_Select {
-              width: 150px;
+              width: 135px;
               height: 30px;
               padding: 0 32px 0 14px;
               appearance: none;
@@ -436,15 +434,6 @@
           }
         }
 
-        // input {
-        //   border-radius: 5px;
-        //   -webkit-box-sizing: border-box;
-        //   -moz-box-sizing: border-box;
-        //   height: 30px;
-        //   outline: none;
-        //   padding: 8px;
-        //   width: 100%;
-        // }
 
       }
 

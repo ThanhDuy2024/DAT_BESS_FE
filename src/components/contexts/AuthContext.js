@@ -91,6 +91,7 @@ export function AuthProvider({ children }) {
         account: identifier.trim(),
         password,
       });
+      console.log(res);
 
       if (!res?.status) return { success: false, error: res?.mess || "Login failed" };
 
