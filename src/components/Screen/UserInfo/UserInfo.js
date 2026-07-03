@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./UserInfo.scss";
-import { useAuth } from "../../contexts/AuthContext";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { LuUserPen } from "react-icons/lu";
 import { useIntl } from "react-intl";

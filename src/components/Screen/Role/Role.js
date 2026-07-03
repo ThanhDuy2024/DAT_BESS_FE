@@ -10,7 +10,6 @@ import Modal from '../../Modal/Modal';
 import { callApi } from '../../Api/Api';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner';
-import { useAuth } from '../../contexts/AuthContext';
 import { isMobile } from "react-device-detect";
 import { SystemContext } from '../../contexts/SystemContext';
 

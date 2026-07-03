@@ -10,7 +10,6 @@ import { LuUsers, LuUserPlus, LuMenu, LuUser } from "react-icons/lu";
 import { callApi, From } from "../../Api/Api";
 import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "sonner";
 import { SystemContext } from "../../contexts/SystemContext";
 

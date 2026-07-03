@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { LuBell, LuLogOut } from "react-icons/lu";
 import { FaEarthAsia } from "react-icons/fa6";
 import { useIntl } from "react-intl";
-import { useAuth } from "../contexts/AuthContext";
 import { useLanguage } from "../Lang/LanguageProvider";
 import "./Header.scss";
 import { isMobile } from "react-device-detect";

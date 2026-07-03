@@ -7,8 +7,6 @@ import Sidebar from "../Sidebar/Sidebar";
 import Header from "../Header/Header";
 import Alarm from "../Screen/Alarm/Alarm";
 import "./MainLayout.scss";
-import { useAuth } from "../contexts/AuthContext";
-
 export default function MainLayout() {
   const lang = useIntl();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);

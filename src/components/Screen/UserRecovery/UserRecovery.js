@@ -11,7 +11,6 @@ import Modal from '../../Modal/Modal';
 import { callApi } from '../../Api/Api';
 import { LuUsers, LuUserPlus, LuMenu, LuUser } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
 import { isMobile } from "react-device-detect";
 import { SystemContext } from '../../contexts/SystemContext';

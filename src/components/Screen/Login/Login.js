@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { replace, useNavigate } from "react-router-dom";
 import { LuEye, LuEyeOff, LuGlobe, LuLock, LuUser, LuMail, LuAccessibility } from "react-icons/lu";
 import { RiArrowGoBackLine, RiLockPasswordLine } from "react-icons/ri";
-
-import { useAuth } from "../../contexts/AuthContext";
 import { useLanguage } from "../../Lang/LanguageProvider";
 import { useIntl } from "react-intl";
 
@@ -16,7 +14,6 @@ export default function Login() {
   const lang = useIntl();
   const { locale, setLocale } = useLanguage();
   const navigate = useNavigate();
-  const { login } = useAuth();
   const { systemDispatch } = useContext(SystemContext)
   const backgroundStyle = {
     backgroundImage: `linear-gradient(rgba(7, 15, 32, 0.28), rgba(7, 15, 32, 0.42)), url(https://embody.com.vn/BG/728_0/1/tontaynam.jpg)`,
@@ -53,6 +50,41 @@ export default function Login() {
     setError("");
   }, [isForgotPassword]);
 
+  const login = async (account, password, save) => {
+    try {
+      const res = await callApi('post', `${process.env.REACT_APP_API}/data/login`, {
+        account: account,
+        password: password,
+      });
+
+      if (res.status === true) {
+        if (save) {
+          localStorage.setItem("token", JSON.stringify(res.token));
+        } else {
+          sessionStorage.setItem("token", JSON.stringify(res.token));
+        };
+        systemDispatch({
+          type: "LOAD_USR",
+          payload: {
+            userId: res.data.id_,
+            username: res.data.username_,
+            name: res.data.full_name_,
+            email: res.data.email_,
+            phone: res.data.phone_ || "",
+            address: res.data.address_ || "",
+            roleName: res.data.rolename_,
+            permissions: res.data.permission_,
+            status: true
+          }
+        })
+        return navigate("/dashboard");
+      }
+    } catch (error) {
+
+    }
+  }
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -68,35 +100,8 @@ export default function Login() {
     }
 
     setLoading(true);
-    const res = await callApi('post', `${process.env.REACT_APP_API}/data/login`, {
-      account: identifier,
-      password: password,
-    })
+    await login(identifier, password, remember);
     setLoading(false);
-
-    if (res.status === true) {
-      if (remember) {
-        localStorage.setItem("token", JSON.stringify(res.token));
-      } else {
-        sessionStorage.setItem("token", JSON.stringify(res.token));
-      }
-      systemDispatch({
-        type: "LOAD_USR",
-        payload: {
-          userId: res.data.id_,
-          username: res.data.username_,
-          name: res.data.full_name_,
-          email: res.data.email_,
-          phone: res.data.phone_ || "",
-          address: res.data.address_ || "",
-          roleName: res.data.rolename_,
-          permissions: res.data.permission_,
-          status: true
-        }
-      })
-      navigate("/dashboard");
-      return;
-    }
 
     setError(lang.formatMessage({ id: "login_error" }));
   };
@@ -108,18 +113,8 @@ export default function Login() {
   const handleDemoLogin = async () => {
     setError("");
     setLoading(true);
-
-    const result = await login("demo_user", "abc12345", true);
+    await login("demo_user", "abc12345", true);
     setLoading(false);
-
-    if (result.success) {
-      navigate("/dashboard", {
-        replace: true
-      });
-      return;
-    }
-
-    setError(result.error);
   };
 
   const handleSubmitEmail = async (e) => {
@@ -209,7 +204,8 @@ export default function Login() {
     } else {
       setError(lang.formatMessage({ id: "alarm_password_not_match" }));
     }
-  }
+  };
+
   const handleOtpChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
 
@@ -237,7 +233,7 @@ export default function Login() {
       console.log(error);
       console.log("Lỗi hệ thống");
     }
-  }
+  };
 
   const handleOtpKeyDown = (index, e) => {
     if (
