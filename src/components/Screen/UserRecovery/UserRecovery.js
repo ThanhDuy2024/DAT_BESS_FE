@@ -75,7 +75,7 @@ export default function UserRecovery() {
         try {
             const response = await callApi(
                 "post",
-                `${process.env.REACT_APP_APIDEV}/data/deleteUserRecovery`,
+                `${process.env.REACT_APP_API}/data/deleteUserRecovery`,
                 {
                     userId: user.id
                 }

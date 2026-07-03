@@ -3,12 +3,13 @@ import { useIntl } from "react-intl"
 import './RoleEdit.scss'
 import './RoleEditMobile.scss'
 import { IoIosArrowBack } from "react-icons/io";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
 import { callApi } from "../../Api/Api";
 import { toast } from "sonner";
 import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
+import { SystemContext } from "../../contexts/SystemContext";
 
 const permissions = {
     dashboard: ["View", "Create", "Update", "Delete"],
@@ -24,6 +25,7 @@ const permissions = {
 export default function RoleEdit() {
     const lang = useIntl();
     const { id } = useParams();
+    const { systemDispatch } = useContext(SystemContext);
     const [selected, setSelected] = useState({});
     const [roleName, setRoleName] = useState("");
     const [status, setStatus] = useState("active");
@@ -84,7 +86,13 @@ export default function RoleEdit() {
             if (res && res.status === true) {
                 toast.success(lang.formatMessage({ id: "toast_updated" }))
                 loadRoleDetail(id);
-                
+                systemDispatch({
+                    type: "UPDATE_YOUR_ROLE", 
+                    payload: {
+                        roleName: payload.roleName,
+                        permissions: payload.permission
+                    }
+                })
             } else {
                 toast.error(lang.formatMessage({ id: "toast_error" }))
             }

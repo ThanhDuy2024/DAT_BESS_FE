@@ -14,7 +14,6 @@ const INITIAL_STATE = {
 const SystemReducer = (state, action) => {
     switch (action.type) {
         case 'LOAD_USR':
-
             return {
                 ...state,
                 userId: action.payload.userId,
@@ -26,6 +25,17 @@ const SystemReducer = (state, action) => {
                 roleName: action.payload.roleName,
                 permissions: action.payload.permissions,
                 status: action.payload.status
+            }
+        case 'UPDATE_YOUR_ROLE':
+            if (state.roleName === action.payload.roleName) {
+                return {
+                    ...state,
+                    permissions: action.payload.permissions
+                }
+            } else {
+                return {
+                    ...state
+                }
             }
         default:
             return state;
