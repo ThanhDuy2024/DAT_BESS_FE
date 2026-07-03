@@ -75,7 +75,7 @@ export default function UserRecovery() {
         try {
             const response = await callApi(
                 "post",
-                `${process.env.REACT_APP_API}/data/deleteUserRecovery`,
+                `${process.env.REACT_APP_APIDEV}/data/deleteUserRecovery`,
                 {
                     userId: user.id
                 }
@@ -85,7 +85,7 @@ export default function UserRecovery() {
                 loadUserRecovery(search, sort, currentPage);
             }
         } catch (error) {
-            toast.success(lang.formatMessage({ id: "toast_error" }))
+            toast.error(lang.formatMessage({ id: "toast_error" }))
             console.log(error);
             console.log(error.response);
             console.log(error.response?.data);
@@ -113,6 +113,7 @@ export default function UserRecovery() {
 
         },
     ];
+
     useEffect(() => {
         loadUserRecovery(search, sort, currentPage);
     }, [search, sort, currentPage]);

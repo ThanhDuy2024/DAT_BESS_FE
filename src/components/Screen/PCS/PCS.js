@@ -184,17 +184,7 @@ const PCS = (props) => {
     5: "Chg.derate",
     6: "Disch.derate",
   }
-
-    const {username, status,systemDispatch} = useContext(SystemContext)
   
-    useEffect(() => {
-        console.log(username, status)
-  
-        // systemDispatch({type:'LOAD_USR',payload:{username:'loc',status:true}})
-  
-    }, [])
-  
-
   useEffect(() => {
 
 

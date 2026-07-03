@@ -93,7 +93,7 @@ const ProtectedRoute = () => {
     };
 
     loadUser();
-  }, [status, systemDispatch, navigate]);
+  }, [status, systemDispatch]);
 
   if (isLoading) {
     return <div>Loading...</div>;
