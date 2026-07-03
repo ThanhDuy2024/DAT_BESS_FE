@@ -82,7 +82,7 @@ export default function Role() {
         console.log(response.msg);
       } else {
         toast.success(lang.formatMessage({ id: "toast_created" }))
-        setAddRoleModal(false);
+        setModalType(null);
       };
     } catch (error) {
       console.log(error);
@@ -105,7 +105,7 @@ export default function Role() {
 
   useEffect(() => {
     getAllRole(currentPage, search, filterStatus);
-  }, [addRoleModal, currentPage, search, filterStatus, sort])
+  }, [addRoleModal, currentPage, search, filterStatus, sort, modalType])
 
   const handleDelete = async () => {
     if (!deleteRole) return;
@@ -121,7 +121,7 @@ export default function Role() {
       if (res.status) {
         toast.success(lang.formatMessage({ id: "toast_deleted" }))
         getAllRole(currentPage, search, filterStatus);
-        setDeleteRole(null); // Đóng modal sau khi xóa thành công
+        setDeleteRole(null);
       } else {
         toast.error(lang.formatMessage({ id: "toast_error" }))
       }
@@ -130,6 +130,7 @@ export default function Role() {
       alert("Có lỗi xảy ra khi xóa!");
     }
   };
+
   const renderTitle = () => {
     switch (modalType) {
       case "add":
@@ -142,6 +143,7 @@ export default function Role() {
         return "";
     }
   };
+  
   const renderModalAddRole = () => {
     return (
       <div className="DAT_RoleSetting_Form_Grid">
