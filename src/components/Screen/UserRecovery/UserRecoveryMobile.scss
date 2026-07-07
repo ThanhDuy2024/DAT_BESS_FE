@@ -347,32 +347,13 @@
             }
 
             &_Btn_Delete {
-                background-color: var(--danger-dark);
+                background-color: var(--primary);
                 border: none;
                 border-radius: 5px;
                 color: var(--card-bg);
                 cursor: pointer;
                 padding: 8px 16px;
                 margin-left: 6px;
-            }
-
-            &_Button_GhostSm {
-                background: transparent;
-                border-color: var(--border);
-                color: var(--primary);
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: var(--space-sm);
-                padding: 6px 12px;
-                border: 1px solid transparent;
-                border-radius: var(--radius-md);
-                font-size: var(--font-size-sm);
-                font-weight: var(--font-weight-medium);
-                line-height: 1.4;
-                white-space: nowrap;
-                transition: all var(--transition-base);
-
             }
         }
     }

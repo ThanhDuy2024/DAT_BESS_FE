@@ -143,7 +143,7 @@ export default function Role() {
         return "";
     }
   };
-  
+
   const renderModalAddRole = () => {
     return (
       <div className="DAT_RoleSetting_Form_Grid">
@@ -278,12 +278,14 @@ export default function Role() {
                 placeholder={lang.formatMessage({ id: "role_search" })}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <button
-                className="DAT_RoleSettingMobile_Card_Actions_Button_Primary"
-                onClick={() => setModalType("add")}
-              >
-                <AiOutlineUsergroupAdd size={22} />
-              </button>
+              {permissions["roles"].includes(defaultPermissions.create) && (
+                <button
+                  className="DAT_RoleSettingMobile_Card_Actions_Button_Primary"
+                  onClick={() => setModalType("add")}
+                >
+                  <AiOutlineUsergroupAdd size={22} />
+                </button>
+              )}
               <select
                 className="DAT_RoleSettingMobile_Card_Actions_FilterSelect"
                 style={{ width: 140 }}
@@ -317,19 +319,24 @@ export default function Role() {
             {roles.map((item) => {
               return (
                 <div className="DAT_RoleSettingMobile_Container_Card">
-                  <div className="DAT_RoleSettingMobile_Container_Card_Left">ROLE-{item.id >= 10 ? `0${item.id}` : `00${item.id}`}</div>
-                  <div className="DAT_RoleSettingMobile_Container_Card_Mid1">
-                    <div className="DAT_RoleSettingMobile_Container_Card_Mid1_Title">{item.roleName}</div>
-                    <div className="DAT_RoleSettingMobile_Container_Card_Mid1_Subtitle">{item.numberOfUser} {lang.formatMessage({ id: "users" })}</div>
-                  </div>
-                  <div className="DAT_RoleSettingMobile_Container_Card_Mid2">
-                    <div className="DAT_RoleSettingMobile_Container_Card_Mid2_Date">{item.createdAt}</div>
-                    <div className="DAT_RoleSettingMobile_Container_Card_Mid2_Status"
-                      style={{ color: item.status === "active" ? "green" : "red" }}
-                    >
-                      {item.status == "active" ? lang.formatMessage({ id: "statusActive_role" }) : lang.formatMessage({ id: "statusInactive_role" })}</div>
+                  <div className="DAT_RoleSettingMobile_Container_Card_Left">
+                    <div className="DAT_RoleSettingMobile_Container_Card_Left_Label">
+                    ROLE-{item.id >= 10 ? `0${item.id}` : `00${item.id}`}
+                    </div>
+
+                    <div className="DAT_RoleSettingMobile_Container_Card_Left_Item">
+                      <div className="DAT_RoleSettingMobile_Container_Card_Left_Item_Title">{item.roleName}</div>
+                      <div className="DAT_RoleSettingMobile_Container_Card_Left_Item_Subtitle">{item.numberOfUser} {lang.formatMessage({ id: "users" })}</div>
+                    </div>
                   </div>
                   <div className="DAT_RoleSettingMobile_Container_Card_Right">
+                    <div className="DAT_RoleSettingMobile_Container_Card_Right_Item">
+                      <div className="DAT_RoleSettingMobile_Container_Card_Right_Item_Date">{item.createdAt}</div>
+                      <div className="DAT_RoleSettingMobile_Container_Card_Right_Item_Status"
+                        style={{ color: item.status === "active" ? "green" : "red" }}
+                      >
+                        {item.status == "active" ? lang.formatMessage({ id: "statusActive_role" }) : lang.formatMessage({ id: "statusInactive_role" })}</div>
+                    </div>
                     <button
                       className="DAT_RoleSettingMobile_Container_Card_Right_Button"
                       aria-label="View alarm detail"

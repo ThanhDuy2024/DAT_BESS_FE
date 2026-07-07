@@ -42,7 +42,7 @@ export default function Battery() {
 
     (async () => {
       let data = await callApi("post", process.env.REACT_APP_API + "/data/readBess", {
-        level: "pcslevel",
+        level: "bmslevel",
       });
       console.log(data);
       if (data.status === "true") {
@@ -63,13 +63,16 @@ export default function Battery() {
       level: "bmslevel"
     });
 
-    // socket.value.emit("BESS_SUBSCRIBE_MANY", {
-    //     levels: ["pcslevel"],
-    // });
+    socket.value.emit("BESS_SUBSCRIBE_MANY", {
+        levels: ["bmslevel", "rack1level_04", "rack1cellvoltagelevel_04"],
+    });
 
     socket.value.on("BESS_DATA", (payload) => {
-      // console.log(payload.level, payload.data);
+      //console.log(payload.level, payload.data);
 
+      if(payload.level === "rack1level_04") {
+        console.log(payload.data);
+      }
       Object.keys(payload.data).map((keyName, i) => {
 
         setDataInf(data => ({ ...data, [keyName]: payload.data[keyName] }));

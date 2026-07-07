@@ -218,7 +218,7 @@ export default function UserManagement() {
 
       if (response.status === true) {
         toast.success(lang.formatMessage({ id: "toast_updated" }))
-        setShowModal(false);
+        setModalType(null);
         setEditing(null);
         setForm(emptyUser);
         loadUser();
@@ -556,7 +556,7 @@ export default function UserManagement() {
       case "edit":
         return renderModalFormBody();
       case "delete":
-        return lang.formatMessage({ id: "description_delete_user" })
+        return lang.formatMessage({ id: "description_delete" })
       default:
         return null;
     }
@@ -922,59 +922,6 @@ export default function UserManagement() {
                                     </div>
                                   )}
 
-                                </div>
-                              )}
-                              {deleteUser && (
-                                <div className="DAT_UserManagement_Modal" onClick={() => { setDeleteUser(false) }}>
-                                  <div className="DAT_UserManagement_Modal_Container">
-                                    <div className="DAT_UserManagement_Modal_Container_Header">
-                                      <div className="DAT_UserManagement_Modal_Container_Header_Title">
-                                        {lang.formatMessage({
-                                          id: "confirm_delete",
-                                        })}{" "}
-                                      </div>
-                                      <div className="DAT_UserManagement_Modal_Container_Header_Close">
-                                        <svg
-                                          stroke="currentColor"
-                                          fill="currentColor"
-                                          strokeWidth="0"
-                                          viewBox="0 0 512 512"
-                                          height="25"
-                                          width="25"
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          onClick={() => setDeleteUser(false)}
-                                        >
-                                          <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
-                                        </svg>
-                                      </div>
-                                    </div>
-
-                                    <div className="DAT_UserManagement_Modal_Container_Main">
-                                      {lang.formatMessage({
-                                        id: "description_delete",
-                                      })}
-                                    </div>
-
-                                    <div className="DAT_UserManagement_Modal_Container_Foot">
-                                      <button
-                                        className="DAT_UserManagement_Modal_Container_Foot_Btn_Cancel"
-                                        onClick={() => setDeleteUser(null)}
-                                      >
-                                        {lang.formatMessage({ id: "cancel" })}
-                                      </button>
-
-                                      <button
-                                        className="DAT_UserManagement_Modal_Container_Foot_Btn_Delete"
-                                        onClick={() => {
-                                          handleDelete()
-                                        }}
-                                      >
-                                        {lang.formatMessage({
-                                          id: "user_delete_button",
-                                        })}
-                                      </button>
-                                    </div>
-                                  </div>
                                 </div>
                               )}
                             </div>

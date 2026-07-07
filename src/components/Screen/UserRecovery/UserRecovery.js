@@ -27,6 +27,8 @@ export default function UserRecovery() {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedUser, setSelectedUser] = useState("");
     const [openModal, setOpenModal] = useState(false);
+    const [modalType, setModalType] = useState(null);
+
     const navigate = useNavigate();
 
     const loadUserRecovery = async (search, sort, currentPage) => {
@@ -61,7 +63,7 @@ export default function UserRecovery() {
             );
             if (response.status === true) {
                 toast.success(lang.formatMessage({ id: "toast_recovery" }))
-                setOpenRecoveryModal(-1)
+                setModalType(null)
                 loadUserRecovery(search, sort, currentPage);
             }
         } catch (error) {
@@ -71,17 +73,18 @@ export default function UserRecovery() {
         }
     }
 
-    const handleDelete = async (user) => {
+    const handleDelete = async (userId) => {
         try {
             const response = await callApi(
                 "post",
-                `${process.env.REACT_APP_API}/data/deleteUserRecovery`,
+                `${process.env.REACT_APP_APIDEV}/data/deleteUserRecovery`,
                 {
-                    userId: user.id
+                    userId: userId
                 }
             );
             if (response.status === true) {
-                toast.success(lang.formatMessage({ id: "toast_delete" }))
+                toast.success(lang.formatMessage({ id: "toast_deleted" }))
+                setModalType(null)
                 loadUserRecovery(search, sort, currentPage);
             }
         } catch (error) {
@@ -118,6 +121,95 @@ export default function UserRecovery() {
         loadUserRecovery(search, sort, currentPage);
     }, [search, sort, currentPage]);
 
+
+    const renderTitle = () => {
+        switch (modalType) {
+            case "view":
+                return `${lang.formatMessage({ id: "user_information" })} USR-${String(selectedUser.id).padStart(3, "0")}`
+            case "delete":
+                return lang.formatMessage({ id: "confirm_delete", })
+            case "recovery":
+                return lang.formatMessage({ id: "confirm_recovery", })
+        }
+    }
+    const renderBody = () => {
+        switch (modalType) {
+            case "view":
+                return (
+                    <div className="DAT_UserRecoveryMobile_Modal">
+                        {userInfo.map((item, index) => (
+                            <div key={index} className="DAT_UserRecoveryMobile_Modal_Row">
+                                <div className="DAT_UserRecoveryMobile_Modal_Row_Label">{item.label}</div>
+                                <div className="DAT_UserRecoveryMobile_Modal_Row_Value">{item.value || "-"}</div>
+                            </div>
+                        ))}
+                    </div>
+                )
+            case "delete":
+                return lang.formatMessage({ id: "description_delete", })
+            case "recovery":
+                return lang.formatMessage({ id: "description_recovery", })
+        }
+    }
+    const renderFooter = () => {
+        switch (modalType) {
+            case "view":
+                return (
+
+                    <div className="DAT_UserRecoveryMobile_Modal_Foot">
+                        <div className="DAT_UserRecoveryMobile_Modal_Foot_Btn_Cancel" onClick={() => setModalType(null)}>
+                            {lang.formatMessage({ id: "cancel" })}
+                        </div>
+                        <div className="DAT_UserRecoveryMobile_Modal_Foot_Btn_Delete" onClick={() => { setModalType("recovery") }}>
+                            {lang.formatMessage({ id: "recovery" })}
+                        </div>
+                        <div className="DAT_UserRecoveryMobile_Modal_Foot_Btn_Delete" onClick={() => { setModalType("delete") }}>
+                            {lang.formatMessage({ id: "delete" })}
+                        </div>
+                    </div>
+                )
+            case "delete":
+                return (
+                    <>
+                        <button
+                            className="DAT_UserManagement_Modal_Container_Foot_Btn_Cancel"
+                            onClick={() => setModalType(null)}
+                        >
+                            {lang.formatMessage({ id: "cancel" })}
+                        </button>
+
+                        <button
+                            className="DAT_UserManagement_Modal_Container_Foot_Btn_Delete"
+                            onClick={() => handleDelete(selectedUser.id)}
+                        >
+                            {lang.formatMessage({
+                                id: "user_button_delete",
+                            })}
+                        </button>
+                    </>
+                )
+            case "recovery":
+                return (
+                    <>
+                        <button
+                            className="DAT_UserManagement_Modal_Container_Foot_Btn_Cancel"
+                            onClick={() => setModalType(null)}
+                        >
+                            {lang.formatMessage({ id: "cancel" })}
+                        </button>
+
+                        <button
+                            className="DAT_UserManagement_Modal_Container_Foot_Btn_Delete"
+                            onClick={() => handleRecovery(selectedUser.id)}
+                        >
+                            {lang.formatMessage({
+                                id: "user_button_recovery",
+                            })}
+                        </button>
+                    </>
+                )
+        }
+    }
     return (
         <>
             {isMobile ? (
@@ -169,7 +261,7 @@ export default function UserRecovery() {
                                     className="DAT_UserRecoveryMobile_Container_Card_Button"
                                     onClick={() => {
                                         setSelectedUser(user);
-                                        setOpenModal(true);
+                                        setModalType("view");
                                     }}
                                 >
                                     {lang.formatMessage({ id: "view_details" })}
@@ -178,25 +270,12 @@ export default function UserRecovery() {
                         ))}
                     </div>
                     <Modal
-                        isOpen={openModal}
-                        onClose={() => setOpenModal(false)}
-                        title={`${lang.formatMessage({ id: "user_information" })} USR-${String(selectedUser.id).padStart(3, "0")}`}
-                        footer={<>
-                            <div className="DAT_UserRecoveryMobile_Modal_Foot">
-                                <div className="DAT_UserRecoveryMobile_Modal_Foot_Btn_Delete" onClick={() => { setOpenModal(false); handleRecovery(selectedUser.id) }}>
-                                    {lang.formatMessage({ id: "recovery" })}
-                                </div>
-                            </div>
-                        </>}
+                        isOpen={modalType !== null}
+                        onClose={() => setModalType(null)}
+                        title={renderTitle()}
+                        footer={renderFooter()}
                     >
-                        <div className="DAT_UserRecoveryMobile_Modal">
-                            {userInfo.map((item, index) => (
-                                <div key={index} className="DAT_UserRecoveryMobile_Modal_Row">
-                                    <div className="DAT_UserRecoveryMobile_Modal_Row_Label">{item.label}</div>
-                                    <div className="DAT_UserRecoveryMobile_Modal_Row_Value">{item.value || "-"}</div>
-                                </div>
-                            ))}
-                        </div>
+                        {renderBody()}
                     </Modal>
                 </div>
             ) : (
@@ -285,66 +364,16 @@ export default function UserRecovery() {
                                                     <div className='DAT_UserRecovery_Container_Table_Main_Cell_Action'>
                                                         <button
                                                             className='DAT_UserRecovery_Container_Table_Main_Cell_Action_Button'
-                                                            onClick={() => setOpenRecoveryModal(item.id)}
+                                                            onClick={() => { setModalType("recovery"); setSelectedUser(item) }}
                                                         >
                                                             {lang.formatMessage({ id: "user_button_recovery" })}
                                                         </button>
                                                         <button
                                                             className='DAT_UserRecovery_Container_Table_Main_Cell_Action_Button'
-                                                            onClick={() => { handleDelete(item) }}
+                                                            onClick={() => { setModalType("delete"); setSelectedUser(item) }}
                                                         >
                                                             {lang.formatMessage({ id: "delete" })}
                                                         </button>
-                                                        {openRecoveryModal == item.id && (
-                                                            <div className="DAT_UserManagement_Modal">
-                                                                <div className="DAT_UserManagement_Modal_Container">
-                                                                    <div className="DAT_UserManagement_Modal_Container_Header">
-                                                                        <div className="DAT_UserManagement_Modal_Container_Header_Title">
-                                                                            {lang.formatMessage({
-                                                                                id: "confirm_recovery",
-                                                                            })}{" "}
-                                                                        </div>
-                                                                        <div className="DAT_UserManagement_Modal_Container_Header_Close" onClick={() => setOpenRecoveryModal(-1)}>
-                                                                            <svg
-                                                                                stroke="currentColor"
-                                                                                fill="currentColor"
-                                                                                strokeWidth="0"
-                                                                                viewBox="0 0 512 512"
-                                                                                height="25"
-                                                                                width="25"
-                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                            >
-                                                                                <path d="M289.94 256l95-95A24 24 0 00351 127l-95 95-95-95a24 24 0 00-34 34l95 95-95 95a24 24 0 1034 34l95-95 95 95a24 24 0 0034-34z"></path>
-                                                                            </svg>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div className="DAT_UserManagement_Modal_Container_Main">
-                                                                        {lang.formatMessage({
-                                                                            id: "description_recovery",
-                                                                        })}
-                                                                    </div>
-
-                                                                    <div className="DAT_UserManagement_Modal_Container_Foot">
-                                                                        <button
-                                                                            className="DAT_UserManagement_Modal_Container_Foot_Btn_Cancel"
-                                                                            onClick={() => setOpenRecoveryModal(-1)}
-                                                                        >
-                                                                            {lang.formatMessage({ id: "cancel" })}
-                                                                        </button>
-
-                                                                        <button
-                                                                            className="DAT_UserManagement_Modal_Container_Foot_Btn_Delete"
-                                                                            onClick={() => handleRecovery(item.id)}
-                                                                        >
-                                                                            {lang.formatMessage({
-                                                                                id: "user_button_recovery",
-                                                                            })}
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -380,7 +409,17 @@ export default function UserRecovery() {
                             </div>
                         )}
                     </div>
+
+                    <Modal
+                        isOpen={modalType !== null}
+                        onClose={() => setModalType(null)}
+                        title={renderTitle()}
+                        footer={renderFooter()}
+                    >
+                        {renderBody()}
+                    </Modal>
                 </div>
+
             )}
         </>
     )

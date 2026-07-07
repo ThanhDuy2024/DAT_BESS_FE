@@ -122,8 +122,8 @@
             background: var(--card-bg);
             box-shadow: var(--shadow-card);
             transition: box-shadow var(--transition-base);
-            display: grid;
-            grid-template-columns: 90px 120px 110px 1fr;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             margin-bottom: 8px;
@@ -131,43 +131,50 @@
             height: 60px;
 
             &_Left {
-                background: var(--primary);
-                color: white;
-                border-top-left-radius: var(--radius-md);
-                border-bottom-left-radius: var(--radius-md);
-                font-weight: var(--font-weight-bold);
                 height: 60px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                padding: 0px 5px;
-                margin-right: 8px;
-            }
 
-            &_Mid1 {
-                &_Title {
+                &_Label {
+                    background: var(--primary);
+                    color: white;
+                    border-top-left-radius: var(--radius-md);
+                    border-bottom-left-radius: var(--radius-md);
                     font-weight: var(--font-weight-bold);
-                    color: var(--primary);
+                    padding: 0px 5px;
+                    margin-right: 8px;
+                    height: 60px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 }
 
-                &_Subtitle {
-                    color: var(--text-secondary);
-                    font-size: var(--font-size-xs);
+                &_Item {
+                    &_Title {
+                        font-weight: var(--font-weight-bold);
+                        color: var(--primary);
+                    }
+
+                    &_Subtitle {
+                        color: var(--text-secondary);
+                        font-size: var(--font-size-xs);
+                    }
                 }
-            }
-
-            &_Mid2 {
-                text-align: end;
-                margin-right: 8px;
-
-                &_Date {
-                    color: var(--text-secondary);
-                    font-size: var(--font-size-xs);
-                }
-
             }
 
             &_Right {
+                display:flex;
+                padding-right: 10px;
+                &_Item {
+                    text-align: end;
+                    margin-right: 8px;
+
+                    &_Date {
+                        color: var(--text-secondary);
+                        font-size: var(--font-size-xs);
+                    }
+                }
 
                 &_Button {
                     font-size: 14px;
