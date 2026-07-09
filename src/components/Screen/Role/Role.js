@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { isMobile } from "react-device-detect";
 import { SystemContext } from '../../contexts/SystemContext';
 
+
 const defaultPermissions = {
   read: 'read',
   update: "update",
@@ -108,7 +109,6 @@ export default function Role() {
   }, [addRoleModal, currentPage, search, filterStatus, sort, modalType])
 
   const handleDelete = async () => {
-    if (!deleteRole) return;
     try {
       const res = await callApi(
         "post",
@@ -121,7 +121,7 @@ export default function Role() {
       if (res.status) {
         toast.success(lang.formatMessage({ id: "toast_deleted" }))
         getAllRole(currentPage, search, filterStatus);
-        setDeleteRole(null);
+        setModalType(null);
       } else {
         toast.error(lang.formatMessage({ id: "toast_error" }))
       }
@@ -217,16 +217,20 @@ export default function Role() {
       case "view":
         return (
           <div className="DAT_RoleSettingMobile_Modal_Foot">
-            <button
-              className="DAT_RoleSettingMobile_Modal_Foot_Button_GhostSm"
-              style={{ color: "var(--text-primary)", backgroundColor: "var(--primary-light)" }}
-              onClick={() => navigate(`/roles/${selectedRole?.id}`)}
-            >
-              {lang.formatMessage({ id: "user_edit_button" })}
-            </button>
-            <div className="DAT_RoleSettingMobile_Modal_Foot_Btn_Delete" onClick={() => { setModalType("delete"); setDeleteRoleId(selectedRole?.id); }}>
-              {lang.formatMessage({ id: "user_delete_button" })}
-            </div>
+            {permissions["roles"].includes(defaultPermissions.update) && (
+              <button
+                className="DAT_RoleSettingMobile_Modal_Foot_Button_GhostSm"
+                style={{ color: "var(--text-primary)", backgroundColor: "var(--primary-light)" }}
+                onClick={() => navigate(`/roles/${selectedRole?.id}`)}
+              >
+                {lang.formatMessage({ id: "user_edit_button" })}
+              </button>
+            )}
+            {permissions["roles"].includes(defaultPermissions.delete) && (
+              <div className="DAT_RoleSettingMobile_Modal_Foot_Btn_Delete" onClick={() => { setModalType("delete"); setDeleteRoleId(selectedRole?.id); }}>
+                {lang.formatMessage({ id: "user_delete_button" })}
+              </div>
+            )}  
           </div>
         );
       case "delete":
@@ -321,7 +325,7 @@ export default function Role() {
                 <div className="DAT_RoleSettingMobile_Container_Card">
                   <div className="DAT_RoleSettingMobile_Container_Card_Left">
                     <div className="DAT_RoleSettingMobile_Container_Card_Left_Label">
-                    ROLE-{item.id >= 10 ? `0${item.id}` : `00${item.id}`}
+                      ROLE-{item.id >= 10 ? `0${item.id}` : `00${item.id}`}
                     </div>
 
                     <div className="DAT_RoleSettingMobile_Container_Card_Left_Item">

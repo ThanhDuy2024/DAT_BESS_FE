@@ -86,6 +86,7 @@ const ProtectedRoute = () => {
           navigate("/login");
         }
       } catch (error) {
+        console.log(error);
         navigate("/login");
       } finally {
         setIsLoading(false);
@@ -93,7 +94,7 @@ const ProtectedRoute = () => {
     };
 
     loadUser();
-  }, [status, systemDispatch]);
+  }, [status, systemDispatch, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -104,7 +105,7 @@ const ProtectedRoute = () => {
 
 const PublicOnlyRoute = ({ children }) => {
   const { status } = useContext(SystemContext);
-  return status ? <Navigate to="/dashboard" replace /> : children;
+  return status === true ? <Navigate to="/dashboard" replace /> : children;
 }
 
 const ProtectedPermission = (props) => {

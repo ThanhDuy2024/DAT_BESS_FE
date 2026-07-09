@@ -107,6 +107,9 @@ export default function EnergyReport() {
   const [charge, setCharge] = useState(0);
   const [discharge, setDischarge] = useState(0);
   const [report, setReport] = useState([]);
+  const [totalPage, setTotalPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reportPage, setReportPage] = useState([])
 
   const latestDate = useMemo(() => {
     if (mockEnergyReport && mockEnergyReport.length > 0) {
@@ -277,12 +280,11 @@ export default function EnergyReport() {
       return report.map((item) => formatHourLabel(item.time));
     }
 
-    return rows
+    return report
       .slice()
       .reverse()
       .map((item) => formatToDayMonth(item.date));
-  }, [rows, viewMode]);
-
+  }, [report, viewMode]);
   const chartRows = useMemo(() => {
     if (viewMode === "day") {
       return rows;
@@ -423,31 +425,69 @@ export default function EnergyReport() {
       },
     },
   };
-
-  useEffect(() => {
-    const getData = async () => {
-
-      try {
-
-        const res = await callApi(
-          "post",
-          `${process.env.REACT_APP_APIDEV}/data/getAllReport`,
-          {
-            date: formattedDateDisplay
-          }
-        );
-
-        if (res.status === true) {
-          setReport(res.data);
+  const getAllReportPagination = async (current) => {
+    try {
+      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/getAllReportPagination?date=${formattedDateDisplay}&page=${current}`);
+      if (response.status === false) {
+        console.log(response.msg);
+      } else {
+        setReportPage(response.data);
+        setTotalPage(response.totalPage);
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const getAllReport = async () => {
+    try {
+      const res = await callApi(
+        "post",
+        `${process.env.REACT_APP_APIDEV}/data/getAllReport`,
+        {
+          date: formattedDateDisplay
         }
-      } catch (err) {
-        console.log(err);
+      );
+
+      if (res.status === true) {
+        setReport(res.data);
       }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  useEffect(() => {
+    getAllReport();
+    getAllReportPagination(currentPage);
 
-    };
-    getData();
+  }, [formattedDateDisplay, currentPage]);
 
-  }, [formattedDateDisplay]);
+  const getPagination = (currentPage, totalPages) => {
+    const delta = 2; // số trang hiển thị mỗi bên
+    const pages = [];
+
+    const left = Math.max(2, currentPage - delta);
+    const right = Math.min(totalPages - 1, currentPage + delta);
+
+    pages.push(1);
+
+    if (left > 2) {
+      pages.push("...");
+    }
+
+    for (let i = left; i <= right; i++) {
+      pages.push(i);
+    }
+
+    if (right < totalPages - 1) {
+      pages.push("...");
+    }
+
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+    console.log(pages);
+    return pages;
+  };
   return (
     <>
       {isMobile ? (
@@ -1401,8 +1441,8 @@ export default function EnergyReport() {
                   <thead>
                     <tr>
                       <th>{lang.formatMessage({ id: "date" })}</th>
-                      <th>{lang.formatMessage({ id: "soc" })}</th>
-                      <th>{lang.formatMessage({ id: "soh" })}</th>
+                      <th>SOC</th>
+                      <th>SOH</th>
                       <th>{lang.formatMessage({ id: "charge" })}</th>
                       <th>{lang.formatMessage({ id: "discharge" })}</th>
 
@@ -1415,13 +1455,13 @@ export default function EnergyReport() {
                           id: "current",
                         })}
                       </th>
-                      <th>{lang.formatMessage({ id: "grid_export" })}</th>
-                      <th>{lang.formatMessage({ id: "load" })}</th>
+                      <th>{lang.formatMessage({ id: "dashboard_chart_series_grid_import" })}</th>
+                      <th>{lang.formatMessage({ id: "load_consumption" })}</th>
 
                     </tr>
                   </thead>
                   <tbody>
-                    {report.map((row) => (
+                    {reportPage.map((row) => (
                       <tr
                         key={
                           viewMode === "day"
@@ -1438,15 +1478,48 @@ export default function EnergyReport() {
                         <td>{row.soh} %</td>
                         <td>{row.charge} kWh</td>
                         <td>{row.discharge} kWh</td>
-                        <td>{row.volt} kWh</td>
-                        <td>{row.current} kWh</td>
-                        <td>{row.grid} kWh</td>
-                        <td>{row.load} kWh</td>
+                        <td>{row.volt} V</td>
+                        <td>{row.current} A</td>
+                        <td>{row.grid} kW</td>
+                        <td>{row.load} kW</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+
+                {totalPage > 1 && (
+                  <div className="DAT_Report_Detail_Container_Pagination">
+                    <button
+                      className="DAT_Report_Detail_Container_Pagination_Btn DAT_Report_Detail_Container_Pagination_Btn--prev"
+                      onClick={() => setCurrentPage(currentPage === 1 ? totalPage : currentPage - 1)}
+                    >
+                      &lt;
+                    </button>
+                    {getPagination(currentPage, totalPage).map((item, index) =>
+                      item === "..." ? (
+                        <span key={`ellipsis-${index}`} className="DAT_Report_Detail_Container_Pagination_Ellipsis">
+                          ...
+                        </span>
+                      ) : (
+                        <button
+                          key={item}
+                          className={`DAT_Report_Detail_Container_Pagination_Btn${(item) === currentPage ? " DAT_Report_Detail_Container_Pagination_Btn--active" : ""}`}
+                          onClick={() => setCurrentPage(item)}
+                        >
+                          {item}
+                        </button>
+                      )
+                    )}
+                    <button
+                      className="DAT_Report_Detail_Container_Pagination_Btn DAT_Report_Detail_Container_Pagination_Btn--next"
+                      onClick={() => setCurrentPage(currentPage == totalPage ? 1 : currentPage + 1)}
+                    >
+                      &gt;
+                    </button>
+                  </div>
+                )}
               </div>
+
             ) : (
               <div className="DAT_Report_Detail_Empty">
                 <div className="DAT_Report_Detail_Empty_Icon">📭</div>

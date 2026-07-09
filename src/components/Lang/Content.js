@@ -458,7 +458,10 @@ const enMessages = {
   alarm_username_wrong: "Username must not contain special characters or spaces.",
   alarm_username_wrong_number: "Username must contain at least one letter.",
   alarm_password_number: "Password must contain at least 8 character.",
-  user_save_button: "Save"
+  user_save_button: "Save",
+  user_button_delete: "Delete user",
+  volt: "Volt",
+  soc: "State of Charge"
 };
 
 const viMessages = {
@@ -932,7 +935,10 @@ const viMessages = {
   alarm_username_wrong: "Tên tài khoản không được gồm kí tự đặc biệt và khoảng trắng.",
   alarm_username_wrong_number: "Tên tài khoản phải gồm ít nhất một chữ cái.",
   alarm_password_number: "Mật khẩu phải ít nhất 8 kí tự",
-  user_save_button: "Lưu"
+  user_save_button: "Lưu",
+  user_button_delete: "Xóa người dùng",
+  volt: "Điện áp",
+  soc: "Trạng thái sạc",
 };
 
 export const messages = {
