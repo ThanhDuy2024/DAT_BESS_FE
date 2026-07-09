@@ -22,7 +22,7 @@
     &_Title {
       color: rgba(11, 25, 103, 1);
       font-size: 24px;
-      font-weight: 700;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -620,12 +620,12 @@ $color-border-line : #f1f4f8;
     &_Title {
       color: rgba(11, 25, 103, 1);
       font-size: 24px;
-      font-weight: 700;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 110px;
+      gap: 70px;
       display: flex;
-
+      white-space: nowrap;
     }
 
     &_Subtitle {
@@ -945,29 +945,27 @@ $color-border-line : #f1f4f8;
   }
 
   &_Stat {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-base);
 
     &_Box {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(251, 252, 254, 1) 100%);
+      padding: var(--space-base);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-lg);
-      padding: 10px;
-      width: 100px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(251, 252, 254, 1) 100%);
 
       &_Label {
         display: block;
         color: var(--text-secondary);
-        font-size: 9px;
+        font-size: var(--font-size-sm);
         margin-bottom: 6px;
       }
 
       &_Value {
         display: block;
         color: var(--text-primary);
-        font-size: 12px;
+        font-size: var(--font-size-xl);
         font-weight: var(--font-weight-bold);
       }
     }
@@ -1034,65 +1032,117 @@ $color-border-line : #f1f4f8;
       background-color: rgba(235, 237, 239, 1);
 
       &_Cards {
-        background-color: $color-bg-card;
-        max-width: 450px;
-        border: 1px solid var(--border-light);
+        border: 1px solid #e8eaed;
+        // border-radius: 8px;
+        background: #ffffff;
+        // margin-bottom: 12px;
+        transition: all 0.8s ease;
+        overflow: hidden;
+
+        &.expanded {
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
 
         &_Header {
+          cursor: pointer;
           display: flex;
-          justify-content: space-between;
           align-items: center;
-          // margin-bottom  : 20px;
+          justify-content: space-between;
+          transition: all 0.8s ease;
+          user-select: none;
+          padding: 6px 10px;
 
+          &:hover {
+            background: #fafbfc;
+          }
+        }
 
-          &_Time {
+        &_Time {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+          flex: 1;
+
+          .icon-clock {
+            background-color: #f0f6ff;
+            color: #1b63b8;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            flex-shrink: 0;
 
-            .icon-clock {
-              background-color: $color-bg-time;
-              color: $color-blue-primary;
-              padding: 10px;
-              border-radius: 12px;
-              font-size: 1.2rem;
+            svg {
               display: flex;
-              align-items: center;
-              justify-content: center;
-            }
-
-            .time-text {
-              font-size: 1.4rem;
-              font-weight: 700;
-              color: #000000;
             }
           }
 
-          &_Badge {
-            background-color: $color-bg-badge;
-            color: $color-text-badge;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.9rem;
+          .time-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+          }
+
+          .time-text {
+            font-size: 14px;
             font-weight: 600;
-            letter-spacing: 0.3px;
+            color: #202124;
+          }
+
+          .efficiency-text {
+            font-size: 12px;
+            font-weight: 400;
+            color: #5f6368;
           }
         }
 
-        // Thanh gạch ngang phân cách
+        .expand-icon {
+          font-size: 14px;
+          color: #9aa0a6;
+          transition: transform 0.8s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-left: 12px;
+          flex-shrink: 0;
+
+          svg {
+            display: flex;
+          }
+
+          &.expanded {
+            transform: rotate(180deg);
+            color: #1b63b8;
+          }
+        }
+
         &_Thanh {
           height: 1px;
-          background-color: $color-border-line;
-          width: 100%;
-          margin-bottom: 24px;
+          background: #e8eaed;
+          margin: 0;
+          transition: all 0.8s ease;
         }
 
-        // Grid container chứa 6 ô dữ liệu (chia thành 2 cột)
         &_Container {
+          padding: 12px 16px 14px;
+          animation: expandDown 0.8s ease;
           display: grid;
           grid-template-columns: 1fr 1fr;
-          row-gap: 24px;
-          column-gap: 20px;
+          gap: 12px;
+        }
+
+        &.collapsed {
+          .DAT_Mobile_Report_Detail_Container_Cards {
+            &_Container {
+              display: none;
+            }
+          }
         }
 
       }
@@ -1144,120 +1194,6 @@ $color-border-line : #f1f4f8;
 }
 
 // Accordion/Collapsible cards styles
-.DAT_Mobile_Report_Detail_Container_Cards {
-  border: 1px solid #e8eaed;
-  // border-radius: 8px;
-  background: #ffffff;
-  // margin-bottom: 12px;
-  transition: all 0.8s ease;
-  overflow: hidden;
-
-  &.expanded {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-
-  &_Header {
-    padding: 14px 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: all 0.8s ease;
-    user-select: none;
-
-    &:hover {
-      background: #fafbfc;
-    }
-  }
-
-  &_Time {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    flex: 1;
-
-    .icon-clock {
-      background-color: #f0f6ff;
-      color: #1b63b8;
-      padding: 8px;
-      border-radius: 8px;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 36px;
-      height: 36px;
-      flex-shrink: 0;
-
-      svg {
-        display: flex;
-      }
-    }
-
-    .time-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      flex: 1;
-    }
-
-    .time-text {
-      font-size: 14px;
-      font-weight: 600;
-      color: #202124;
-    }
-
-    .efficiency-text {
-      font-size: 12px;
-      font-weight: 400;
-      color: #5f6368;
-    }
-  }
-
-  .expand-icon {
-    font-size: 14px;
-    color: #9aa0a6;
-    transition: transform 0.8s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 12px;
-    flex-shrink: 0;
-
-    svg {
-      display: flex;
-    }
-
-    &.expanded {
-      transform: rotate(180deg);
-      color: #1b63b8;
-    }
-  }
-
-  &_Thanh {
-    height: 1px;
-    background: #e8eaed;
-    margin: 0;
-    transition: all 0.8s ease;
-  }
-
-  &_Container {
-    padding: 12px 16px 14px;
-    animation: expandDown 0.8s ease;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  &.collapsed {
-    .DAT_Mobile_Report_Detail_Container_Cards {
-      &_Container {
-        display: none;
-      }
-    }
-  }
-}
 
 .report-item {
   display: flex;

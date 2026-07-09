@@ -427,7 +427,7 @@ export default function EnergyReport() {
   };
   const getAllReportPagination = async (current) => {
     try {
-      const response = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/getAllReportPagination?date=${formattedDateDisplay}&page=${current}`);
+      const response = await callApi("get", `${process.env.REACT_APP_APIDEV}/data/getAllReportPagination?date=${formattedDateDisplay}&page=${current}`);
       if (response.status === false) {
         console.log(response.msg);
       } else {
@@ -696,7 +696,7 @@ export default function EnergyReport() {
                 {lang.formatMessage({ id: "total_charge" })}
               </span>
               <span className="DAT_Mobile_Report_Stat_Box_Value">
-                {summary.charge} kWh
+                {charge} kWh
               </span>
             </div>
             <div className="DAT_Mobile_Report_Stat_Box">
@@ -704,66 +704,7 @@ export default function EnergyReport() {
                 {lang.formatMessage({ id: "total_discharge" })}
               </span>
               <span className="DAT_Mobile_Report_Stat_Box_Value">
-                {summary.discharge} kWh
-              </span>
-            </div>
-            <div className="DAT_Mobile_Report_Stat_Box">
-              <span className="DAT_Mobile_Report_Stat_Box_Label">
-                {lang.formatMessage({ id: "round_trip" })}
-              </span>
-              <span className="DAT_Mobile_Report_Stat_Box_Value">
-                {avgEfficiency}%
-              </span>
-            </div>
-
-            <div className="DAT_Mobile_Report_Stat_Box">
-              <span className="DAT_Mobile_Report_Stat_Box_Label">
-                {lang.formatMessage({
-                  id: "dashboard_chart_series_grid_import",
-                })}
-              </span>
-              <span className="DAT_Mobile_Report_Stat_Box_Value">
-                {summary.gridImport} kWh
-              </span>
-            </div>
-            <div className="DAT_Mobile_Report_Stat_Box">
-              <span className="DAT_Mobile_Report_Stat_Box_Label">
-                {lang.formatMessage({ id: "grid_export" })}
-              </span>
-              <span className="DAT_Mobile_Report_Stat_Box_Value">
-                {summary.gridExport} kWh
-              </span>
-            </div>
-            <div className="DAT_Mobile_Report_Stat_Box">
-              <span className="DAT_Mobile_Report_Stat_Box_Label">
-                {lang.formatMessage({ id: "load_consumption" })}
-              </span>
-              <span className="DAT_Mobile_Report_Stat_Box_Value">
-                {summary.load} kWh
-              </span>
-            </div>
-            <div className="DAT_Mobile_Report_Stat_Box">
-              <span className="DAT_Mobile_Report_Stat_Box_Label">
-                {lang.formatMessage({ id: "cycle_count" })}
-              </span>
-              <span className="DAT_Mobile_Report_Stat_Box_Value">
-                {summary.cycles}
-              </span>
-            </div>
-            <div className="DAT_Mobile_Report_Stat_Box">
-              <span className="DAT_Mobile_Report_Stat_Box_Label">
-                {lang.formatMessage({ id: "cost_saving" })}
-              </span>
-              <span className="DAT_Mobile_Report_Stat_Box_Value">
-                ${costSaving}
-              </span>
-            </div>
-            <div className="DAT_Mobile_Report_Stat_Box">
-              <span className="DAT_Mobile_Report_Stat_Box_Label">
-                {lang.formatMessage({ id: "revenue" })}
-              </span>
-              <span className="DAT_Mobile_Report_Stat_Box_Value">
-                ${revenue}
+                {discharge} kWh
               </span>
             </div>
           </div>
@@ -782,7 +723,7 @@ export default function EnergyReport() {
                       datasets: [
                         {
                           label: lang.formatMessage({ id: "charge" }),
-                          data: chartRows.map((item) => item.charge),
+                          data: report.map((item) => item.charge),
                           borderColor: "rgba(27, 99, 184, 1)",
                           backgroundColor: "rgba(27, 99, 184, 1)",
                           fill: false,
@@ -790,7 +731,7 @@ export default function EnergyReport() {
                         },
                         {
                           label: lang.formatMessage({ id: "discharge" }),
-                          data: chartRows.map((item) => item.discharge),
+                          data: report.map((item) => item.discharge),
                           borderColor: "rgba(255, 197, 61, 1)",
                           backgroundColor: "rgba(255, 197, 61, 1)",
                           fill: false,
@@ -831,8 +772,7 @@ export default function EnergyReport() {
 
             <div className="DAT_Mobile_Report_Chart_Container">
               <div className="DAT_Mobile_Report_Chart_Container_Header">
-                {lang.formatMessage({ id: "efficiency" })} /{" "}
-                {lang.formatMessage({ id: "load_trend" })}
+                {lang.formatMessage({ id: "soc" })}
               </div>
               <div style={{ width: "100%", height: 280 }}>
                 {isDayView ? (
@@ -841,18 +781,10 @@ export default function EnergyReport() {
                       labels: chartLabels,
                       datasets: [
                         {
-                          label: lang.formatMessage({ id: "efficiency" }),
-                          data: chartRows.map((item) => item.efficiency),
+                          label: lang.formatMessage({ id: "soc" }),
+                          data: report.map((item) => item.soc),
                           borderColor: "rgba(33, 167, 53, 1)",
                           backgroundColor: "rgba(33, 167, 53, 1)",
-                          fill: false,
-                          tension: 0,
-                        },
-                        {
-                          label: lang.formatMessage({ id: "load" }),
-                          data: chartRows.map((item) => item.load),
-                          borderColor: "rgba(245, 158, 11, 1)",
-                          backgroundColor: "rgba(245, 158, 11, 1)",
                           fill: false,
                           tension: 0,
                         },
@@ -866,17 +798,93 @@ export default function EnergyReport() {
                       labels: chartLabels,
                       datasets: [
                         {
-                          label: lang.formatMessage({ id: "efficiency" }),
-                          data: chartRows.map((item) => item.efficiency),
+                          label: lang.formatMessage({ id: "soc" }),
+                          data: report.map((item) => item.soc),
                           backgroundColor: "rgba(33, 167, 53, 1)",
                           borderRadius: 0,
                           barThickness: 6,
                           maxBarThickness: 8,
                         },
+                      ],
+                    }}
+                    options={barChartOptions}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="DAT_Mobile_Report_Chart_Container">
+              <div className="DAT_Mobile_Report_Chart_Container_Header">
+                {lang.formatMessage({ id: "volt" })}
+              </div>
+              <div style={{ width: "100%", height: 280 }}>
+                {isDayView ? (
+                  <Line
+                    data={{
+                      labels: chartLabels,
+                      datasets: [
                         {
-                          label: lang.formatMessage({ id: "load" }),
-                          data: chartRows.map((item) => item.load),
-                          backgroundColor: "rgba(245, 158, 11, 1)",
+                          label: lang.formatMessage({ id: "volt" }),
+                          data: report.map((item) => item.volt),
+                          borderColor: "rgb(205, 19, 140)",
+                          backgroundColor: "rgb(205, 19, 140)",
+                          fill: false,
+                          tension: 0,
+                        },
+                      ],
+                    }}
+                    options={lineChartOptions}
+                  />
+                ) : (
+                  <Bar
+                    data={{
+                      labels: chartLabels,
+                      datasets: [
+                        {
+                          label: lang.formatMessage({ id: "volt" }),
+                          data: report.map((item) => item.volt),
+                          backgroundColor: "rgb(205, 19, 140)",
+                          borderRadius: 0,
+                          barThickness: 6,
+                          maxBarThickness: 8,
+                        },
+                      ],
+                    }}
+                    options={barChartOptions}
+                  />
+                )}
+              </div>
+            </div>
+            <div className="DAT_Mobile_Report_Chart_Container">
+              <div className="DAT_Mobile_Report_Chart_Container_Header">
+                {lang.formatMessage({ id: "current" })}
+              </div>
+              <div style={{ width: "100%", height: 280 }}>
+                {isDayView ? (
+                  <Line
+                    data={{
+                      labels: chartLabels,
+                      datasets: [
+                        {
+                          label: lang.formatMessage({ id: "current" }),
+                          data: report.map((item) => item.current),
+                          borderColor: "rgb(215, 118, 21)",
+                          backgroundColor: "rgb(215, 118, 21)",
+                          fill: false,
+                          tension: 0,
+                        },
+                      ],
+                    }}
+                    options={lineChartOptions}
+                  />
+                ) : (
+                  <Bar
+                    data={{
+                      labels: chartLabels,
+                      datasets: [
+                        {
+                          label: lang.formatMessage({ id: "current" }),
+                          data: report.map((item) => item.current),
+                          backgroundColor: "rgb(215, 118, 21)",
                           borderRadius: 0,
                           barThickness: 6,
                           maxBarThickness: 8,
@@ -896,10 +904,10 @@ export default function EnergyReport() {
                 {lang.formatMessage({ id: "detailed_report_table" })}
               </span>
             </div>
-            {rows.length ? (
+            {report.length ? (
               <div className="DAT_Mobile_Report_Detail_Container">
                 <div className="DAT_Mobile_Report_Detail_Container_Cards_Grid">
-                  {rows.map((row, index) => {
+                  {report.map((row, index) => {
                     const cardKey =
                       viewMode === "day" ? `${row.date}-${row.time}` : row.date;
                     const isExpanded = expandedCard === cardKey;
@@ -927,7 +935,10 @@ export default function EnergyReport() {
                                   : formatToDayMonth(row.date)}
                               </span>
                               <span className="efficiency-text">
-                                {row.efficiency}% Efficiency
+                                {row.soc}% SOC
+                              </span>
+                              <span className="efficiency-text">
+                                {row.soh}% SOH
                               </span>
                             </div>
                           </div>
@@ -946,10 +957,9 @@ export default function EnergyReport() {
                         {/* Grid Content Section */}
                         {isExpanded && (
                           <div className="DAT_Mobile_Report_Detail_Container_Cards_Container">
-                            {/* Row 1: Charge & Discharge */}
                             <div className="report-item">
                               <div className="report-item_title text-blue">
-                                <LuZap size={14} /> CHARGE
+                                {lang.formatMessage({ id: "charge" })}
                               </div>
                               <div className="report-item_value">
                                 {row.charge} <span className="unit">kWh</span>
@@ -958,7 +968,7 @@ export default function EnergyReport() {
 
                             <div className="report-item">
                               <div className="report-item_title text-blue">
-                                <LuZap size={14} /> DISCHARGE
+                                {lang.formatMessage({ id: "discharge" })}
                               </div>
                               <div className="report-item_value">
                                 {row.discharge}{" "}
@@ -966,43 +976,42 @@ export default function EnergyReport() {
                               </div>
                             </div>
 
-                            {/* Row 2: Grid Import & Grid Export */}
                             <div className="report-item">
                               <div className="report-item_title text-blue">
-                                <LuArrowLeftToLine size={14} /> GRID IMPORT
+                                {lang.formatMessage({ id: "volt" })}
                               </div>
                               <div className="report-item_value">
-                                {row.gridImport}{" "}
-                                <span className="unit">kWh</span>
+                                {row.volt}{" "}
+                                <span className="unit">V</span>
                               </div>
                             </div>
 
                             <div className="report-item">
                               <div className="report-item_title text-blue">
-                                <LuArrowRightFromLine size={14} /> GRID EXPORT
+                                {lang.formatMessage({ id: "current" })}
                               </div>
                               <div className="report-item_value">
-                                {row.gridExport}{" "}
-                                <span className="unit">kWh</span>
+                                {row.current}{" "}
+                                <span className="unit">A</span>
                               </div>
                             </div>
 
                             {/* Row 3: Load & Cost Saving */}
                             <div className="report-item">
                               <div className="report-item_title text-blue">
-                                <LuSettings size={14} /> LOAD
+                                {lang.formatMessage({ id: "dashboard_chart_series_grid_import" })}
                               </div>
                               <div className="report-item_value">
-                                {row.load} <span className="unit">kWh</span>
+                                {row.grid} <span className="unit">Wh</span>
                               </div>
                             </div>
 
                             <div className="report-item">
                               <div className="report-item_title text-blue">
-                                <LuDollarSign size={14} /> COST SAVING
+                                {lang.formatMessage({ id: "load_consumption" })}
                               </div>
                               <div className="report-item_value highlight-blue">
-                                ${Math.round(row.discharge * 0.12)}
+                                {row.load} <span className="unit">Wh</span>
                               </div>
                             </div>
                           </div>
@@ -1279,7 +1288,7 @@ export default function EnergyReport() {
                       datasets: [
                         {
                           label: lang.formatMessage({ id: "charge" }),
-                          data: chartRows.map((item) => item.charge),
+                          data: report.map((item) => item.charge),
                           backgroundColor: "rgba(18, 144, 201, 1)",
                           borderRadius: 0,
                           barThickness: 6,
@@ -1303,7 +1312,7 @@ export default function EnergyReport() {
 
             <div className="DAT_Report_Chart_Container">
               <div className="DAT_Report_Chart_Container_Header">
-                {lang.formatMessage({ id: "soc" })}
+                {lang.formatMessage({ id: "SoC/SoH" })}
               </div>
               <div style={{ width: "100%", height: 280 }}>
                 {isDayView ? (
@@ -1319,6 +1328,7 @@ export default function EnergyReport() {
                           fill: false,
                           tension: 0,
                         },
+
                       ],
                     }}
                     options={lineChartOptions}
@@ -1373,7 +1383,7 @@ export default function EnergyReport() {
                         {
                           label: lang.formatMessage({ id: "volt" }),
                           data: report.map((item) => item.volt),
-                          backgroundColor: "rgba(33, 167, 53, 1)",
+                          backgroundColor: "rgb(205, 19, 140)",
                           borderRadius: 0,
                           barThickness: 6,
                           maxBarThickness: 8,
@@ -1415,7 +1425,7 @@ export default function EnergyReport() {
                         {
                           label: lang.formatMessage({ id: "volt" }),
                           data: report.map((item) => item.volt),
-                          backgroundColor: "rgba(33, 167, 53, 1)",
+                          backgroundColor: "rgb(215, 118, 21)",
                           borderRadius: 0,
                           barThickness: 6,
                           maxBarThickness: 8,

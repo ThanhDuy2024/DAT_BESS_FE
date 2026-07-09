@@ -8,6 +8,8 @@ import { callApi } from "../../Api/Api";
 import { socket } from "../../../App";
 import { useIntl } from "react-intl";
 import { isMobile } from "react-device-detect";
+import { RiBatteryChargeLine } from "react-icons/ri";
+
 export default function Battery() {
   const [selectedContainer, setSelectedContainer] = useState(mockContainers[0]);
   const [selectedRack, setSelectedRack] = useState(null);
@@ -42,7 +44,7 @@ export default function Battery() {
 
     (async () => {
       let data = await callApi("post", process.env.REACT_APP_API + "/data/readBess", {
-        level: "bmslevel",
+        level: "pcslevel",
       });
       console.log(data);
       if (data.status === "true") {
@@ -63,16 +65,13 @@ export default function Battery() {
       level: "bmslevel"
     });
 
-    socket.value.emit("BESS_SUBSCRIBE_MANY", {
-        levels: ["bmslevel", "rack1level_04", "rack1cellvoltagelevel_04"],
-    });
+    // socket.value.emit("BESS_SUBSCRIBE_MANY", {
+    //     levels: ["pcslevel"],
+    // });
 
     socket.value.on("BESS_DATA", (payload) => {
-      //console.log(payload.level, payload.data);
+      // console.log(payload.level, payload.data);
 
-      if(payload.level === "rack1level_04") {
-        console.log(payload.data);
-      }
       Object.keys(payload.data).map((keyName, i) => {
 
         setDataInf(data => ({ ...data, [keyName]: payload.data[keyName] }));
@@ -112,7 +111,7 @@ export default function Battery() {
                   <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle">
                     <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title">
                       <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Icon">
-                        <LuBatteryCharging size={40} />
+                        <RiBatteryChargeLine size={30}/>
                       </div>
                       <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({ id: "bms_level" })}</div>
                     </div>
@@ -343,7 +342,8 @@ export default function Battery() {
                   <div className="DAT_Battery_Overview_Card_Header_BoxTitle">
                     <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title">
                       <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title_Icon">
-                        <LuBatteryCharging size={40} />
+                        <RiBatteryChargeLine size={30}/>
+
                       </div>
                       <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({ id: "bms_level" })}</div>
                     </div>
