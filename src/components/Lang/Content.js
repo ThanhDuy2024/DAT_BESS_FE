@@ -352,9 +352,9 @@ const enMessages = {
   bms_status_fault: "Fault",
   bms_level: "BMS Level",
   bms_search: "Search rack",
-  bms_max_temp: "Max Temp",
+  bms_max_temp: "Maximum Temperature",
   bms_max_temp_normal: "Max Temp",
-  bms_min_temp: "Min Temp",
+  bms_min_temp: "Minimum Temperature",
   bms_rack_list: "Rack List",
   bms_voltage: "Voltage",
   bms_current: "Current",
@@ -461,7 +461,11 @@ const enMessages = {
   user_save_button: "Save",
   user_button_delete: "Delete user",
   volt: "Volt",
-  soc: "State of Charge"
+  soc: "State of Charge",
+  bms_max_temp: "Maximum cell temperature",
+  bms_min_temp: "Minimum cell temperature",
+  bms_max_voltage: "Maximum cell voltage",
+  bms_min_voltage: "Minimum cell voltage"
 };
 
 const viMessages = {
@@ -939,6 +943,8 @@ const viMessages = {
   user_button_delete: "Xóa người dùng",
   volt: "Điện áp",
   soc: "Trạng thái sạc",
+  bms_max_voltage: "Điện áp cell cao nhất",
+  bms_min_voltage: "Điện áp cell thấp nhất",
 };
 
 export const messages = {

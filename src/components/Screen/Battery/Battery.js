@@ -9,6 +9,7 @@ import { socket } from "../../../App";
 import { useIntl } from "react-intl";
 import { isMobile } from "react-device-detect";
 import { RiBatteryChargeLine } from "react-icons/ri";
+import { bmsDataTemplate } from "../../data/bmsTemplate";
 
 export default function Battery() {
   const [selectedContainer, setSelectedContainer] = useState(mockContainers[0]);
@@ -22,6 +23,7 @@ export default function Battery() {
   const [dataInf, setDataInf] = useState({});
   const [step, setStep] = useState(0);
   const [arrRack, setArrRack] = useState([]);
+  const [dataMapping, setDataMapping] = useState([]);
   const batteryStatus = {
     0: "Initialization",
     1: "Charging",
@@ -81,55 +83,7 @@ export default function Battery() {
     });
 
     socket.value.on("BESS_DATA", (payload) => {
-      //console.log(payload.level, payload.data);
-      const registerInformation = {
-        100: "status",
-        115: "voltage",
-        116: "current",
-        117: "temperature",
-        118: "soc",
-        119: "soh",
-      };
-
-      const registerRealData = {};
-      const registerAddress = Object.keys(payload.data);
-      const [startAddress] = registerAddress[0].split("-");
-      const checkPoint = Number(startAddress) - 100;
-
-      Object.entries(payload.data).forEach(([key, value]) => {
-        const [address] = key.split("-");
-        const field = registerInformation[Number(address) - checkPoint];
-        if (field === "status") {
-          registerRealData[field] = batteryStatus[value];
-        }
-        else if (field) {
-          registerRealData[field] = value;
-        }
-      });
-
-      setArrRack((prev) => {
-        const index = prev.findIndex((item) => item.rackName === payload.level);
-
-        if (index === -1) {
-          return [
-            ...prev,
-            {
-              rackName: payload.level,
-              data: registerRealData
-            }
-          ]
-        };
-
-        return prev.map((item) =>
-          item.rackName === payload.level
-            ? {
-              ...item,
-              data: registerRealData,
-            }
-            : item
-        );
-      });
-
+      console.log(payload.level, payload.data);
       Object.keys(payload.data).map((keyName, i) => {
         setDataInf(data => ({ ...data, [keyName]: payload.data[keyName] }));
       });
@@ -149,7 +103,60 @@ export default function Battery() {
 
   }, [step]);
 
-  console.log(arrRack);
+  useEffect(() => {
+    const response = bmsDataTemplate;
+    for (const item of response) {
+      setDataMapping((prev) => {
+        const index = prev.findIndex((rack) => rack.rackName === item.rackName);
+
+        if (index === -1) {
+          return [...prev, {
+            id: item.id,
+            rackName: item.rackName,
+            model: item.model,
+            status: {
+              statusId: dataInf[item.template.status.register],
+              statusName: rackNStatus[dataInf[item.template.status.register]]
+            },
+            voltage: (Number(dataInf[item.template.voltage.register]) * item.template.voltage.scale).toFixed(2),
+            maximumCellVoltage: (Number(dataInf[item.template.maximumCellVoltage.register]) * item.template.maximumCellVoltage.scale).toFixed(2),
+            minimumCellVoltage: (Number(dataInf[item.template.minimumCellVoltage.register]) * item.template.minimumCellVoltage.scale).toFixed(2),
+            current: (Number(dataInf[item.template.current.register]) * item.template.current.scale - Math.abs(item.template.current.offset)).toFixed(2),
+            temperature: Number(dataInf[item.template.temperature.regiser] * item.template.temperature.scale - Math.abs(item.template.temperature.offset)).toFixed(0),
+            maximumCellTemperature: Number(dataInf[item.template.maximumCellTemperature.regiser] * item.template.maximumCellTemperature.scale - Math.abs(item.template.maximumCellTemperature.offset)).toFixed(0),
+            minimumCellTemperature: Number(dataInf[item.template.minimumCellTemperature.regiser] * item.template.minimumCellTemperature.scale - Math.abs(item.template.minimumCellTemperature.offset)).toFixed(0),
+            soc: dataInf[item.template.soc.register],
+            soh: dataInf[item.template.soh.register],
+            module: item.module
+          }]
+        }
+
+        return prev.map((rack) => (
+          rack.rackName === item.rackName ?
+            {
+              ...rack,
+            status: {
+              statusId: dataInf[item.template.status.register],
+              statusName: rackNStatus[dataInf[item.template.status.register]]
+            },
+            voltage: (Number(dataInf[item.template.voltage.register]) * item.template.voltage.scale).toFixed(2),
+            maximumCellVoltage: (Number(dataInf[item.template.maximumCellVoltage.register]) * item.template.maximumCellVoltage.scale).toFixed(2),
+            minimumCellVoltage: (Number(dataInf[item.template.minimumCellVoltage.register]) * item.template.minimumCellVoltage.scale).toFixed(2),
+            current: (Number(dataInf[item.template.current.register]) * item.template.current.scale - Math.abs(item.template.current.offset)).toFixed(2),
+            temperature: Number(dataInf[item.template.temperature.regiser] * item.template.temperature.scale - Math.abs(item.template.temperature.offset)).toFixed(0),
+            maximumCellTemperature: dataInf[item.template.maximumCellTemperature.register] * item.template.maximumCellTemperature.scale - Math.abs(Number(item.template.maximumCellTemperature.offset)),
+            minimumCellTemperature: dataInf[item.template.minimumCellTemperature.register] * item.template.minimumCellTemperature.scale - Math.abs(Number(item.template.minimumCellTemperature.offset)),
+            soc: dataInf[item.template.soc.register],
+            soh: dataInf[item.template.soh.register],
+            module: item.module
+            }
+            :
+            rack
+        ))
+      })
+    }
+  }, [dataInf]);
+
   return (
     <>
       {isMobile ? (
@@ -477,25 +484,25 @@ export default function Battery() {
                   </tr>
                 </thead>
                 <tbody className="DAT_Battery_RackList_Table_Main_Body">
-                  {arrRack.map((r) => (
+                  {dataMapping.map((r) => (
                     <tr
                       key={r.rackName}
                       className={`DAT_Battery_RackList_Table_Main_Body_Row`}
                       style={{ cursor: "pointer" }}
-                      // onClick={() => {
-                      //   setSelectedRack(r);
-                      //   setIsModalOpen(true);
-                      // }}
+                      onClick={() => {
+                        setSelectedRack(r);
+                        setIsModalOpen(true);
+                      }}
                     >
                       <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell DAT_Battery_RackList_Table_Main_Body_Row_Cell--medium">{r.rackName.toUpperCase()}</td>
                       <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">
-                        {r.data.status}
+                        <StatusBadge status={r.status.statusName} />
                       </td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{(r.data.voltage * 0.1).toFixed(2)}V</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{((r.data.current * 0.1) - 3200).toFixed(2)}A</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.data.soc}%</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.data.soh}%</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{((r.data.temperature * 1) - 40).toFixed(0)}°C</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.voltage}V</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.current}A</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.soc}%</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.soh}%</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.temperature}°C</td>
                     </tr>
                   ))}
                 </tbody>
@@ -503,14 +510,14 @@ export default function Battery() {
             </div>
           </div>
 
-          {isModalOpen && selectedRack && lang && (
+          {isModalOpen && lang && (
             <div className="DAT_Modal_Overlay" onClick={() => setIsModalOpen(false)}>
               <div
                 className="DAT_Modal_Overlay_Box"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="DAT_Modal_Overlay_Box_Header">
-                  <h2>{selectedRack.id} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
+                  <h2>{selectedRack.rackName.toUpperCase()} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
                   <button
                     className="DAT_Modal_Overlay_Box_Header_Close"
                     onClick={() => setIsModalOpen(false)}
@@ -533,26 +540,6 @@ export default function Battery() {
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_temp" })}:</span>
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.temperature}°C</span>
-                  </div>
-
-                  <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_temp" })}:</span>
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.maxTemp}°C</span>
-                  </div>
-
-                  <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_min_cell" })}:</span>
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.minCellV}</span>
-                  </div>
-
-                  <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_cell" })}:</span>
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.maxCellV}</span>
-                  </div>
-
-                  <div className="DAT_Modal_Overlay_Box_Grid_Card">
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_voltage" })}:</span>
                     <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.voltage}V</span>
                   </div>
@@ -563,13 +550,23 @@ export default function Battery() {
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_cycles" })}:</span>
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.cycles}</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_min_temp" })}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.minimumCellTemperature}°C</span>
                   </div>
 
                   <div className="DAT_Modal_Overlay_Box_Grid_Card">
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">DeltaV:</span>
-                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.deltaV}</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_temp" })}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.maximumCellTemperature}°C</span>
+                  </div>
+
+                  <div className="DAT_Modal_Overlay_Box_Grid_Card">
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_min_voltage" })}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.minimumCellVoltage}V</span>
+                  </div>
+
+                  <div className="DAT_Modal_Overlay_Box_Grid_Card">
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_voltage" })}:</span>
+                    <span className="DAT_Modal_Overlay_Box_Grid_Card_Value">{selectedRack.maximumCellVoltage}V</span>
                   </div>
 
                 </div>
@@ -580,9 +577,9 @@ export default function Battery() {
                       <div className="DAT_Modal_Overlay_Box_Module_Card" onClick={() => {
                         setIsModalOpen(false)
                         setIsModalModuleOpen(true)
-                        setModuleName(m)
+                        setModuleName(m,moduleName)
                       }}>
-                        <span className="DAT_Modal_Overlay_Box_Module_Card_Value">{m}</span>
+                        <span className="DAT_Modal_Overlay_Box_Module_Card_Value">{m.moduleName}</span>
                       </div>
                     )
                   })}
@@ -616,7 +613,7 @@ export default function Battery() {
                   </button>
                 </div>
 
-                <div className="DAT_Modal_Overlay_BoxCell_Cell">
+                {/* <div className="DAT_Modal_Overlay_BoxCell_Cell">
                   {selectedRack.cells.map((cell) => {
                     return (
                       <div className={cell.status === "Normal" ? `DAT_Modal_Overlay_BoxCell_Cell_Card` : "DAT_Modal_Overlay_BoxCell_Cell_Card--High"}>
@@ -640,7 +637,7 @@ export default function Battery() {
                       </div>
                     )
                   })}
-                </div>
+                </div> */}
               </div>
             </div>
           )}
