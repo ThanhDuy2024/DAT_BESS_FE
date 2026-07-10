@@ -465,7 +465,9 @@ const enMessages = {
   bms_max_temp: "Maximum cell temperature",
   bms_min_temp: "Minimum cell temperature",
   bms_max_voltage: "Maximum cell voltage",
-  bms_min_voltage: "Minimum cell voltage"
+  bms_min_voltage: "Minimum cell voltage",
+  view_all_alarm: "View all alarms",
+  alarm_center: "Alarm center"
 };
 
 const viMessages = {
@@ -945,6 +947,8 @@ const viMessages = {
   soc: "Trạng thái sạc",
   bms_max_voltage: "Điện áp cell cao nhất",
   bms_min_voltage: "Điện áp cell thấp nhất",
+  alarm_center: "Thông báo",
+  view_all_alarm: "Xem tất cả",
 };
 
 export const messages = {
