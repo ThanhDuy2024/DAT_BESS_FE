@@ -30,6 +30,7 @@ import {
 } from "react-icons/lu";
 import { PiExportLight } from "react-icons/pi";
 import { isMobile } from "react-device-detect";
+import axios from "axios";
 
 ChartJS.register(
   CategoryScale,
@@ -326,7 +327,6 @@ export default function EnergyReport() {
     lang.locale === "vi" ? "vi-VN" : "en-US",
   );
 
-
   const commonChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -425,6 +425,7 @@ export default function EnergyReport() {
       },
     },
   };
+
   const getAllReportPagination = async (current) => {
     try {
       const response = await callApi("get", `${process.env.REACT_APP_APIDEV}/data/getAllReportPagination?date=${formattedDateDisplay}&page=${current}`);
@@ -438,6 +439,7 @@ export default function EnergyReport() {
       console.log(error);
     }
   }
+
   const getAllReport = async () => {
     try {
       const res = await callApi(
@@ -455,6 +457,31 @@ export default function EnergyReport() {
       console.log(err);
     }
   }
+
+  const handleExportToDay = async () => {
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_APIDEV}/data/export-excel-today`, {
+        date: formattedDateDisplay
+      }, {
+        headers: {
+          token:
+            JSON.parse(localStorage.getItem("token")) ||
+            JSON.parse(sessionStorage.getItem("token")),
+        },
+        responseType: "blob",
+      }
+      );
+      const url = window.URL.createObjectURL(res.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Battery_Report_today.xlsx";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getAllReport();
     getAllReportPagination(currentPage);
@@ -488,6 +515,7 @@ export default function EnergyReport() {
     console.log(pages);
     return pages;
   };
+
   return (
     <>
       {isMobile ? (
@@ -1223,7 +1251,7 @@ export default function EnergyReport() {
               </div>
 
               {/* <button className="DAT_Report_Toolbar_Actions_ImportExcel">{lang.formatMessage({ id: "import_excel" })}</button> */}
-              <button className="DAT_Report_Toolbar_Actions_Excel">
+              <button className="DAT_Report_Toolbar_Actions_Excel" onClick={handleExportToDay}>
                 {lang.formatMessage({ id: "export_excel" })}
               </button>
             </div>

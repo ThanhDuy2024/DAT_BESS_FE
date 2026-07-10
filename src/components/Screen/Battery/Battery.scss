@@ -154,7 +154,7 @@
             border-bottom: 1px solid var(--border-light);
             background: var(--bg-hover);
             color: var(--text-secondary);
-            text-align: left;
+            text-align: center;
             white-space: nowrap;
             font-size: var(--font-size-sm);
             font-weight: var(--font-weight-semibold);
@@ -181,7 +181,7 @@
               border-bottom: 1px solid var(--border-light);
               color: var(--text-body);
               font-size: var(--font-size-base);
-              vertical-align: middle;
+              text-align: center;
 
               &--medium {
                 font-weight: var(--font-weight-medium);

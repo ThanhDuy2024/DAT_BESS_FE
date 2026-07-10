@@ -761,6 +761,7 @@
           /* Giới hạn tin nhắn tối đa 2 dòng, nếu dài quá tự có dấu ... */
           display: -webkit-box;
           -webkit-line-clamp: 2;
+          line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }

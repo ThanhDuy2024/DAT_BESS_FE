@@ -17,17 +17,11 @@ export default function Battery() {
   const [filterStatus, setFilterStatus] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModelModuleOpen, setIsModalModuleOpen] = useState(false);
-  const [moduleName, setModuleName] = useState("")
-
-  const filteredRacks = selectedContainer.racks.filter((r) => {
-    const matchSearch = r.id.toLowerCase().includes(searchRack.toLowerCase());
-    const matchStatus = filterStatus === "All" || r.status === filterStatus;
-    return matchSearch && matchStatus;
-  });
+  const [moduleName, setModuleName] = useState("");
   const lang = useIntl();
   const [dataInf, setDataInf] = useState({});
   const [step, setStep] = useState(0);
-
+  const [arrRack, setArrRack] = useState([]);
   const batteryStatus = {
     0: "Initialization",
     1: "Charging",
@@ -37,14 +31,32 @@ export default function Battery() {
     6: "Discharge prohibition.",
     7: "Charging and discharging prohibition",
     8: "Fault",
+  };
+
+  const rackNStatus = {
+    0: "Initial state",
+    1: "Charging",
+    2: "Discharging",
+    3: "Ready",
+    4: "Rack maintenance",
+    5: "Charge prohibition",
+    6: "Discharge prohibition",
+    7: "Charging and discharging prohibited",
+    8: "Fault"
   }
 
+  const filteredRacks = selectedContainer.racks.filter((r) => {
+    const matchSearch = r.id.toLowerCase().includes(searchRack.toLowerCase());
+    const matchStatus = filterStatus === "All" || r.status === filterStatus;
+    return matchSearch && matchStatus;
+  });
+
+
+
   useEffect(() => {
-
-
     (async () => {
       let data = await callApi("post", process.env.REACT_APP_API + "/data/readBess", {
-        level: "pcslevel",
+        level: "bmslevel",
       });
       console.log(data);
       if (data.status === "true") {
@@ -57,42 +69,87 @@ export default function Battery() {
   }, []);
 
   useEffect(() => {
-
-
     if (!step) return;
     console.log('Connecting to Socket.IO server...');
-    socket.value.emit("BESS_SUBSCRIBE", {
-      level: "bmslevel"
-    });
-
-    // socket.value.emit("BESS_SUBSCRIBE_MANY", {
-    //     levels: ["pcslevel"],
+    // socket.value.emit("BESS_SUBSCRIBE", {
+    //   level: "bmslevel"
     // });
 
+    const arrLevels = ["rack1level_04", "rack2level_04", "rack3level_04", "rack4level_04", "rack5level_04", "rack6level_04"]
+    socket.value.emit("BESS_SUBSCRIBE_MANY", {
+      levels: arrLevels,
+    });
+
     socket.value.on("BESS_DATA", (payload) => {
-      // console.log(payload.level, payload.data);
+      //console.log(payload.level, payload.data);
+      const registerInformation = {
+        100: "status",
+        115: "voltage",
+        116: "current",
+        117: "temperature",
+        118: "soc",
+        119: "soh",
+      };
+
+      const registerRealData = {};
+      const registerAddress = Object.keys(payload.data);
+      const [startAddress] = registerAddress[0].split("-");
+      const checkPoint = Number(startAddress) - 100;
+
+      Object.entries(payload.data).forEach(([key, value]) => {
+        const [address] = key.split("-");
+        const field = registerInformation[Number(address) - checkPoint];
+        if (field === "status") {
+          registerRealData[field] = batteryStatus[value];
+        }
+        else if (field) {
+          registerRealData[field] = value;
+        }
+      });
+
+      setArrRack((prev) => {
+        const index = prev.findIndex((item) => item.rackName === payload.level);
+
+        if (index === -1) {
+          return [
+            ...prev,
+            {
+              rackName: payload.level,
+              data: registerRealData
+            }
+          ]
+        };
+
+        return prev.map((item) =>
+          item.rackName === payload.level
+            ? {
+              ...item,
+              data: registerRealData,
+            }
+            : item
+        );
+      });
 
       Object.keys(payload.data).map((keyName, i) => {
-
         setDataInf(data => ({ ...data, [keyName]: payload.data[keyName] }));
       });
     });
-
 
     return () => {
       socket.value.emit("BESS_UNSUBSCRIBE", {
         level: "bmslevel",
       });
 
-      // socket.value.emit("BESS_UNSUBSCRIBE_MANY", {
-      //     levels: ["pcslevel", "bmslevel"],
-      // });
+      socket.value.emit("BESS_UNSUBSCRIBE_MANY", {
+        levels: arrLevels
+      });
       socket.value.off("BESS_DATA");
     };
 
 
   }, [step]);
 
+  console.log(arrRack);
   return (
     <>
       {isMobile ? (
@@ -111,7 +168,7 @@ export default function Battery() {
                   <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle">
                     <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title">
                       <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Icon">
-                        <RiBatteryChargeLine size={30}/>
+                        <RiBatteryChargeLine size={30} />
                       </div>
                       <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({ id: "bms_level" })}</div>
                     </div>
@@ -342,7 +399,7 @@ export default function Battery() {
                   <div className="DAT_Battery_Overview_Card_Header_BoxTitle">
                     <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title">
                       <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title_Icon">
-                        <RiBatteryChargeLine size={30}/>
+                        <RiBatteryChargeLine size={30} />
 
                       </div>
                       <div className="DAT_Battery_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({ id: "bms_level" })}</div>
@@ -417,30 +474,28 @@ export default function Battery() {
                     <th className="DAT_Battery_RackList_Table_Main_Head_Th">SOC</th>
                     <th className="DAT_Battery_RackList_Table_Main_Head_Th">SOH</th>
                     <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({ id: "bms_temp" })}</th>
-                    <th className="DAT_Battery_RackList_Table_Main_Head_Th">{lang.formatMessage({ id: "bms_cycles" })}</th>
                   </tr>
                 </thead>
                 <tbody className="DAT_Battery_RackList_Table_Main_Body">
-                  {filteredRacks.map((r) => (
+                  {arrRack.map((r) => (
                     <tr
-                      key={r.id}
-                      className={`DAT_Battery_RackList_Table_Main_Body_Row ${selectedRack?.id === r.id ? "DAT_Battery_RackList_Table_Main_Body_Row--selected" : ""} ${r.status === "Warning" ? "DAT_Battery_RackList_Table_Main_Body_Row--warning" : ""}`}
+                      key={r.rackName}
+                      className={`DAT_Battery_RackList_Table_Main_Body_Row`}
                       style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setSelectedRack(r);
-                        setIsModalOpen(true);
-                      }}
+                      // onClick={() => {
+                      //   setSelectedRack(r);
+                      //   setIsModalOpen(true);
+                      // }}
                     >
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell DAT_Battery_RackList_Table_Main_Body_Row_Cell--medium">{r.id}</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell DAT_Battery_RackList_Table_Main_Body_Row_Cell--medium">{r.rackName.toUpperCase()}</td>
                       <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">
-                        <StatusBadge status={r.status} />
+                        {r.data.status}
                       </td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.voltage}V</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.current}A</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.soc}%</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.soh}%</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.temperature}°C</td>
-                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.cycles}</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{(r.data.voltage * 0.1).toFixed(2)}V</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{((r.data.current * 0.1) - 3200).toFixed(2)}A</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.data.soc}%</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{r.data.soh}%</td>
+                      <td className="DAT_Battery_RackList_Table_Main_Body_Row_Cell">{((r.data.temperature * 1) - 40).toFixed(0)}°C</td>
                     </tr>
                   ))}
                 </tbody>
