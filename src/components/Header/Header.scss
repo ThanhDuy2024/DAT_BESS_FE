@@ -10,27 +10,27 @@
   top: 0;
   z-index: var(--z-header);
 
-  &_left {
+  &_Left {
     display: flex;
     align-items: center;
     gap: 16px;
 
-    &_title {
+    &_Title {
       font-size: 18px;
       font-weight: var(--font-weight-semibold);
       color: var(--text-primary);
     }
   }
 
-  &_right {
+  &_Right {
     display: flex;
     align-items: center;
     gap: 20px;
 
-    &_dropdown {
+    &_Dropdown {
       position: relative;
 
-      &_menu {
+      &_Menu {
         position: absolute;
         top: 100%;
         right: 0;
@@ -43,16 +43,16 @@
         z-index: var(--z-dropdown);
         animation: headerMenuFadeIn 0.15s ease-out;
 
-        &_language {
+        &_Language {
           min-width: 140px;
         }
 
-        &_alarm {
+        &_Alarm {
           min-width: 300px;
         }
       }
 
-      &_menuItem {
+      &_MenuItem {
         padding: 10px 16px;
         font-size: var(--font-size-base);
         color: var(--text-body);
@@ -66,7 +66,7 @@
           background: var(--gray-100);
         }
 
-        &_flag {
+        &_Flag {
           width: 18px;
           height: 12px;
           border-radius: 2px;
@@ -76,7 +76,7 @@
         }
       }
 
-      &_header {
+      &_Header {
         background: var(--primary);
         color: white;
         padding: 10px 16px;
@@ -90,7 +90,7 @@
         font-weight: var(--font-weight-semibold);
       }
 
-      &_item {
+      &_Item {
         display: flex;
         padding: 10px;
         border-bottom: 1px solid var(--gray-300);
@@ -102,7 +102,7 @@
           border-bottom-right-radius: var(--radius-md);
         }
 
-        &_icon {
+        &_Icon {
           height: 35px;
           width: 35px;
           border-radius: 50%;
@@ -114,20 +114,20 @@
           margin-right: 8px;
         }
 
-        &_main {
+        &_Main {
 
-          &_tittle {
+          &_Tittle {
             white-space: nowrap;
           }
 
-          &_date {
+          &_Date {
             color: var(--text-muted);
             font-size: 10px;
           }
         }
       }
 
-      &_footer {
+      &_Footer {
         padding: 10px;
         display: flex;
         align-items: center;
@@ -143,7 +143,7 @@
       }
     }
 
-    &_iconButton {
+    &_IconButton {
       position: relative;
       background: none;
       border: none;
@@ -162,7 +162,7 @@
         color: var(--text-primary);
       }
 
-      &_label {
+      &_Label {
         position: absolute;
         top: -2px;
         right: -2px;
@@ -182,7 +182,7 @@
         color: var(--text-muted);
       }
 
-      &_badge {
+      &_Badge {
         position: absolute;
         top: 0;
         right: 0;
@@ -200,7 +200,7 @@
       }
     }
 
-    &_user {
+    &_User {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -216,11 +216,10 @@
         background: var(--gray-100);
       }
 
-      &_avatar {
+      &_Avatar {
         width: 34px;
         height: 34px;
         border-radius: var(--radius-full);
-        background: var(--primary);
         color: rgba(255, 255, 255, 1);
         display: flex;
         align-items: center;
@@ -229,18 +228,18 @@
         font-size: var(--font-size-sm);
       }
 
-      &_info {
+      &_Info {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
 
-        &_name {
+        &_Name {
           font-size: var(--font-size-sm);
           font-weight: var(--font-weight-semibold);
           color: var(--text-primary);
         }
 
-        &_role {
+        &_Role {
           font-size: var(--font-size-xs);
           color: var(--text-muted);
         }
@@ -261,7 +260,7 @@
   top: 0;
   z-index: var(--z-header);
 
-  &_left {
+  &_Left {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -271,22 +270,22 @@
       width: 110px
     }
 
-    &_title {
+    &_Title {
       font-size: 12px;
       font-weight: var(--font-weight-semibold);
       color: var(--text-primary);
     }
   }
 
-  &_right {
+  &_Right {
     display: flex;
     align-items: center;
     gap: 20px;
 
-    &_dropdown {
+    &_Dropdown {
       position: relative;
 
-      &_menu {
+      &_Menu {
         position: absolute;
         top: 100%;
         left: 0;
@@ -299,16 +298,16 @@
         z-index: var(--z-dropdown);
         animation: headerMenuFadeIn 0.15s ease-out;
 
-        &_language {
+        &_Language {
           min-width: 140px;
         }
 
-        &_alarm {
+        &_Alarm {
           min-width: 350px;
         }
       }
 
-      &_menuItem {
+      &_MenuItem {
         padding: 10px 16px;
         font-size: var(--font-size-base);
         color: var(--text-body);
@@ -322,7 +321,7 @@
           background: var(--gray-100);
         }
 
-        &_flag {
+        &_Flag {
           width: 18px;
           height: 12px;
           border-radius: 2px;
@@ -332,7 +331,7 @@
         }
       }
 
-      &_header {
+      &_Header {
         background: var(--primary);
         color: white;
         padding: 10px 16px;
@@ -346,7 +345,7 @@
         font-weight: var(--font-weight-semibold);
       }
 
-      &_item {
+      &_Item {
         display: flex;
         padding: 10px;
         border-bottom: 1px solid var(--gray-300);
@@ -358,7 +357,7 @@
           border-bottom-right-radius: var(--radius-md);
         }
 
-        &_icon {
+        &_Icon {
           height: 35px;
           width: 35px;
           border-radius: 50%;
@@ -370,20 +369,20 @@
           margin-right: 8px;
         }
 
-        &_main {
+        &_Main {
 
-          &_tittle {
+          &_Tittle {
             white-space: nowrap;
           }
 
-          &_date {
+          &_Date {
             color: var(--text-muted);
             font-size: 10px;
           }
         }
       }
 
-      &_footer {
+      &_Footer {
         padding: 10px;
         display: flex;
         align-items: center;
@@ -399,7 +398,7 @@
       }
     }
 
-    &_iconButton {
+    &_IconButton {
       position: relative;
       background: none;
       border: none;
@@ -418,7 +417,7 @@
         color: var(--text-primary);
       }
 
-      &_label {
+      &_Label {
         position: absolute;
         top: -2px;
         right: -2px;
@@ -438,7 +437,7 @@
         color: var(--text-muted);
       }
 
-      &_badge {
+      &_Badge {
         position: absolute;
         top: 0;
         right: 0;
@@ -456,7 +455,7 @@
       }
     }
 
-    &_user {
+    &_User {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -472,11 +471,10 @@
         background: var(--gray-100);
       }
 
-      &_avatar {
+      &_Avatar {
         width: 34px;
         height: 34px;
         border-radius: var(--radius-full);
-        background: var(--primary);
         color: rgba(255, 255, 255, 1);
         display: flex;
         align-items: center;
@@ -485,16 +483,16 @@
         font-size: var(--font-size-sm);
       }
 
-      &_info {
+      &_Info {
 
-        &_name {
+        &_Name {
           font-size: var(--font-size-sm);
           font-weight: var(--font-weight-semibold);
           color: var(--text-primary);
           white-space: nowrap;
         }
 
-        &_role {
+        &_Role {
           font-size: var(--font-size-xs);
           color: var(--text-muted);
         }

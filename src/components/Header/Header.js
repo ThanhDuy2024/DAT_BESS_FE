@@ -13,7 +13,7 @@ import { RiAlertFill } from "react-icons/ri";
 export default function Header({ onAlarmClick }) {
   const lang = useIntl();
   const { locale, setLocale } = useLanguage();
-  const { name, roleName, systemDispatch } = useContext(SystemContext);
+  const { name, roleName, image, systemDispatch } = useContext(SystemContext);
   const navigate = useNavigate();
   const [showLanMenu, setShowLanMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -89,32 +89,32 @@ export default function Header({ onAlarmClick }) {
     <>
       {isMobile ? (
         <header className="DAT_HeaderMobile">
-          <div className="DAT_HeaderMobile_left">
+          <div className="DAT_HeaderMobile_Left">
             <img src={"/img/DAT.png"} alt="DAT" />
           </div >
-          <div className="DAT_Header_right" >
-            <div className="DAT_HeaderMobile_right_dropdown" ref={lanRef}>
+          <div className="DAT_HeaderMobile_Right" >
+            <div className="DAT_HeaderMobile_Right_Dropdown" ref={lanRef}>
               <button
                 type="button"
-                className="DAT_Header_right_iconButton"
+                className="DAT_HeaderMobile_Right_IconButton"
                 onClick={() => setOpenMenu(openMenu === "lan" ? null : "lan")}
                 aria-label={lang.formatMessage({ id: "common_select_language" })}
               >
                 <FaEarthAsia />
-                <span className="DAT_Header_right_iconButton_label">
+                <span className="DAT_HeaderMobile_Right_IconButton_Label">
                   {currentLanguageLabel}
                 </span>
               </button>
               {openMenu === "lan" && (
-                <div className="DAT_Header_right_dropdown_menu DAT_Header_right_dropdown_menu_language">
+                <div className="DAT_HeaderMobile_Right_Dropdown_Menu DAT_HeaderMobile_Right_Dropdown_Menu_Language">
                   {languageOptions.map((option) => (
                     <div
                       key={option.key}
-                      className="DAT_Header_right_dropdown_menuItem"
+                      className="DAT_HeaderMobile_Right_Dropdown_MenuItem"
                       onClick={() => handleChangeLanguage(option.key)}
                     >
                       <img
-                        className="DAT_Header_right_dropdown_menuItem_flag"
+                        className="DAT_HeaderMobile_Right_Dropdown_MenuItem_Flag"
                         src={option.flag}
                         alt={option.label}
                       />
@@ -124,73 +124,71 @@ export default function Header({ onAlarmClick }) {
                 </div>
               )}
             </div>
-            <div className="DAT_HeaderMobile_right_dropdown" ref={alarmRef}>
+            <div className="DAT_HeaderMobile_Right_Dropdown" ref={alarmRef}>
               <button
                 type="button"
-                className="DAT_HeaderMobile_right_iconButton"
+                className="DAT_HeaderMobile_Right_IconButton"
                 onClick={() => setOpenMenu(openMenu === "alarm" ? null : "alarm")}
                 aria-label={lang.formatMessage({ id: "common_open_alarms" })}
               >
                 <LuBell />
-                <span className="DAT_HeaderMobile_right_iconButton_badge">3</span>
+                <span className="DAT_HeaderMobile_Right_IconButton_Badge">3</span>
               </button>
 
               {openMenu === "alarm" && (
-                <div className="DAT_HeaderMobile_right_dropdown_menu DAT_Header_right_dropdown_menu_alarm">
-                  <div className="DAT_HeaderMobile_right_dropdown_header">{lang.formatMessage({ id: "alarm_center" })}</div>
-                  <div className="DAT_HeaderMobile_right_dropdown_item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
-                    <div className="DAT_HeaderMobile_right_dropdown_item_icon"><RiAlertFill />
+                <div className="DAT_HeaderMobile_Right_Dropdown_Menu DAT_HeaderMobile_Right_Dropdown_Menu_Alarm">
+                  <div className="DAT_HeaderMobile_Right_Dropdown_Header">{lang.formatMessage({ id: "alarm_center" })}</div>
+                  <div className="DAT_HeaderMobile_Right_Dropdown_Item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
+                    <div className="DAT_HeaderMobile_Right_Dropdown_Item_Icon"><RiAlertFill />
                     </div>
-                    <div className="DAT_HeaderMobile_right_dropdown_item_main">
-                      <div className="DAT_HeaderMobile_right_dropdown_item_main_date">11/06/2026</div>
-                      <div className="DAT_HeaderMobile_right_dropdown_item_main_title">This is an Alert</div>
-                    </div>
-                  </div>
-                  <div className="DAT_HeaderMobile_right_dropdown_item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
-                    <div className="DAT_HeaderMobile_right_dropdown_item_icon"><RiAlertFill />
-                    </div>
-                    <div className="DAT_HeaderMobile_right_dropdown_item_main">
-                      <div className="DAT_HeaderMobile_right_dropdown_item_main_date">17/06/2026</div>
-                      <div className="DAT_HeaderMobile_right_dropdown_item_main_title">This is an Alert</div>
+                    <div className="DAT_HeaderMobile_Right_Dropdown_Item_Main">
+                      <div className="DAT_HeaderMobile_Right_Dropdown_Item_Main_Date">11/06/2026</div>
+                      <div className="DAT_HeaderMobile_Right_Dropdown_Item_Main_Title">This is an Alert</div>
                     </div>
                   </div>
-                  <div className="DAT_HeaderMobile_right_dropdown_item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
-                    <div className="DAT_HeaderMobile_right_dropdown_item_icon"><RiAlertFill />
+                  <div className="DAT_HeaderMobile_Right_Dropdown_Item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
+                    <div className="DAT_HeaderMobile_Right_Dropdown_Item_Icon"><RiAlertFill />
                     </div>
-                    <div className="DAT_HeaderMobile_right_dropdown_item_main">
-                      <div className="DAT_HeaderMobile_right_dropdown_item_main_date">1/06/2026</div>
-                      <div className="DAT_HeaderMobile_right_dropdown_item_main_title">This is an Alert</div>
+                    <div className="DAT_HeaderMobile_Right_Dropdown_Item">
+                      <div className="DAT_HeaderMobile_Right_Dropdown_Item_Main_Date">17/06/2026</div>
+                      <div className="DAT_HeaderMobile_Right_Dropdown_Item_Main_Title">This is an Alert</div>
                     </div>
                   </div>
-                  <div className="DAT_HeaderMobile_right_dropdown_footer"
+                  <div className="DAT_HeaderMobile_Right_Dropdown_Item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
+                    <div className="DAT_HeaderMobile_Right_Dropdown_Item_Icon"><RiAlertFill />
+                    </div>
+                    <div className="DAT_HeaderMobile_Right_Dropdown_Item_Main">
+                      <div className="DAT_HeaderMobile_Right_Dropdown_Item_Main_Date">1/06/2026</div>
+                      <div className="DAT_HeaderMobile_Right_Dropdown_Item_Main_Title">This is an Alert</div>
+                    </div>
+                  </div>
+                  <div className="DAT_HeaderMobile_Right_Dropdown_Footer"
                     onClick={() => { navigate("alarm"); setOpenMenu(null) }}
                   >
                     {lang.formatMessage({ id: "view_all_alarm" })}</div>
                 </div>
               )}
             </div>
-            <div className="DAT_HeaderMobile_right_dropdown" ref={userRef}>
+            <div className="DAT_HeaderMobile_Right_Dropdown" ref={userRef}>
               <button
                 type="button"
-                className="DAT_HeaderMobile_right_user"
+                className="DAT_HeaderMobile_Right_User"
                 onClick={() => setOpenMenu(openMenu === "user" ? null : "user")}
               >
-                <div className="DAT_HeaderMobile_right_user_avatar">
-                  {name?.charAt(0) || "U"}
-                </div>
-                <div className="DAT_HeaderMobiler_right_user_info">
-                  <div className="DAT_HeaderMobile_right_user_info_name">
+                <img src={image ? image : "/img/user.png"} className="DAT_HeaderMobile_Right_User_Avatar"/>
+                <div className="DAT_HeaderMobile_Right_User_Info">
+                  <div className="DAT_HeaderMobile_Right_User_Info_Name">
                     {name}
                   </div>
-                  <div className="DAT_HeaderMobile_right_user_info_role">
+                  <div className="DAT_HeaderMobile_Right_User_Info_Role">
                     {roleName}
                   </div>
                 </div>
               </button>
               {openMenu === "user" && (
-                <div className="DAT_HeaderMobile_right_dropdown_menu DAT_Header_right_dropdown_menu_user">
+                <div className="DAT_HeaderMobile_Right_Dropdown_Menu DAT_HeaderMobile_Right_Dropdown_Menu_User">
                   <div
-                    className="DAT_HeaderMobile_right_dropdown_menuItem"
+                    className="DAT_HeaderMobile_Right_Dropdown_MenuItem"
                     onClick={handleLogout}
                   >
                     <LuLogOut />
@@ -203,34 +201,34 @@ export default function Header({ onAlarmClick }) {
         </header >
       ) : (
         <header className="DAT_Header" >
-          <div className="DAT_Header_left">
-            <h1 className="DAT_Header_left_title">
+          <div className="DAT_Header_Left">
+            <h1 className="DAT_Header_Left_Title">
               {lang.formatMessage({ id: "bess" })}
             </h1 >
           </div >
-          <div className="DAT_Header_right" >
-            <div className="DAT_Header_right_dropdown" ref={lanRef}>
+          <div className="DAT_Header_Right" >
+            <div className="DAT_Header_Right_Dropdown" ref={lanRef}>
               <button
                 type="button"
-                className="DAT_Header_right_iconButton"
+                className="DAT_Header_Right_IconButton"
                 onClick={() => setOpenMenu(openMenu === "lan" ? null : "lan")}
                 aria-label={lang.formatMessage({ id: "common_select_language" })}
               >
                 <FaEarthAsia />
-                <span className="DAT_Header_right_iconButton_label">
+                <span className="DAT_Header_Right_IconButton_Label">
                   {currentLanguageLabel}
                 </span>
               </button>
               {openMenu === "lan" && (
-                <div className="DAT_Header_right_dropdown_menu DAT_Header_right_dropdown_menu_language">
+                <div className="DAT_Header_Right_Dropdown_Menu DAT_Header_Right_Dropdown_Menu_Language">
                   {languageOptions.map((option) => (
                     <div
                       key={option.key}
-                      className="DAT_Header_right_dropdown_menuItem"
+                      className="DAT_Header_Right_Dropdown_MenuItem"
                       onClick={() => handleChangeLanguage(option.key)}
                     >
                       <img
-                        className="DAT_Header_right_dropdown_menuItem_flag"
+                        className="DAT_Header_Right_Dropdown_MenuItem_Flag"
                         src={option.flag}
                         alt={option.label}
                       />
@@ -240,73 +238,71 @@ export default function Header({ onAlarmClick }) {
                 </div>
               )}
             </div>
-            <div className="DAT_Header_right_dropdown" ref={alarmRef}>
+            <div className="DAT_Header_Right_Dropdown" ref={alarmRef}>
               <button
                 type="button"
-                className="DAT_Header_right_iconButton"
+                className="DAT_Header_Right_IconButton"
                 onClick={() => setOpenMenu(openMenu === "alarm" ? null : "alarm")}
                 aria-label={lang.formatMessage({ id: "common_open_alarms" })}
               >
                 <LuBell />
-                <span className="DAT_Header_right_iconButton_badge">3</span>
+                <span className="DAT_Header_Right_IconButton_Badge">3</span>
               </button>
 
               {openMenu === "alarm" && (
-                <div className="DAT_Header_right_dropdown_menu DAT_Header_right_dropdown_menu_alarm">
-                  <div className="DAT_Header_right_dropdown_header">{lang.formatMessage({ id: "alarm_center" })}</div>
-                  <div className="DAT_Header_right_dropdown_item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
-                    <div className="DAT_Header_right_dropdown_item_icon"><RiAlertFill />
+                <div className="DAT_Header_Right_Dropdown_Menu DAT_Header_Right_Dropdown_Menu_Alarm">
+                  <div className="DAT_Header_Right_Dropdown_Header">{lang.formatMessage({ id: "alarm_center" })}</div>
+                  <div className="DAT_Header_Right_Dropdown_Item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
+                    <div className="DAT_Header_Right_Dropdown_Item_Icon"><RiAlertFill />
                     </div>
-                    <div className="DAT_Header_right_dropdown_item_main">
-                      <div className="DAT_Header_right_dropdown_item_main_date">11/06/2026</div>
-                      <div className="DAT_Header_right_dropdown_item_main_title">This is an Alert</div>
-                    </div>
-                  </div>
-                  <div className="DAT_Header_right_dropdown_item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
-                    <div className="DAT_Header_right_dropdown_item_icon"><RiAlertFill />
-                    </div>
-                    <div className="DAT_Header_right_dropdown_item_main">
-                      <div className="DAT_Header_right_dropdown_item_main_date">17/06/2026</div>
-                      <div className="DAT_Header_right_dropdown_item_main_title">This is an Alert</div>
+                    <div className="DAT_Header_Right_Dropdown_Item_Main">
+                      <div className="DAT_Header_Right_Dropdown_Item_Main_Date">11/06/2026</div>
+                      <div className="DAT_Header_Right_Dropdown_Item_Main_Title">This is an Alert</div>
                     </div>
                   </div>
-                  <div className="DAT_Header_right_dropdown_item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
-                    <div className="DAT_Header_right_dropdown_item_icon"><RiAlertFill />
+                  <div className="DAT_Header_Right_Dropdown_Item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
+                    <div className="DAT_Header_Right_Dropdown_Item_Icon"><RiAlertFill />
                     </div>
-                    <div className="DAT_Header_right_dropdown_item_main">
-                      <div className="DAT_Header_right_dropdown_item_main_date">1/06/2026</div>
-                      <div className="DAT_Header_right_dropdown_item_main_title">This is an Alert</div>
+                    <div className="DAT_Header_Right_Dropdown_Item_Main">
+                      <div className="DAT_Header_Right_Dropdown_Item_Main_Date">17/06/2026</div>
+                      <div className="DAT_Header_Right_Dropdown_Item_Main_Title">This is an Alert</div>
                     </div>
                   </div>
-                  <div className="DAT_Header_right_dropdown_footer"
+                  <div className="DAT_Header_Right_Dropdown_Item" onClick={() => { navigate("alarm"); setOpenMenu(null) }}>
+                    <div className="DAT_Header_Right_Dropdown_Item_Icon"><RiAlertFill />
+                    </div>
+                    <div className="DAT_Header_Right_Dropdown_Item_Main">
+                      <div className="DAT_Header_Right_Dropdown_Item_Main_Date">1/06/2026</div>
+                      <div className="DAT_Header_Right_Dropdown_Item_Main_Title">This is an Alert</div>
+                    </div>
+                  </div>
+                  <div className="DAT_Header_Right_Dropdown_Footer"
                     onClick={() => { navigate("alarm"); setOpenMenu(null) }}
                   >
                     {lang.formatMessage({ id: "view_all_alarm" })}</div>
                 </div>
               )}
             </div>
-            <div className="DAT_Header_right_dropdown" ref={userRef}>
+            <div className="DAT_Header_Right_Dropdown" ref={userRef}>
               <button
                 type="button"
-                className="DAT_Header_right_user"
+                className="DAT_Header_Right_User"
                 onClick={() => setOpenMenu(openMenu === "user" ? null : "user")}
               >
-                <div className="DAT_Header_right_user_avatar">
-                  {name?.charAt(0) || "U"}
-                </div>
-                <div className="DAT_Header_right_user_info">
-                  <span className="DAT_Header_right_user_info_name">
+                <img src={image ? image : "/img/user.png"} className="DAT_Header_Right_User_Avatar"/>
+                <div className="DAT_Header_Right_User_Info">
+                  <span className="DAT_Header_Right_User_Info_Name">
                     {name}
                   </span>
-                  <span className="DAT_Header_right_user_info_role">
+                  <span className="DAT_Header_Right_User_Info_Role">
                     {roleName}
                   </span>
                 </div>
               </button>
               {openMenu === "user" && (
-                <div className="DAT_Header_right_dropdown_menu DAT_Header_right_dropdown_menu_user">
+                <div className="DAT_Header_Right_Dropdown_Menu DAT_Header_Right_Dropdown_Menu_User">
                   <div
-                    className="DAT_Header_right_dropdown_menuItem"
+                    className="DAT_Header_Right_Dropdown_MenuItem"
                     onClick={handleLogout}
                   >
                     <LuLogOut />

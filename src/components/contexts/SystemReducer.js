@@ -7,6 +7,7 @@ const INITIAL_STATE = {
     phone: "",
     address: "",
     roleName: "",
+    image: "",
     permissions: [],
     status: false,
 };
@@ -23,6 +24,7 @@ const SystemReducer = (state, action) => {
                 phone: action.payload.phone,
                 address: action.payload.address,
                 roleName: action.payload.roleName,
+                image: action.payload.image,
                 permissions: action.payload.permissions,
                 status: action.payload.status
             }

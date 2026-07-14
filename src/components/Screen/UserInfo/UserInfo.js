@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import "./UserInfo.scss";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { LuUserPen } from "react-icons/lu";
@@ -9,19 +9,20 @@ import { toast } from "sonner";
 
 export default function UserInfo() {
   const lang = useIntl();
-  const { userId, username, name, email, phone, address, systemDispatch } = useContext(SystemContext);
+  const { userId, username, name, email, image, phone, address, systemDispatch } = useContext(SystemContext);
   const [changeInfor, setChangeInfor] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
   const [showPasswordCurrent, setShowPasswordCurrent] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordCurrent, setPasswordCurrent] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [editField, setEditField] = useState("");
+  const fileRef = useRef();
+  const [avatar, setAvatar] = useState(null);
+  const [preview, setPreview] = useState(image);
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
@@ -45,6 +46,7 @@ export default function UserInfo() {
             phone: res.data[0].phone_ || "",
             address: res.data[0].address_ || "",
             roleName: res.data[0].rolename_,
+            avatar: res.data[0].avatar_,
             permissions: res.data[0].permission_,
             status: true
           }
@@ -170,6 +172,45 @@ export default function UserInfo() {
     setChangePassword(false);
   };
 
+  const chooseImage = () => {
+    fileRef.current.click();
+  };
+
+  const handleChange = (e) => {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setAvatar(file);
+
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const upload = async () => {
+
+    if (!avatar) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("avatar", avatar);
+      formData.append("username", username);
+
+      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/uploadAvatar`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+
+    } catch (err) {
+      console.error(err);
+      alert("Upload thất bại");
+    }
+  };
+
   return (
     <div className="DAT_UserInfor">
       <div className="DAT_UserInfor_Card">
@@ -189,11 +230,27 @@ export default function UserInfo() {
             <div className="DAT_UserInfor_Container_Row_Content_Title">
               {lang.formatMessage({ id: "avatar" })}
             </div>
-            <div className="DAT_UserInfor_Container_Row_Content_Avt">
-              {name?.charAt(0) || "U"}
-            </div>
+            <img className="DAT_UserInfor_Container_Row_Content_Avt"
+              src={preview ? preview : "/img/user.png"}
+              alt=""
+              onClick={chooseImage}
+            >
+            </img>
+            <input
+              ref={fileRef}
+              hidden
+              type="file"
+              accept="image/*"
+              onChange={handleChange}
+            />
           </div>
-          <div className="DAT_UserInfor_Container_Row_Btn"></div>
+          <div
+            className="DAT_UserInfor_Container_Row_Btn"
+            onClick={upload}
+            aria-label="Change Avatar"
+          >
+            Upload Avatar
+          </div>
         </div>
 
         <div className="DAT_UserInfor_Container_Row">

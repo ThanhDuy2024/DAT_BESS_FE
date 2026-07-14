@@ -78,6 +78,7 @@ const ProtectedRoute = () => {
               phone: res.data[0].phone_ || "",
               address: res.data[0].address_ || "",
               roleName: res.data[0].rolename_,
+              image: res.data[0].avatar_,
               permissions: res.data[0].permission_,
               status: true
             }
@@ -86,7 +87,6 @@ const ProtectedRoute = () => {
           navigate("/login");
         }
       } catch (error) {
-        console.log(error);
         navigate("/login");
       } finally {
         setIsLoading(false);
@@ -105,7 +105,7 @@ const ProtectedRoute = () => {
 
 const PublicOnlyRoute = ({ children }) => {
   const { status } = useContext(SystemContext);
-  return status === true ? <Navigate to="/dashboard" replace /> : children;
+  return status ? <Navigate to="/dashboard" replace /> : children;
 }
 
 const ProtectedPermission = (props) => {
