@@ -462,8 +462,6 @@ const enMessages = {
   user_button_delete: "Delete user",
   volt: "Volt",
   soc: "State of Charge",
-  bms_max_temp: "Maximum cell temperature",
-  bms_min_temp: "Minimum cell temperature",
   bms_max_voltage: "Maximum cell voltage",
   bms_min_voltage: "Minimum cell voltage",
   view_all_alarm: "View all alarms",

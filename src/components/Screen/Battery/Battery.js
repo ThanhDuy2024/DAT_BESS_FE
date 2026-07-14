@@ -14,6 +14,7 @@ import { bmsDataTemplate } from "../../data/bmsTemplate";
 export default function Battery() {
   const [selectedContainer, setSelectedContainer] = useState(mockContainers[0]);
   const [selectedRack, setSelectedRack] = useState(null);
+  const [selectedModule, setSelectedModule] = useState();
   const [searchRack, setSearchRack] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -77,16 +78,25 @@ export default function Battery() {
     //   level: "bmslevel"
     // });
 
-    const arrLevels = ["rack1level_04", "rack2level_04", "rack3level_04", "rack4level_04", "rack5level_04", "rack6level_04"]
+    const arrLevels = [
+      "rack1level_04", "rack2level_04", "rack3level_04", "rack4level_04", "rack5level_04", "rack6level_04",
+      "rack1cellvoltagelevel_04", "rack1celltemplevel_04", "rack1cellsoclevel_04", "rack1cellsohlevel_04",
+      "rack2cellvoltagelevel_04", "rack2celltemplevel_04", "rack2cellsoclevel_04", "rack2cellsohlevel_04",
+      "rack3cellvoltagelevel_04", "rack3celltemplevel_04", "rack3cellsoclevel_04", "rack3cellsohlevel_04",
+      "rack4cellvoltagelevel_04", "rack4celltemplevel_04", "rack4cellsoclevel_04", "rack4cellsohlevel_04",
+      "rack5cellvoltagelevel_04", "rack5celltemplevel_04", "rack5cellsoclevel_04", "rack5cellsohlevel_04",
+      "rack6cellvoltagelevel_04", "rack6celltemplevel_04", "rack6cellsoclevel_04", "rack6cellsohlevel_04"
+    ]
     socket.value.emit("BESS_SUBSCRIBE_MANY", {
       levels: arrLevels,
     });
 
     socket.value.on("BESS_DATA", (payload) => {
-      console.log(payload.level, payload.data);
-      Object.keys(payload.data).map((keyName, i) => {
-        setDataInf(data => ({ ...data, [keyName]: payload.data[keyName] }));
-      });
+      //console.log(payload.level, payload.data)
+      setDataInf(prev => ({
+        ...prev,
+        ...payload.data
+      }));
     });
 
     return () => {
@@ -109,25 +119,47 @@ export default function Battery() {
       setDataMapping((prev) => {
         const index = prev.findIndex((rack) => rack.rackName === item.rackName);
 
+        let cellArr = [];
+        const moduleArray = [];
+        for (const module of item.module) {
+          let index = 1;
+          for (const itemInCell of module.cell) {
+            const obj = {
+              cellName: `${item.rackName}-Cell-${index}`,
+              cellVoltage: (dataInf[itemInCell.cellVoltage.register] * itemInCell.cellVoltage.scale).toFixed(2),
+              cellTemperature: dataInf[itemInCell.cellTemperature.register] * itemInCell.cellTemperature.scale - Math.abs(itemInCell.cellTemperature.offset),
+              cellSoc: (dataInf[itemInCell.cellSoc.register] * itemInCell.cellSoc.scale),
+              cellSoh: (dataInf[itemInCell.cellSoh.register] * itemInCell.cellSoh.scale),
+            }
+            cellArr.push(obj)
+            index += 1;
+          };
+          moduleArray.push({
+            moduleName: module.moduleName,
+            cells: cellArr,
+          });
+          cellArr = []
+        };
+
         if (index === -1) {
           return [...prev, {
             id: item.id,
             rackName: item.rackName,
             model: item.model,
             status: {
-              statusId: dataInf[item.template.status.register],
+              statusId: dataInf[item.template.status.register] || 0,
               statusName: rackNStatus[dataInf[item.template.status.register]]
             },
-            voltage: (Number(dataInf[item.template.voltage.register]) * item.template.voltage.scale).toFixed(2),
-            maximumCellVoltage: (Number(dataInf[item.template.maximumCellVoltage.register]) * item.template.maximumCellVoltage.scale).toFixed(2),
-            minimumCellVoltage: (Number(dataInf[item.template.minimumCellVoltage.register]) * item.template.minimumCellVoltage.scale).toFixed(2),
-            current: (Number(dataInf[item.template.current.register]) * item.template.current.scale - Math.abs(item.template.current.offset)).toFixed(2),
-            temperature: Number(dataInf[item.template.temperature.regiser] * item.template.temperature.scale - Math.abs(item.template.temperature.offset)).toFixed(0),
-            maximumCellTemperature: Number(dataInf[item.template.maximumCellTemperature.regiser] * item.template.maximumCellTemperature.scale - Math.abs(item.template.maximumCellTemperature.offset)).toFixed(0),
-            minimumCellTemperature: Number(dataInf[item.template.minimumCellTemperature.regiser] * item.template.minimumCellTemperature.scale - Math.abs(item.template.minimumCellTemperature.offset)).toFixed(0),
-            soc: dataInf[item.template.soc.register],
-            soh: dataInf[item.template.soh.register],
-            module: item.module
+            voltage: (Number(dataInf[item.template.voltage.register]) * item.template.voltage.scale).toFixed(2) || 0,
+            maximumCellVoltage: (Number(dataInf[item.template.maximumCellVoltage.register]) * item.template.maximumCellVoltage.scale).toFixed(2) || 0,
+            minimumCellVoltage: (Number(dataInf[item.template.minimumCellVoltage.register]) * item.template.minimumCellVoltage.scale).toFixed(2) || 0,
+            current: (Number(dataInf[item.template.current.register]) * item.template.current.scale - Math.abs(item.template.current.offset)).toFixed(2) || 0,
+            temperature: Number(dataInf[item.template.temperature.regiser] * item.template.temperature.scale - Math.abs(item.template.temperature.offset)).toFixed(0) || 0,
+            maximumCellTemperature: Number(dataInf[item.template.maximumCellTemperature.regiser] * item.template.maximumCellTemperature.scale - Math.abs(item.template.maximumCellTemperature.offset)).toFixed(0) || 0,
+            minimumCellTemperature: Number(dataInf[item.template.minimumCellTemperature.regiser] * item.template.minimumCellTemperature.scale - Math.abs(item.template.minimumCellTemperature.offset)).toFixed(0) || 0,
+            soc: dataInf[item.template.soc.register] || 0,
+            soh: dataInf[item.template.soh.register] || 0,
+            module: moduleArray
           }]
         }
 
@@ -135,20 +167,20 @@ export default function Battery() {
           rack.rackName === item.rackName ?
             {
               ...rack,
-            status: {
-              statusId: dataInf[item.template.status.register],
-              statusName: rackNStatus[dataInf[item.template.status.register]]
-            },
-            voltage: (Number(dataInf[item.template.voltage.register]) * item.template.voltage.scale).toFixed(2),
-            maximumCellVoltage: (Number(dataInf[item.template.maximumCellVoltage.register]) * item.template.maximumCellVoltage.scale).toFixed(2),
-            minimumCellVoltage: (Number(dataInf[item.template.minimumCellVoltage.register]) * item.template.minimumCellVoltage.scale).toFixed(2),
-            current: (Number(dataInf[item.template.current.register]) * item.template.current.scale - Math.abs(item.template.current.offset)).toFixed(2),
-            temperature: Number(dataInf[item.template.temperature.regiser] * item.template.temperature.scale - Math.abs(item.template.temperature.offset)).toFixed(0),
-            maximumCellTemperature: dataInf[item.template.maximumCellTemperature.register] * item.template.maximumCellTemperature.scale - Math.abs(Number(item.template.maximumCellTemperature.offset)),
-            minimumCellTemperature: dataInf[item.template.minimumCellTemperature.register] * item.template.minimumCellTemperature.scale - Math.abs(Number(item.template.minimumCellTemperature.offset)),
-            soc: dataInf[item.template.soc.register],
-            soh: dataInf[item.template.soh.register],
-            module: item.module
+              status: {
+                statusId: dataInf[item.template.status.register],
+                statusName: rackNStatus[dataInf[item.template.status.register]]
+              },
+              voltage: (Number(dataInf[item.template.voltage.register]) * item.template.voltage.scale).toFixed(2),
+              maximumCellVoltage: (Number(dataInf[item.template.maximumCellVoltage.register]) * item.template.maximumCellVoltage.scale).toFixed(2),
+              minimumCellVoltage: (Number(dataInf[item.template.minimumCellVoltage.register]) * item.template.minimumCellVoltage.scale).toFixed(2),
+              current: (Number(dataInf[item.template.current.register]) * item.template.current.scale - Math.abs(item.template.current.offset)).toFixed(2),
+              temperature: Number(dataInf[item.template.temperature.regiser] * item.template.temperature.scale - Math.abs(item.template.temperature.offset)).toFixed(0),
+              maximumCellTemperature: dataInf[item.template.maximumCellTemperature.register] * item.template.maximumCellTemperature.scale - Math.abs(Number(item.template.maximumCellTemperature.offset)),
+              minimumCellTemperature: dataInf[item.template.minimumCellTemperature.register] * item.template.minimumCellTemperature.scale - Math.abs(Number(item.template.minimumCellTemperature.offset)),
+              soc: dataInf[item.template.soc.register],
+              soh: dataInf[item.template.soh.register],
+              module: moduleArray
             }
             :
             rack
@@ -176,6 +208,7 @@ export default function Battery() {
                     <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title">
                       <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Icon">
                         <RiBatteryChargeLine size={30} />
+
                       </div>
                       <div className="DAT_BatteryMobile_Overview_Card_Header_BoxTitle_Title_Label">{lang.formatMessage({ id: "bms_level" })}</div>
                     </div>
@@ -191,6 +224,15 @@ export default function Battery() {
                     <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item">
                       <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item_Label">SoH:</div>
                       <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item_Value">{parseInt(dataInf?.['5-1']) || 0}%</div>
+                    </div>
+
+                    <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item">
+                      <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item_Label">{lang.formatMessage({ id: "bms_max_temp" })}:</div>
+                      <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item_Value">{parseFloat(dataInf?.['12-1']) - 40}°C</div>
+                    </div>
+                    <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item">
+                      <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item_Label">{lang.formatMessage({ id: "bms_min_temp" })}:</div>
+                      <div className="DAT_BatteryMobile_Overview_Card_Header_Box_Item_Value">{parseFloat(dataInf?.['15-1']) - 40}°C</div>
                     </div>
                   </div>
                 </div>
@@ -226,19 +268,19 @@ export default function Battery() {
                   </tr>
                 </thead>
                 <tbody className="DAT_BatteryMobile_RackList_Table_Main_Body">
-                  {filteredRacks.map((r) => (
+                  {dataMapping.map((r) => (
                     <tr
-                      key={r.id}
-                      className={`DAT_BatteryMobile_RackList_Table_Main_Body_Row ${selectedRack?.id === r.id ? "DAT_Battery_RackList_Table_Main_Body_Row--selected" : ""} ${r.status === "Warning" ? "DAT_Battery_RackList_Table_Main_Body_Row--warning" : ""}`}
+                      key={r.rackName}
+                      className={`DAT_BatteryMobile_RackList_Table_Main_Body_Row`}
                       style={{ cursor: "pointer" }}
                       onClick={() => {
                         setSelectedRack(r);
                         setIsModalOpen(true);
                       }}
                     >
-                      <td className="DAT_BatteryMobile_RackList_Table_Main_Body_Row_Cell DAT_Battery_RackList_Table_Main_Body_Row_Cell--medium">{r.id}</td>
+                      <td className="DAT_BatteryMobile_RackList_Table_Main_Body_Row_Cell DAT_Battery_RackList_Table_Main_Body_Row_Cell--medium">{r.rackName.toUpperCase()}</td>
                       <td className="DAT_BatteryMobile_RackList_Table_Main_Body_Row_Cell">
-                        <StatusBadge status={r.status} />
+                        <StatusBadge status={r.status.statusName} />
                       </td>
                     </tr>
                   ))}
@@ -247,14 +289,14 @@ export default function Battery() {
             </div>
           </div>
 
-          {isModalOpen && selectedRack && (
+          {isModalOpen && lang && (
             <div className="DAT_ModalMobile_Overlay" onClick={() => setIsModalOpen(false)}>
               <div
                 className="DAT_ModalMobile_Overlay_Box"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="DAT_ModalMobile_Overlay_Box_Header">
-                  <h2>{selectedRack.id} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
+                  <h2>{selectedRack.rackName.toUpperCase()} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
                   <button
                     className="DAT_ModalMobile_Overlay_Box_Header_Close"
                     onClick={() => setIsModalOpen(false)}
@@ -277,26 +319,6 @@ export default function Battery() {
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_temp" })}:</span>
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.temperature}°C</span>
-                  </div>
-
-                  <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_temp_normal" })}:</span>
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.maxTemp}°C</span>
-                  </div>
-
-                  <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_min_cell" })}:</span>
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.minCellV}</span>
-                  </div>
-
-                  <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_cell" })}:</span>
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.maxCellV}</span>
-                  </div>
-
-                  <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_voltage" })}:</span>
                     <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.voltage}V</span>
                   </div>
@@ -307,13 +329,23 @@ export default function Battery() {
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_cycles" })}:</span>
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.cycles}</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_min_temp" })}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.minimumCellTemperature}°C</span>
                   </div>
 
                   <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">DeltaV:</span>
-                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.deltaV}</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_temp" })}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.maximumCellTemperature}°C</span>
+                  </div>
+
+                  <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_min_voltage" })}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.minimumCellVoltage}V</span>
+                  </div>
+
+                  <div className="DAT_ModalMobile_Overlay_Box_Grid_Card">
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Label">{lang.formatMessage({ id: "bms_max_voltage" })}:</span>
+                    <span className="DAT_ModalMobile_Overlay_Box_Grid_Card_Value">{selectedRack.maximumCellVoltage}V</span>
                   </div>
 
                 </div>
@@ -324,20 +356,19 @@ export default function Battery() {
                       <div className="DAT_ModalMobile_Overlay_Box_Module_Card" onClick={() => {
                         setIsModalOpen(false)
                         setIsModalModuleOpen(true)
-                        setModuleName(m)
+                        setSelectedModule(m);
                       }}>
-                        <span className="DAT_ModalMobile_Overlay_Box_Module_Card_Value">{m}</span>
+                        <span className="DAT_ModalMobile_Overlay_Box_Module_Card_Value">{m.moduleName}</span>
                       </div>
                     )
                   })}
                 </div>
 
-
               </div>
             </div>
           )}
 
-          {isModelModuleOpen && selectedRack && (
+          {isModelModuleOpen && selectedModule && (
             <div className="DAT_ModalMobile_Overlay" onClick={() => setIsModalModuleOpen(false)}>
               <div
                 className="DAT_ModalMobile_Overlay_BoxCell"
@@ -351,7 +382,7 @@ export default function Battery() {
                     <div className="DAT_ModalMobile_Overlay_BoxCell_Header_Back_Icon">
                       <FaArrowLeftLong size={20} />
                     </div>
-                    <h2>{selectedRack.id} - {moduleName} - Cells</h2>
+                    <h2>{selectedRack.rackName} - {selectedModule.moduleName} - Cells</h2>
                   </div>
                   <button
                     className="DAT_ModalMobile_Overlay_BoxCell_Header_Close"
@@ -362,24 +393,26 @@ export default function Battery() {
                 </div>
 
                 <div className="DAT_ModalMobile_Overlay_BoxCell_Cell">
-                  {selectedRack.cells.map((cell) => {
+                  {selectedModule.cells.map((cell) => {
                     return (
-                      <div className={cell.status === "Normal" ? `DAT_Modal_Overlay_BoxCell_Cell_Card` : "DAT_Modal_Overlay_BoxCell_Cell_Card--High"}>
+                      <div className={cell.cellTemperature < 35 ? `DAT_Modal_Overlay_BoxCell_Cell_Card` : "DAT_Modal_Overlay_BoxCell_Cell_Card--High"}>
                         <div className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header">
-                          <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Title">{cell.id}</span>
+                          <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Title">{cell.cellName}</span>
                           <div className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status">
-                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Label">{lang.formatMessage({ id: "bms_status" })}:</span>
-                            <span className={cell.status === "Normal" ? `DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Value` : "DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value_High"}>{lang.formatMessage({ id: `bms_status_${cell.status.toLowerCase()}` })}</span>
+                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Label">{lang.formatMessage({ id: "bms_temp" })}</span>
+                            <span className={cell.cellTemperature < 35 ? `DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Value` : "DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Header_Status_Value_High"}>
+                              {cell.cellTemperature}°C
+                            </span>
                           </div>
                         </div>
                         <div className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats">
                           <div className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item">
                             <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({ id: "bms_voltage" })}:</span>
-                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.voltage}V</span>
+                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.cellVoltage}V</span>
                           </div>
                           <div className="">
-                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({ id: "bms_temp" })}:</span>
-                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.temperature}°C</span>
+                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Label">Soc</span>
+                            <span className="DAT_ModalMobile_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.cellSoc}%</span>
                           </div>
                         </div>
                       </div>
@@ -577,7 +610,7 @@ export default function Battery() {
                       <div className="DAT_Modal_Overlay_Box_Module_Card" onClick={() => {
                         setIsModalOpen(false)
                         setIsModalModuleOpen(true)
-                        setModuleName(m,moduleName)
+                        setSelectedModule(m);
                       }}>
                         <span className="DAT_Modal_Overlay_Box_Module_Card_Value">{m.moduleName}</span>
                       </div>
@@ -589,7 +622,7 @@ export default function Battery() {
             </div>
           )}
 
-          {isModelModuleOpen && selectedRack && (
+          {isModelModuleOpen && selectedModule && (
             <div className="DAT_Modal_Overlay" onClick={() => setIsModalModuleOpen(false)}>
               <div
                 className="DAT_Modal_Overlay_BoxCell"
@@ -603,7 +636,7 @@ export default function Battery() {
                     <div className="DAT_Modal_Overlay_BoxCell_Header_Back_Icon">
                       <FaArrowLeftLong size={20} />
                     </div>
-                    <h2>{selectedRack.id} - {moduleName} - Cells</h2>
+                    <h2>{selectedRack.rackName} - {selectedModule.moduleName} - Cells</h2>
                   </div>
                   <button
                     className="DAT_Modal_Overlay_BoxCell_Header_Close"
@@ -613,31 +646,33 @@ export default function Battery() {
                   </button>
                 </div>
 
-                {/* <div className="DAT_Modal_Overlay_BoxCell_Cell">
-                  {selectedRack.cells.map((cell) => {
+                <div className="DAT_Modal_Overlay_BoxCell_Cell">
+                  {selectedModule.cells.map((cell) => {
                     return (
-                      <div className={cell.status === "Normal" ? `DAT_Modal_Overlay_BoxCell_Cell_Card` : "DAT_Modal_Overlay_BoxCell_Cell_Card--High"}>
+                      <div className={cell.cellTemperature < 35 ? `DAT_Modal_Overlay_BoxCell_Cell_Card` : "DAT_Modal_Overlay_BoxCell_Cell_Card--High"}>
                         <div className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header">
-                          <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Title">{cell.id}</span>
+                          <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Title">{cell.cellName}</span>
                           <div className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status">
-                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Label">{lang.formatMessage({ id: "bms_status" })}:</span>
-                            <span className={cell.status === "Normal" ? `DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value` : "DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value_High"}>{lang.formatMessage({ id: `bms_status_${cell.status.toLowerCase()}` })}</span>
+                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Label">{lang.formatMessage({ id: "bms_temp" })}</span>
+                            <span className={cell.cellTemperature < 35 ? `DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value` : "DAT_Modal_Overlay_BoxCell_Cell_Card_Header_Status_Value_High"}>
+                              {cell.cellTemperature}°C
+                            </span>
                           </div>
                         </div>
                         <div className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats">
                           <div className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item">
                             <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({ id: "bms_voltage" })}:</span>
-                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.voltage}V</span>
+                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.cellVoltage}V</span>
                           </div>
                           <div className="">
-                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Label">{lang.formatMessage({ id: "bms_temp" })}:</span>
-                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.temperature}°C</span>
+                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Label">Soc</span>
+                            <span className="DAT_Modal_Overlay_BoxCell_Cell_Card_Stats_Item_Value">{cell.cellSoc}%</span>
                           </div>
                         </div>
                       </div>
                     )
                   })}
-                </div> */}
+                </div>
               </div>
             </div>
           )}
