@@ -3,7 +3,7 @@ const bmsDataTemplate2 = [
         id: 1,
         rackName: "rack1level_04",
         model: "rack1level",
-        band: "Hithium",
+        brand: "Hithium",
         template: {
             status: {
                 register: "100-1",
@@ -24,7 +24,7 @@ const bmsDataTemplate2 = [
                 type: "word"
             },
             temperature: {
-                regiser: "117-1",
+                register: "117-1",
                 scale: 1,
                 offset: -40,
                 type: "word"
@@ -110,7 +110,7 @@ const bmsDataTemplate2 = [
         id: 2,
         rackName: "rack2level_04",
         model: "rack2level",
-        band: "Hithium",
+        brand: "Hithium",
         template: {
             status: {
                 register: "3100-1",
@@ -131,7 +131,7 @@ const bmsDataTemplate2 = [
                 type: "word"
             },
             temperature: {
-                regiser: "3117-1",
+                register: "3117-1",
                 scale: 1,
                 offset: -40,
                 type: "word"
@@ -217,7 +217,7 @@ const bmsDataTemplate2 = [
         id: 3,
         rackName: "rack3level_04",
         model: "rack3level",
-        band: "Hithium",
+        brand: "Hithium",
         template: {
             status: {
                 register: "6100-1",
@@ -238,7 +238,7 @@ const bmsDataTemplate2 = [
                 type: "word"
             },
             temperature: {
-                regiser: "6117-1",
+                register: "6117-1",
                 scale: 1,
                 offset: -40,
                 type: "word"
@@ -324,7 +324,7 @@ const bmsDataTemplate2 = [
         id: 4,
         rackName: "rack4level_04",
         model: "rack4level",
-        band: "Hithium",
+        brand: "Hithium",
         template: {
             status: {
                 register: "9100-1",
@@ -345,7 +345,7 @@ const bmsDataTemplate2 = [
                 type: "word"
             },
             temperature: {
-                regiser: "9117-1",
+                register: "9117-1",
                 scale: 1,
                 offset: -40,
                 type: "word"
@@ -431,7 +431,7 @@ const bmsDataTemplate2 = [
         id: 5,
         rackName: "rack5level_04",
         model: "rack5level",
-        band: "Hithium",
+        brand: "Hithium",
         template: {
             status: {
                 register: "12100-1",
@@ -452,7 +452,7 @@ const bmsDataTemplate2 = [
                 type: "word"
             },
             temperature: {
-                regiser: "12117-1",
+                register: "12117-1",
                 scale: 1,
                 offset: -40,
                 type: "word"
@@ -538,7 +538,7 @@ const bmsDataTemplate2 = [
         id: 6,
         rackName: "rack6level_04",
         model: "rack6level",
-        band: "Hithium",
+        brand: "Hithium",
         template: {
             status: {
                 register: "15100-1",
@@ -559,7 +559,7 @@ const bmsDataTemplate2 = [
                 type: "word"
             },
             temperature: {
-                regiser: "15117-1",
+                register: "15117-1",
                 scale: 1,
                 offset: -40,
                 type: "word"
