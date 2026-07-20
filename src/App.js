@@ -28,6 +28,7 @@ import { useContext, useEffect } from "react";
 import { useState } from "react";
 import { SystemContext } from "./components/contexts/SystemContext";
 import { callApi } from "./components/Api/Api";
+import BmsManagement from "./components/Screen/BmsManagement/BmsManagement";
 //import { listenForegroundNotification, requestNotificationPermission } from "./firebase/notification";
 export const socket = signal(io.connect(process.env.REACT_APP_API));
 
@@ -117,7 +118,6 @@ const ProtectedPermission = (props) => {
   const permissionsRaw = permissions;
   const permisisonArray = permissionsRaw[props.permission] || [];
   const hasPermission = permisisonArray.includes('view') || permisisonArray.includes('read');
-
   if (hasPermission) {
     return <Outlet />;
   } else {
@@ -172,6 +172,11 @@ function AppRoutes() {
               <Route path="/roles" element={<RolePage />} />
               <Route path="/roles/:id" element={<RoleEdit />} />
             </Route>
+
+            <Route element={<ProtectedPermission permission="bms"/>}>
+              <Route path="/bms" element={<BmsManagement/>}/>
+            </Route>
+
 
             <Route element={<ProtectedPermission permission="users" />}>
               <Route path="/users" element={<UserManagementPage />} />

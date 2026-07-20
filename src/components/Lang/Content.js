@@ -468,7 +468,22 @@ const enMessages = {
   alarm_center: "Alarm center",
   toast_update_avatar_success: "Upload avatar success",
   toast_update_avatar_error: "Upload avatar fail!",
-  toast_request_success: "Request success"
+  toast_request_success: "Request success",
+  sidebar_item_battery_management: "BMS management",
+  bms_management: "BMS Management",
+  add_rack: "Add rack",
+  bms_rack_id: "ID",
+  bms_rack_name: "Rack name",
+  bms_rack_model: "Model name",
+  bms_rack_brand: "Brand name",
+  bms_rack_start_address: "Start address",
+  bms_actions: "Actions",
+  bms_edit: "Edit",
+  bms_delete: "Delete rack",
+  bms_add_module: "Add module",
+  bms_modal_create_title: "Add new rack",
+  modal_save: "Save",
+  bms_rack_module: "Total modules"
 };
 
 const viMessages = {
@@ -952,7 +967,22 @@ const viMessages = {
   view_all_alarm: "Xem tất cả",
   toast_update_avatar_success: "Cập nhật ảnh đại diện thành công!",
   toast_update_avatar_error: "Cập nhật ảnh đại diện thất bại!",
-  toast_request_success: "Gửi yêu cầu thành công"
+  toast_request_success: "Gửi yêu cầu thành công",
+  sidebar_item_battery_management: "Quản lý BMS",
+  bms_management: "Quản lý BMS",
+  add_rack: "Thêm mới rack",
+  bms_rack_id: "ID",
+  bms_rack_name: "Tên rack",
+  bms_rack_model: "Tên model",
+  bms_rack_brand: "Tên brand",
+  bms_rack_start_address: "Địa chỉ bắt đầu",
+  bms_actions: "Hành động",
+  bms_edit: "Chỉnh sửa",
+  bms_delete: "Xóa rack",
+  bms_add_module: "Thêm module",
+  bms_modal_create_title: "Thêm mới rack",
+  modal_save: "Lưu",
+  bms_rack_module: "Số lượng module"
 };
 
 export const messages = {

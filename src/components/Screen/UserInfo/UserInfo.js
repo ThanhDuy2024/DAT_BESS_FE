@@ -195,7 +195,7 @@ export default function UserInfo() {
       formData.append("avatar", avatar);
       formData.append("username", username);
 
-      const res = await callApi("post", `${process.env.REACT_APP_API}/data/uploadAvatar`,
+      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/uploadAvatar`,
         formData,
         {
           headers: {

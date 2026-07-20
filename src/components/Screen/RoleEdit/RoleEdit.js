@@ -18,6 +18,7 @@ const permissions = {
     battery: ["View", "Create", "Update", "Delete"],
     alarm: ["View", "Create", "Update", "Delete"],
     "energy-report": ["View", "Create", "Update", "Delete"],
+    bms: ["View", "Create", "Update", "Delete"],
     roles: ["View", "Create", "Update", "Delete"],
     settings: ["View", "Create", "Update", "Delete"],
 };

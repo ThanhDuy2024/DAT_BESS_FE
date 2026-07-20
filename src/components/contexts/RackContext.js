@@ -9,6 +9,7 @@ export const RackContextProvider = ({ children }) => {
     return (
         <RackContext.Provider value={{
             bmsData: state.bmsData,
+            rackData: state.rackData,
             rackDispatch
         }}
         >

@@ -171,6 +171,7 @@ export default function Role() {
       </div>
     )
   };
+  
   const renderModalViewRole = () => {
     return (
       <div className="DAT_RoleSettingMobile_Modal">
@@ -183,6 +184,7 @@ export default function Role() {
       </div>
     )
   };
+  
   const renderBody = () => {
     switch (modalType) {
       case "add":
@@ -195,6 +197,7 @@ export default function Role() {
         return null;
     }
   };
+
   const renderFooter = () => {
     switch (modalType) {
       case "add":

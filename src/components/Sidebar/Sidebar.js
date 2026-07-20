@@ -11,7 +11,8 @@ import {
   LuSettings,
   LuUsers,
   LuBell,
-  LuUserPen
+  LuUserPen,
+  LuBatteryFull
 } from "react-icons/lu";
 import { GoLaw } from "react-icons/go";
 import "./Sidebar.scss";
@@ -65,6 +66,7 @@ const menuGroups = [
       },
     ],
   },
+
   {
     labelId: "sidebar_group_management",
     mobileLabel: "sidebar_group_management_label",
@@ -79,6 +81,11 @@ const menuGroups = [
         path: "/roles",
         icon: <GoLaw />,
         labelId: "sidebar_item_role_management",
+      },
+      {
+        path: "/bms",
+        icon: <LuBatteryFull />,
+        labelId: "sidebar_item_battery_management",
       },
       {
         path: "/settings",

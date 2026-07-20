@@ -680,3 +680,27 @@ const sinh = (bmsDataTemplate2) => {
 }
 
 export const bmsDataTemplate = sinh(bmsDataTemplate2);
+
+export const rackData = [
+    {
+        id_: 1,
+        rack_name_: "rack1level_04",
+        model_: "rack1level",
+        brand_: "hithium",
+        start_rack_address_: 100
+    },
+    {
+        id_: 2,
+        rack_name_: "rack2level_04",
+        model_: "rack2level",
+        brand_: "hithium",
+        start_rack_address_: 3100
+    },
+    {
+        id_: 3,
+        rack_name_: "rack3level_04",
+        model_: "rack3level",
+        brand_: "hithium",
+        start_rack_address_: 6100
+    }
+]
