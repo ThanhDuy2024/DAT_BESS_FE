@@ -4,6 +4,7 @@ import './index.scss';
 import App from './App';
 import { LanguageProvider } from './components/Lang/LanguageProvider'
 import { SystemContextProvider } from './components/contexts/SystemContext';
+import { RackContextProvider } from './components/contexts/RackContext';
 
 // if ("serviceWorker" in navigator) {
 //   navigator.serviceWorker
@@ -19,7 +20,9 @@ root.render(
   <React.StrictMode>
     <LanguageProvider>
       <SystemContextProvider>
-        <App />
+        <RackContextProvider>
+          <App />
+        </RackContextProvider>
       </SystemContextProvider>
     </LanguageProvider>
 

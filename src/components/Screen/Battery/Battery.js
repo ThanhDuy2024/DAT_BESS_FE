@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { LuBadgeCheck, LuSearch, LuBatteryCharging, LuSeBatteryMobile } from "react-icons/lu";
 import StatusBadge from "../../Modal/StatusBadge";
 import { mockAlarms, mockContainers } from "../../data/mockData";
@@ -10,8 +10,11 @@ import { useIntl } from "react-intl";
 import { isMobile } from "react-device-detect";
 import { RiBatteryChargeLine } from "react-icons/ri";
 import { bmsDataTemplate } from "../../data/bmsTemplate";
+import { RackContext } from "../../contexts/RackContext";
 
 export default function Battery() {
+  const lang = useIntl();
+  const { bmsData, rackDispatch } = useContext(RackContext);
   const [selectedContainer, setSelectedContainer] = useState(mockContainers[0]);
   const [selectedRack, setSelectedRack] = useState(null);
   const [selectedModule, setSelectedModule] = useState();
@@ -20,7 +23,6 @@ export default function Battery() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModelModuleOpen, setIsModalModuleOpen] = useState(false);
   const [moduleName, setModuleName] = useState("");
-  const lang = useIntl();
   const [dataInf, setDataInf] = useState({});
   const [step, setStep] = useState(0);
   const [arrRack, setArrRack] = useState([]);
@@ -75,7 +77,12 @@ export default function Battery() {
       const res = await callApi('get', `${process.env.REACT_APP_APIDEV}/data/getAllRackInfo`, {});
       if(res.status === true) {
         setDataTemplate(res.data);
-        console.log(res.data)
+        rackDispatch({
+          type: "LOAD_BMS_DATA",
+          payload: {
+            bmsData: res.data
+          }
+        })
       } else {
         console.log("Failed to get data");
       }
@@ -122,12 +129,10 @@ export default function Battery() {
       socket.value.off("BESS_DATA");
     };
 
-
   }, [step]);
 
   useEffect(() => {
-    const response = dataTemplate || [];
-    console.log(response);
+    const response = bmsData || [];
     for (const item of response) {
       setDataMapping((prev) => {
         const index = prev.findIndex((rack) => rack.rackName === item.rack_name_);
