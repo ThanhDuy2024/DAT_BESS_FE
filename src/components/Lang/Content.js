@@ -465,7 +465,10 @@ const enMessages = {
   bms_max_voltage: "Maximum cell voltage",
   bms_min_voltage: "Minimum cell voltage",
   view_all_alarm: "View all alarms",
-  alarm_center: "Alarm center"
+  alarm_center: "Alarm center",
+  toast_update_avatar_success: "Upload avatar success",
+  toast_update_avatar_error: "Upload avatar fail!",
+  toast_request_success: "Request success"
 };
 
 const viMessages = {
@@ -947,6 +950,9 @@ const viMessages = {
   bms_min_voltage: "Điện áp cell thấp nhất",
   alarm_center: "Thông báo",
   view_all_alarm: "Xem tất cả",
+  toast_update_avatar_success: "Cập nhật ảnh đại diện thành công!",
+  toast_update_avatar_error: "Cập nhật ảnh đại diện thất bại!",
+  toast_request_success: "Gửi yêu cầu thành công"
 };
 
 export const messages = {

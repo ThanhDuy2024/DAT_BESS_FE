@@ -28,6 +28,7 @@ import { useContext, useEffect } from "react";
 import { useState } from "react";
 import { SystemContext } from "./components/contexts/SystemContext";
 import { callApi } from "./components/Api/Api";
+//import { listenForegroundNotification, requestNotificationPermission } from "./firebase/notification";
 export const socket = signal(io.connect(process.env.REACT_APP_API));
 
 export function toInt16(raw) {
@@ -123,6 +124,7 @@ const ProtectedPermission = (props) => {
     return <Navigate to="/dashboard" replace />;
   }
 }
+
 function AppRoutes() {
   return (
     <>
@@ -138,6 +140,7 @@ function AppRoutes() {
         />
 
         <Route element={<ProtectedRoute />}>
+
           <Route element={<MainLayout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
 
@@ -185,6 +188,20 @@ function AppRoutes() {
 }
 
 export default function App() {
+  // useEffect(() => {
+  //   async function init() {
+  //     const token = await requestNotificationPermission();
+
+  //     if (token) {
+  //       // Gửi token lên backend
+  //       // await axios.post("/api/fcm-token", { token });
+  //     }
+
+  //     listenForegroundNotification();
+  //   }
+
+  //   init();
+  // }, []);
   return (
     <BrowserRouter>
       <AppRoutes />

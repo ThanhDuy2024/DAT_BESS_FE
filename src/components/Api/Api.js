@@ -16,7 +16,6 @@ export const callApi = (method, url, data) => {
         let res = await axios.post(url, data, {
           headers: {
             token: JSON.parse(localStorage.getItem('token')) || JSON.parse(sessionStorage.getItem('token')),
-            email: sessionStorage.getItem("email")
           },
           withCredentials: true
         })

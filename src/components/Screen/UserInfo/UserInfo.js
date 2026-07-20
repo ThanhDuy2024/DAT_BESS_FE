@@ -25,6 +25,7 @@ export default function UserInfo() {
   const [preview, setPreview] = useState(image);
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
+  const [noti, setNoti] = useState("");
 
   const handleOpenModal = (field, currentValue) => {
     setEditField(field);
@@ -188,15 +189,13 @@ export default function UserInfo() {
   };
 
   const upload = async () => {
-
     if (!avatar) return;
-
     try {
       const formData = new FormData();
       formData.append("avatar", avatar);
       formData.append("username", username);
 
-      const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/uploadAvatar`,
+      const res = await callApi("post", `${process.env.REACT_APP_API}/data/uploadAvatar`,
         formData,
         {
           headers: {
@@ -204,12 +203,15 @@ export default function UserInfo() {
           }
         }
       );
-
+      toast.success(lang.formatMessage({ id: "toast_update_avatar_success" }))
     } catch (err) {
       console.error(err);
-      alert("Upload thất bại");
+      toast.error(lang.formatMessage({ id: "toast_update_avatar_error" }))
     }
   };
+  const handleRequest = () => {
+    toast.success(lang.formatMessage({ id: "toast_request_success" }))
+  }
 
   return (
     <div className="DAT_UserInfor">
@@ -464,7 +466,9 @@ export default function UserInfo() {
               {lang.formatMessage({ id: "notification_permission" })}
             </div>
           </div>
-          <div className="DAT_UserInfor_Container_Row_Btn">
+          <div className="DAT_UserInfor_Container_Row_Btn"
+            onClick={handleRequest}
+          >
             {lang.formatMessage({ id: "request" })}
           </div>
         </div>
@@ -478,7 +482,9 @@ export default function UserInfo() {
               {lang.formatMessage({ id: "notification_on_off" })}
             </div>
           </div>
-          <div className="DAT_UserInfor_Container_Row_Btn">Bat</div>
+          <div className="DAT_UserInfor_Container_Row_Btn"
+            onClick={() => setNoti(!noti)}
+          >{noti ? lang.formatMessage({ id: "on" }) : lang.formatMessage({ id: "off" })}</div>
         </div>
       </div>
     </div>

@@ -25,6 +25,7 @@ export default function Battery() {
   const [step, setStep] = useState(0);
   const [arrRack, setArrRack] = useState([]);
   const [dataMapping, setDataMapping] = useState([]);
+  const [dataTemplate, setDataTemplate] = useState();
   const batteryStatus = {
     0: "Initialization",
     1: "Charging",
@@ -54,8 +55,6 @@ export default function Battery() {
     return matchSearch && matchStatus;
   });
 
-
-
   useEffect(() => {
     (async () => {
       let data = await callApi("post", process.env.REACT_APP_API + "/data/readBess", {
@@ -70,6 +69,18 @@ export default function Battery() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const res = await callApi('get', `${process.env.REACT_APP_APIDEV}/data/getAllRackInfo`, {});
+      if(res.status === true) {
+        setDataTemplate(res.data);
+        console.log(res.data)
+      } else {
+        console.log("Failed to get data");
+      }
+    })();
+  }, [])
 
   useEffect(() => {
     if (!step) return;
@@ -93,7 +104,7 @@ export default function Battery() {
     });
 
     socket.value.on("BESS_DATA", (payload) => {
-      console.log(payload.level, payload.data)
+      //console.log(payload.level, payload.data)
       setDataInf(prev => ({
         ...prev,
         ...payload.data
@@ -115,18 +126,19 @@ export default function Battery() {
   }, [step]);
 
   useEffect(() => {
-    const response = bmsDataTemplate;
+    const response = dataTemplate || [];
+    console.log(response);
     for (const item of response) {
       setDataMapping((prev) => {
-        const index = prev.findIndex((rack) => rack.rackName === item.rackName);
+        const index = prev.findIndex((rack) => rack.rackName === item.rack_name_);
 
         let cellArr = [];
         const moduleArray = [];
-        for (const module of item.module) {
+        for (const module of item.module_) {
           let index = 1;
-          for (const itemInCell of module.cell) {
+          for (const itemInCell of module.cells) {
             const obj = {
-              cellName: `${item.rackName}-Cell-${index}`,
+              cellName: `${item.rack_name_}-Cell-${index}`,
               cellVoltage: (dataInf[itemInCell.cellVoltage.register] * itemInCell.cellVoltage.scale).toFixed(2),
               cellTemperature: dataInf[itemInCell.cellTemperature.register] * itemInCell.cellTemperature.scale - Math.abs(itemInCell.cellTemperature.offset),
               cellSoc: (dataInf[itemInCell.cellSoc.register] * itemInCell.cellSoc.scale),
@@ -144,43 +156,42 @@ export default function Battery() {
 
         if (index === -1) {
           return [...prev, {
-            id: item.id,
-            rackName: item.rackName,
-            model: item.model,
+            id: item.rack_id_,
+            rackName: item.rack_name_,
+            model: item.model_,
             status: {
-              statusId: dataInf[item.template.status.register] || 0,
-              statusName: rackNStatus[dataInf[item.template.status.register]]
+              statusId: dataInf[item.template_.status.register] || 0,
+              statusName: rackNStatus[dataInf[item.template_.status.register]]
             },
-            voltage: (Number(dataInf[item.template.voltage.register]) * item.template.voltage.scale).toFixed(2) || 0,
-            maximumCellVoltage: (Number(dataInf[item.template.maximumCellVoltage.register]) * item.template.maximumCellVoltage.scale).toFixed(2) || 0,
-            minimumCellVoltage: (Number(dataInf[item.template.minimumCellVoltage.register]) * item.template.minimumCellVoltage.scale).toFixed(2) || 0,
-            current: (Number(dataInf[item.template.current.register]) * item.template.current.scale - Math.abs(item.template.current.offset)).toFixed(2) || 0,
-            temperature: Number(dataInf[item.template.temperature.register] * item.template.temperature.scale - Math.abs(item.template.temperature.offset)).toFixed(0) || 0,
-            maximumCellTemperature: Number(dataInf[item.template.maximumCellTemperature.register] * item.template.maximumCellTemperature.scale - Math.abs(item.template.maximumCellTemperature.offset)).toFixed(0) || 0,
-            minimumCellTemperature: Number(dataInf[item.template.minimumCellTemperature.register] * item.template.minimumCellTemperature.scale - Math.abs(item.template.minimumCellTemperature.offset)).toFixed(0) || 0,
-            soc: dataInf[item.template.soc.register] || 0,
-            soh: dataInf[item.template.soh.register] || 0,
+            voltage: (Number(dataInf[item.template_.voltage.register]) * item.template_.voltage.scale).toFixed(2) || 0,
+            maximumCellVoltage: (Number(dataInf[item.template_.maximumCellVoltage.register]) * item.template_.maximumCellVoltage.scale).toFixed(2) || 0,
+            minimumCellVoltage: (Number(dataInf[item.template_.minimumCellVoltage.register]) * item.template_.minimumCellVoltage.scale).toFixed(2) || 0,
+            current: (Number(dataInf[item.template_.current.register]) * item.template_.current.scale - Math.abs(item.template_.current.offset)).toFixed(2) || 0,
+            temperature: Number(dataInf[item.template_.temperature.register] * item.template_.temperature.scale - Math.abs(item.template_.temperature.offset)).toFixed(0) || 0,
+            maximumCellTemperature: Number(dataInf[item.template_.maximumCellTemperature.register] * item.template_.maximumCellTemperature.scale - Math.abs(item.template_.maximumCellTemperature.offset)).toFixed(0) || 0,
+            minimumCellTemperature: Number(dataInf[item.template_.minimumCellTemperature.register] * item.template_.minimumCellTemperature.scale - Math.abs(item.template_.minimumCellTemperature.offset)).toFixed(0) || 0,
+            soc: dataInf[item.template_.soc.register] || 0,
+            soh: dataInf[item.template_.soh.register] || 0,
             module: moduleArray
           }]
         }
-
         return prev.map((rack) => (
-          rack.rackName === item.rackName ?
+          rack.rackName === item.rack_name_ ?
             {
               ...rack,
               status: {
-                statusId: dataInf[item.template.status.register],
-                statusName: rackNStatus[dataInf[item.template.status.register]]
+                statusId: dataInf[item.template_.status.register],
+                statusName: rackNStatus[dataInf[item.template_.status.register]]
               },
-              voltage: (Number(dataInf[item.template.voltage.register]) * item.template.voltage.scale).toFixed(2),
-              maximumCellVoltage: (Number(dataInf[item.template.maximumCellVoltage.register]) * item.template.maximumCellVoltage.scale).toFixed(2),
-              minimumCellVoltage: (Number(dataInf[item.template.minimumCellVoltage.register]) * item.template.minimumCellVoltage.scale).toFixed(2),
-              current: (Number(dataInf[item.template.current.register]) * item.template.current.scale - Math.abs(item.template.current.offset)).toFixed(2),
-              temperature: Number(dataInf[item.template.temperature.register] * item.template.temperature.scale - Math.abs(item.template.temperature.offset)).toFixed(0),
-              maximumCellTemperature: dataInf[item.template.maximumCellTemperature.register] * item.template.maximumCellTemperature.scale - Math.abs(Number(item.template.maximumCellTemperature.offset)),
-              minimumCellTemperature: dataInf[item.template.minimumCellTemperature.register] * item.template.minimumCellTemperature.scale - Math.abs(Number(item.template.minimumCellTemperature.offset)),
-              soc: dataInf[item.template.soc.register],
-              soh: dataInf[item.template.soh.register],
+              voltage: (Number(dataInf[item.template_.voltage.register]) * item.template_.voltage.scale).toFixed(2),
+              maximumCellVoltage: (Number(dataInf[item.template_.maximumCellVoltage.register]) * item.template_.maximumCellVoltage.scale).toFixed(2),
+              minimumCellVoltage: (Number(dataInf[item.template_.minimumCellVoltage.register]) * item.template_.minimumCellVoltage.scale).toFixed(2),
+              current: (Number(dataInf[item.template_.current.register]) * item.template_.current.scale - Math.abs(item.template_.current.offset)).toFixed(2),
+              temperature: Number(dataInf[item.template_.temperature.register] * item.template_.temperature.scale - Math.abs(item.template_.temperature.offset)).toFixed(0),
+              maximumCellTemperature: dataInf[item.template_.maximumCellTemperature.register] * item.template_.maximumCellTemperature.scale - Math.abs(Number(item.template_.maximumCellTemperature.offset)),
+              minimumCellTemperature: dataInf[item.template_.minimumCellTemperature.register] * item.template_.minimumCellTemperature.scale - Math.abs(Number(item.template_.minimumCellTemperature.offset)),
+              soc: dataInf[item.template_.soc.register],
+              soh: dataInf[item.template_.soh.register],
               module: moduleArray
             }
             :
@@ -297,7 +308,7 @@ export default function Battery() {
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="DAT_ModalMobile_Overlay_Box_Header">
-                  <h2>{selectedRack.rackName.toUpperCase()} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
+                  <h2>{selectedRack.rackName_.toUpperCase()} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
                   <button
                     className="DAT_ModalMobile_Overlay_Box_Header_Close"
                     onClick={() => setIsModalOpen(false)}

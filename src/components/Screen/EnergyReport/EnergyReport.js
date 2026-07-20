@@ -155,7 +155,7 @@ export default function EnergyReport() {
 
         const res = await callApi(
           "post",
-          `${process.env.REACT_APP_APIDEV}/data/calculate`,
+          `${process.env.REACT_APP_API}/data/calculate`,
           {
             date: formattedDateDisplay
           }
@@ -428,7 +428,7 @@ export default function EnergyReport() {
 
   const getAllReportPagination = async (current) => {
     try {
-      const response = await callApi("get", `${process.env.REACT_APP_APIDEV}/data/getAllReportPagination?date=${formattedDateDisplay}&page=${current}`);
+      const response = await callApi("get", `${process.env.REACT_APP_API}/data/getAllReportPagination?date=${formattedDateDisplay}&page=${current}`);
       if (response.status === false) {
         console.log(response.msg);
       } else {
@@ -444,7 +444,7 @@ export default function EnergyReport() {
     try {
       const res = await callApi(
         "post",
-        `${process.env.REACT_APP_APIDEV}/data/getAllReport`,
+        `${process.env.REACT_APP_API}/data/getAllReport`,
         {
           date: formattedDateDisplay
         }
@@ -460,7 +460,7 @@ export default function EnergyReport() {
 
   const handleExportToDay = async () => {
     try {
-      const res = await axios.post(`${process.env.REACT_APP_APIDEV}/data/export-excel-today`, {
+      const res = await axios.post(`${process.env.REACT_APP_API}/data/export-excel-today`, {
         date: formattedDateDisplay
       }, {
         headers: {
