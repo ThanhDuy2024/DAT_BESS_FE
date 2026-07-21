@@ -469,7 +469,7 @@ const enMessages = {
   toast_update_avatar_success: "Upload avatar success",
   toast_update_avatar_error: "Upload avatar fail!",
   toast_request_success: "Request success",
-  sidebar_item_battery_management: "BMS management",
+  sidebar_item_battery_management: "BMS Management",
   bms_management: "BMS Management",
   add_rack: "Add rack",
   bms_rack_id: "ID",
@@ -483,7 +483,12 @@ const enMessages = {
   bms_add_module: "Add module",
   bms_modal_create_title: "Add new rack",
   modal_save: "Save",
-  bms_rack_module: "Total modules"
+  bms_rack_module: "Total modules",
+  bms_rack_module: "Total modules",
+  bms_module_name: "Module name",
+  bms_total_cell: "Total cells",
+  bms_module_total: "Total Modules",
+  bms_modal_create_module_title: "Create Module"
 };
 
 const viMessages = {
@@ -982,7 +987,12 @@ const viMessages = {
   bms_add_module: "Thêm module",
   bms_modal_create_title: "Thêm mới rack",
   modal_save: "Lưu",
-  bms_rack_module: "Số lượng module"
+  bms_rack_module: "Số lượng module",
+  bms_rack_module: "Số lượng module",
+  bms_module_name: "Tên Module",
+  bms_total_cell: "Số lượng cell",
+  bms_module_total: "Số lượng Module",
+  bms_modal_create_module_title: "Thêm Module"
 };
 
 export const messages = {

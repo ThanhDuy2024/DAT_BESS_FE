@@ -12,6 +12,8 @@ const BmsManagement = () => {
     const { rackData, rackDispatch } = useContext(RackContext);
     const [modalType, setModalType] = useState(null);
     const [createRack, setCreateRack] = useState({});
+    const [createModule, setCreateModule] = useState({});
+    const [rackId, setRackId] = useState(null);
 
     useEffect(() => {
         (async () => {
@@ -36,10 +38,11 @@ const BmsManagement = () => {
                 model: createRack.model,
                 brand: createRack.brand
             });
-            if(res.status === false) {
+            if (res.status === false) {
                 toast.error(res.msg);
             } else {
                 toast.success(lang.formatMessage({ id: "toast_created" }));
+                setModalType(null)
                 rackDispatch({
                     type: "CREATE_RACK_DATA",
                     payload: {
@@ -59,6 +62,30 @@ const BmsManagement = () => {
         }
     }
 
+    const handleCreateModule = async () => {
+        try {
+            const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/v2/createModule`, {
+                rackId: rackId,
+                totalModules: Number(createModule.totalModules),
+                totalCells: Number(createModule.totalCells),
+            });
+            if (res.status === false) {
+                toast.error(res.msg);
+            } else {
+                toast.success(lang.formatMessage({ id: "toast_created" }));
+                setModalType(null)
+                rackDispatch({
+                    type: "CREATE_RACK_MODULE_DATA",
+                    payload: {
+                        rackId: rackId,
+                        totalModules: Number(createModule.totalModules),
+                    }
+                })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const renderModalAdd = () => {
         return (
             <div className="DAT_Bms_Form_Grid">
@@ -93,10 +120,38 @@ const BmsManagement = () => {
         )
     };
 
+    const renderModalAddModule = () => {
+        return (
+            <div className="DAT_Bms_Form_Grid" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }
+            }>
+                <div className="DAT_Bms_Form_Grid_Group">
+                    <label className="DAT_Bms_Form_Grid_Group_Label">
+                        {lang.formatMessage({ id: "bms_module_total" })}
+                    </label>
+                    <input
+                        className="DAT_Bms_Form_Grid_Group_Input"
+                        onChange={(e) => setCreateModule({ ...createModule, totalModules: e.target.value })}
+                    />
+                </div>
+                <div className="DAT_Bms_Form_Grid_Group">
+                    <label className="DAT_Bms_Form_Grid_Group_Label">
+                        {lang.formatMessage({ id: "bms_total_cell" })}
+                    </label>
+                    <input
+                        className="DAT_Bms_Form_Grid_Group_Input"
+                        onChange={(e) => setCreateModule({ ...createModule, totalCells: e.target.value })}
+                    />
+                </div>
+            </div>
+        )
+    };
+
     const renderTitle = () => {
         switch (modalType) {
             case "add":
                 return lang.formatMessage({ id: "bms_modal_create_title" });
+            case "addModule":
+                return lang.formatMessage({ id: "bms_modal_create_module_title" });
             default:
                 return "";
         }
@@ -121,6 +176,23 @@ const BmsManagement = () => {
                         </button>
                     </>
                 );
+            case "addModule":
+                return (
+                    <>
+                        <button
+                            className="DAT_Bms_Modal_Footer_Button_Secondary"
+                            onClick={() => setModalType(null)}
+                        >
+                            {lang.formatMessage({ id: "modal_cancel" })}
+                        </button>
+                        <button
+                            className="DAT_Bms_Modal_Footer_Button_Primary"
+                            onClick={() => handleCreateModule()}
+                        >
+                            {lang.formatMessage({ id: "modal_save" })}
+                        </button>
+                    </>
+                );
             default:
                 return null;
         }
@@ -130,6 +202,8 @@ const BmsManagement = () => {
         switch (modalType) {
             case "add":
                 return renderModalAdd();
+            case "addModule":
+                return renderModalAddModule();
             default:
                 return null;
         }
@@ -193,6 +267,7 @@ const BmsManagement = () => {
                                         <td className="DAT_RoleSetting_Container_Table_Main_Cell">
                                             <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
                                                 <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                                                    onClick={() => { setModalType("addModule"); setRackId(item.id_) }}
                                                 >
                                                     {lang.formatMessage({ id: "bms_add_module" })}
                                                 </button>
@@ -222,7 +297,7 @@ const BmsManagement = () => {
             >
                 {renderBody()}
             </Modal>
-        </div>
+        </div >
     )
 }
 

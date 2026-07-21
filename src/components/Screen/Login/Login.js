@@ -52,10 +52,12 @@ export default function Login() {
 
   const login = async (account, password, save) => {
     try {
-      const res = await callApi('post', `${process.env.REACT_APP_API}/data/login`, {
-        account: account,
-        password: password,
-      });
+      const res = await callApi('post', `${process.env.REACT_APP_API}/data/login`, 
+        {
+          account: account,
+          password: password,
+        }
+      );
 
       if (res.status === true) {
         if (save) {
