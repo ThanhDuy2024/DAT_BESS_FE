@@ -478,7 +478,7 @@ const enMessages = {
   bms_rack_brand: "Brand name",
   bms_rack_start_address: "Start address",
   bms_actions: "Actions",
-  bms_edit: "Edit",
+  bms_edit: "Edit module",
   bms_delete: "Delete rack",
   bms_add_module: "Add module",
   bms_modal_create_title: "Add new rack",
@@ -488,7 +488,17 @@ const enMessages = {
   bms_module_name: "Module name",
   bms_total_cell: "Total cells",
   bms_module_total: "Total Modules",
-  bms_modal_create_module_title: "Create Module"
+  bms_modal_create_module_title: "Create Module",
+  bms_rack_edit_title: "Edit Rack",
+  bms_rack_edit_infor: "Rack information",
+  bms_rack_edit_template: "Rack template",
+  bms_scale: "Scale",
+  bms_offset: "Offset",
+  bms_type: "Type",
+  bms_max_temp: "Maximum cell temperature",
+  bms_min_temp: "Minimum cell temperature",
+  temperature: "Temperature",
+  soh: "Soh"
 };
 
 const viMessages = {
@@ -780,7 +790,7 @@ const viMessages = {
   current_password: "Mật khẩu hiện tại",
   new_password: "Mật khẩu mới",
   password_confirm: "Xác nhận mật khẩu",
-  save: "lưu",
+  save: "Lưu",
   password_input: "Nhập mật khẩu",
   user_search: "Tìm kiếm theo tên hoặc email",
   modal_close_aria: "Đóng hộp thoại",
@@ -992,7 +1002,18 @@ const viMessages = {
   bms_module_name: "Tên Module",
   bms_total_cell: "Số lượng cell",
   bms_module_total: "Số lượng Module",
-  bms_modal_create_module_title: "Thêm Module"
+  bms_modal_create_module_title: "Thêm Module",
+
+  bms_rack_edit_title: "Chỉnh sửa rack",
+  bms_rack_edit_infor: "Thông tin rack",
+  bms_rack_edit_template: "Mẫu rack",
+  bms_scale: "Tỉ lệ",
+  bms_offset: "Phần bù",
+  bms_type: "Kiểu",
+  bms_max_temp: "Nhiệt độ cell cao nhất",
+  bms_min_temp: "Nhiệt độ cell thấp nhất",
+  temperature: "Nhiệt độ",
+  soh: "Tình trạng pin"
 };
 
 export const messages = {

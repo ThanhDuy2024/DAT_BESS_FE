@@ -1,0 +1,264 @@
+.DAT_BmsEdit {
+    &_HeaderCard {
+        padding: var(--space-lg);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        background: var(--card-bg);
+        box-shadow: var(--shadow-card);
+        transition: box-shadow var(--transition-base);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &_Main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            &_Icon {
+                display: flex;
+                align-items: center;
+                color: var(--text-primary);
+            }
+
+            &_Title {
+                grid-area: title;
+                margin: 0;
+                color: var(--text-primary);
+                font-size: 24px;
+                font-weight: var(--font-weight-semibold);
+            }
+
+        }
+    }
+
+    &_Main {
+        background: #fff;
+        padding: 36px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(0, 92, 184, 0.08);
+        margin-top: 10px;
+        box-shadow:
+            0 10px 35px rgba(0, 92, 184, 0.04);
+
+        &_Information {
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+
+            &_Group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+
+                label {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: var(--text-primary)
+                }
+
+                input,
+                select {
+                    height: 56px;
+                    padding: 0 18px;
+                    border-radius: 14px;
+                    border: 1px solid rgba(0, 92, 184, .12);
+                    background: rgba(249, 252, 255, 1);
+                    font-size: 15px;
+                    outline: none;
+                    transition: .18s;
+                    color: rgba(0, 55, 120, 1);
+
+                    &:focus {
+                        border-color: rgba(0, 92, 184, .35);
+                        background: white;
+                        box-shadow: 0 0 0 4px rgba(0, 92, 184, .06);
+                    }
+                }
+
+                select {
+                    cursor: pointer;
+                }
+
+                input::placeholder {
+                    color: rgba(120, 140, 170, 1);
+                }
+            }
+        }
+
+        &_Title {
+            margin-bottom: 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        &_Edit {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+
+            &_Group {
+                // background: linear-gradient(180deg, rgba(252, 253, 255, 1), rgba(247, 250, 255, 1));
+                border: 1px solid rgba(0, 92, 184, 1);
+                border-radius: 20px;
+                padding: 24px;
+                height: 100%;
+                transition: .2s;
+
+                &:hover {
+                    border-color:
+                        rgba(0, 92, 184, .15);
+
+                    box-shadow:
+                        0 8px 20px rgba(0, 92, 184, .04);
+                }
+
+                &_Title {
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: rgba(11, 25, 103, 1);
+                    margin-bottom: 10px;
+                    position: relative;
+                    padding-left: 14px;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                &_Box {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 8px;
+
+                    &:last-child {
+                        margin-bottom: 0px;
+                    }
+
+                    label {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: var(--text-primary)
+                    }
+
+                    input,
+                    select {
+                        height: 36px;
+                        padding: 0 18px;
+                        border-radius: 10px;
+                        border: 1px solid rgba(0, 92, 184, .12);
+                        background: white;
+                        font-size: 15px;
+                        outline: none;
+                        transition: .18s;
+                        color: rgba(0, 55, 120, 1);
+
+                        &:focus {
+                            border-color: rgba(0, 92, 184, .35);
+                            box-shadow: 0 0 0 4px rgba(0, 92, 184, .06);
+                        }
+                    }
+
+                    select {
+                        cursor: pointer;
+                    }
+
+                    input::placeholder {
+                        color: rgba(120, 140, 170, 1);
+                    }
+                }
+            }
+        }
+
+        &_Footer {
+            margin-top: 20px;
+            text-align: center;
+
+            &_Save {
+                height: 46px;
+
+                padding: 0 28px;
+
+                border: none;
+
+                border-radius: 12px;
+
+                background: var(--primary);
+                color: white;
+
+                font-size: 15px;
+
+                font-weight: 600;
+
+                cursor: pointer;
+
+                transition: .2s;
+
+                &:hover {
+                    background:
+                        rgba(0, 78, 156, 1);
+                }
+
+                &:active {
+                    transform: translateY(1px);
+                }
+            }
+        }
+
+    }
+}
+
+.checkbox {
+    width: 18px;
+
+    height: 18px;
+
+    border-radius: 6px;
+
+    border:
+        2px solid rgba(0, 92, 184, .28);
+
+    position: relative;
+
+    flex-shrink: 0;
+
+    &::after {
+        content: "";
+
+        position: absolute;
+
+        left: 50%;
+
+        top: 45%;
+
+        width: 8px;
+
+        height: 4px;
+
+        border-left: 2px solid white;
+
+        border-bottom: 2px solid white;
+
+        transform:
+            translate(-50%, -50%) rotate(-45deg);
+
+        opacity: 0;
+    }
+}
+
+
+
+
+@media (max-width: 900px) {
+    .role-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+    .permission__list {
+        grid-template-columns: 1fr;
+    }
+}
