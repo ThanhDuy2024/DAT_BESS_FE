@@ -4,6 +4,7 @@ import { useIntl } from "react-intl";
 import { callApi } from "../../Api/Api";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner"
+import { isMobile } from "react-device-detect";
 const defaultGroup = { register: 0, scale: "", offset: "", type: "" };
 const defaultTemplate = {
     status: { ...defaultGroup },
@@ -145,333 +146,665 @@ const BmsEditRack = () => {
     };
 
     return (
-        <div className="DAT_BmsEditRack">
-            <div className="DAT_BmsEditRack_HeaderCard">
-                <div className="DAT_BmsEditRack_HeaderCard_Main">
-                    <div className="DAT_BmsEditRack_HeaderCard_Main_Title">
-                        {lang.formatMessage({ id: "bms_rack_edit_title" })}
+        <>
+            {isMobile ? (
+                <div className="DAT_BmsEditRackMobile">
+                    <div className="DAT_BmsEditRackMobile_HeaderCard">
+                        <div className="DAT_BmsEditRackMobile_HeaderCard_Main">
+                            <div className="DAT_BmsEditRackMobile_HeaderCard_Main_Title">
+                                {lang.formatMessage({ id: "bms_rack_edit_title" })}
+                            </div>
+                            <button
+                                className="DAT_BmsEditRackMobile_HeaderCard_Main_Button"
+                                onClick={() => navigate("/bms")}
+                            >
+                                {lang.formatMessage({ id: "go_back" })}
+                            </button>
+                        </div>
                     </div>
-                    <button
-                        className="DAT_BmsEditRack_HeaderCard_Main_Button"
-                        onClick={() => navigate("/bms")}
-                    >
-                        {lang.formatMessage({ id: "go_back" })}
-                    </button>
+
+                    <form className="DAT_BmsEditRackMobile_Main" onSubmit={handleSubmit} key={rackDetail?.id || id}>
+                        <div className="DAT_BmsEditRackMobile_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_infor" })}</div>
+                        <div className="DAT_BmsEditRackMobile_Main_Information">
+                            <div className="DAT_BmsEditRackMobile_Main_Information_Group">
+                                <label>{lang.formatMessage({ id: "bms_rack_name" })}</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter rack name"
+                                    defaultValue={rackDetail?.rack_name_ || ""}
+                                    name="rackName"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditRackMobile_Main_Information_Group">
+                                <label>{lang.formatMessage({ id: "bms_rack_model" })}</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter model name"
+                                    defaultValue={rackDetail?.model_ || ""}
+                                    name="model"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditRackMobile_Main_Information_Group">
+                                <label>{lang.formatMessage({ id: "bms_rack_brand" })}</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter brand name"
+                                    defaultValue={rackDetail?.brand_ || ""}
+                                    name="brand"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditRackMobile_Main_Information_Group">
+                                <label>{lang.formatMessage({ id: "bms_rack_start_address" })}</label>
+                                <input
+                                    type="text"
+                                    defaultValue={rackDetail?.start_rack_address_ || ""}
+                                    disabled
+                                />
+                            </div>
+                        </div>
+
+                        <div className="DAT_BmsEditRackMobile_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_template" })}</div>
+                        <div className="DAT_BmsEditRackMobile_Main_Edit">
+
+                            {/* Status */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group--hidden">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">Status</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "status" })}</label>
+                                    <input
+                                        defaultValue={template_?.status?.scale ?? ""}
+                                        name="scaleStatus"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.status?.offset ?? ""}
+                                        name="offsetStatus"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.status?.type ?? ""}
+                                        name="typeStatus"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Voltage */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "voltage" })}</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.voltage?.scale ?? ""}
+                                        name="scaleVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.voltage?.offset ?? ""}
+                                        name="offsetVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.voltage?.type ?? ""}
+                                        name="typeVoltage"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Current */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "current" })}</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.current?.scale ?? ""}
+                                        name="scaleCurrent"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.current?.offset ?? ""}
+                                        name="offsetCurrent"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.current?.type ?? ""}
+                                        name="typeCurrent"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Soc */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">Soc</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.soc?.scale ?? ""}
+                                        name="scaleSoc"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.soc?.offset ?? ""}
+                                        name="offsetSoc"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.soc?.type ?? ""}
+                                        name="typeSoc"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Soh */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">Soh</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.soh?.scale ?? ""}
+                                        name="scaleSoh"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.soh?.offset ?? ""}
+                                        name="offsetSoh"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.soh?.type ?? ""}
+                                        name="typeSoh"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Temperature */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_temp" })}</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.temperature?.scale ?? ""}
+                                        name="scaleTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.temperature?.offset ?? ""}
+                                        name="offsetTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.temperature?.type ?? ""}
+                                        name="typeTemperature"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Minimum Cell Voltage */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_min_voltage" })}</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellVoltage?.scale ?? ""}
+                                        name="scaleMinimumCellVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellVoltage?.offset ?? ""}
+                                        name="offsetMinimumCellVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellVoltage?.type ?? ""}
+                                        name="typeMinimumCellVoltage"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Maximum Cell Voltage */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_max_voltage" })}</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellVoltage?.scale ?? ""}
+                                        name="scaleMaximumCellVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellVoltage?.offset ?? ""}
+                                        name="offsetMaximumCellVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellVoltage?.type ?? ""}
+                                        name="typeMaximumCellVoltage"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Minimum Cell Temperature */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_min_temp" })}</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellTemperature?.scale ?? ""}
+                                        name="scaleMinimumCellTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellTemperature?.offset ?? ""}
+                                        name="offsetMinimumCellTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellTemperature?.type ?? ""}
+                                        name="typeMinimumCellTemperature"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Maximum Cell Temperature */}
+                            <div className="DAT_BmsEditRackMobile_Main_Edit_Group">
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_max_temp" })}</div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellTemperature?.scale ?? ""}
+                                        name="scaleMaximumCellTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellTemperature?.offset ?? ""}
+                                        name="offsetMaximumCellTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRackMobile_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellTemperature?.type ?? ""}
+                                        name="typeMaximumCellTemperature"
+                                    />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div className="DAT_BmsEditRackMobile_Main_Footer">
+                            <button type="submit" className="DAT_BmsEditRackMobile_Main_Footer_Save">
+                                {lang.formatMessage({ id: "save" })}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </div>
+            ) : (
+                <div className="DAT_BmsEditRack">
+                    <div className="DAT_BmsEditRack_HeaderCard">
+                        <div className="DAT_BmsEditRack_HeaderCard_Main">
+                            <div className="DAT_BmsEditRack_HeaderCard_Main_Title">
+                                {lang.formatMessage({ id: "bms_rack_edit_title" })}
+                            </div>
+                            <button
+                                className="DAT_BmsEditRack_HeaderCard_Main_Button"
+                                onClick={() => navigate("/bms")}
+                            >
+                                {lang.formatMessage({ id: "go_back" })}
+                            </button>
+                        </div>
+                    </div>
 
-            <form className="DAT_BmsEditRack_Main" onSubmit={handleSubmit} key={rackDetail?.id || id}>
-                <div className="DAT_BmsEditRack_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_infor" })}</div>
-                <div className="DAT_BmsEditRack_Main_Information">
-                    <div className="DAT_BmsEditRack_Main_Information_Group">
-                        <label>{lang.formatMessage({ id: "bms_rack_name" })}</label>
-                        <input
-                            type="text"
-                            placeholder="Enter rack name"
-                            defaultValue={rackDetail?.rack_name_ || ""}
-                            name="rackName"
-                        />
-                    </div>
-                    <div className="DAT_BmsEditRack_Main_Information_Group">
-                        <label>{lang.formatMessage({ id: "bms_rack_model" })}</label>
-                        <input
-                            type="text"
-                            placeholder="Enter model name"
-                            defaultValue={rackDetail?.model_ || ""}
-                            name="model"
-                        />
-                    </div>
-                    <div className="DAT_BmsEditRack_Main_Information_Group">
-                        <label>{lang.formatMessage({ id: "bms_rack_brand" })}</label>
-                        <input
-                            type="text"
-                            placeholder="Enter brand name"
-                            defaultValue={rackDetail?.brand_ || ""}
-                            name="brand"
-                        />
-                    </div>
-                    <div className="DAT_BmsEditRack_Main_Information_Group">
-                        <label>{lang.formatMessage({ id: "bms_rack_start_address" })}</label>
-                        <input
-                            type="text"
-                            defaultValue={rackDetail?.start_rack_address_ || ""}
-                            disabled
-                        />
-                    </div>
+                    <form className="DAT_BmsEditRack_Main" onSubmit={handleSubmit} key={rackDetail?.id || id}>
+                        <div className="DAT_BmsEditRack_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_infor" })}</div>
+                        <div className="DAT_BmsEditRack_Main_Information">
+                            <div className="DAT_BmsEditRack_Main_Information_Group">
+                                <label>{lang.formatMessage({ id: "bms_rack_name" })}</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter rack name"
+                                    defaultValue={rackDetail?.rack_name_ || ""}
+                                    name="rackName"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditRack_Main_Information_Group">
+                                <label>{lang.formatMessage({ id: "bms_rack_model" })}</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter model name"
+                                    defaultValue={rackDetail?.model_ || ""}
+                                    name="model"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditRack_Main_Information_Group">
+                                <label>{lang.formatMessage({ id: "bms_rack_brand" })}</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter brand name"
+                                    defaultValue={rackDetail?.brand_ || ""}
+                                    name="brand"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditRack_Main_Information_Group">
+                                <label>{lang.formatMessage({ id: "bms_rack_start_address" })}</label>
+                                <input
+                                    type="text"
+                                    defaultValue={rackDetail?.start_rack_address_ || ""}
+                                    disabled
+                                />
+                            </div>
+                        </div>
+
+                        <div className="DAT_BmsEditRack_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_template" })}</div>
+                        <div className="DAT_BmsEditRack_Main_Edit">
+
+                            {/* Status */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group--hidden">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Status</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "status" })}</label>
+                                    <input
+                                        defaultValue={template_?.status?.scale ?? ""}
+                                        name="scaleStatus"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.status?.offset ?? ""}
+                                        name="offsetStatus"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.status?.type ?? ""}
+                                        name="typeStatus"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Voltage */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "voltage" })}</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.voltage?.scale ?? ""}
+                                        name="scaleVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.voltage?.offset ?? ""}
+                                        name="offsetVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.voltage?.type ?? ""}
+                                        name="typeVoltage"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Current */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "current" })}</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.current?.scale ?? ""}
+                                        name="scaleCurrent"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.current?.offset ?? ""}
+                                        name="offsetCurrent"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.current?.type ?? ""}
+                                        name="typeCurrent"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Soc */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Soc</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.soc?.scale ?? ""}
+                                        name="scaleSoc"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.soc?.offset ?? ""}
+                                        name="offsetSoc"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.soc?.type ?? ""}
+                                        name="typeSoc"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Soh */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Soh</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.soh?.scale ?? ""}
+                                        name="scaleSoh"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.soh?.offset ?? ""}
+                                        name="offsetSoh"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.soh?.type ?? ""}
+                                        name="typeSoh"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Temperature */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_temp" })}</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.temperature?.scale ?? ""}
+                                        name="scaleTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.temperature?.offset ?? ""}
+                                        name="offsetTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.temperature?.type ?? ""}
+                                        name="typeTemperature"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Minimum Cell Voltage */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_min_voltage" })}</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellVoltage?.scale ?? ""}
+                                        name="scaleMinimumCellVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellVoltage?.offset ?? ""}
+                                        name="offsetMinimumCellVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellVoltage?.type ?? ""}
+                                        name="typeMinimumCellVoltage"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Maximum Cell Voltage */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_max_voltage" })}</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellVoltage?.scale ?? ""}
+                                        name="scaleMaximumCellVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellVoltage?.offset ?? ""}
+                                        name="offsetMaximumCellVoltage"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellVoltage?.type ?? ""}
+                                        name="typeMaximumCellVoltage"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Minimum Cell Temperature */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_min_temp" })}</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellTemperature?.scale ?? ""}
+                                        name="scaleMinimumCellTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellTemperature?.offset ?? ""}
+                                        name="offsetMinimumCellTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.minimumCellTemperature?.type ?? ""}
+                                        name="typeMinimumCellTemperature"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Maximum Cell Temperature */}
+                            <div className="DAT_BmsEditRack_Main_Edit_Group">
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_max_temp" })}</div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellTemperature?.scale ?? ""}
+                                        name="scaleMaximumCellTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellTemperature?.offset ?? ""}
+                                        name="offsetMaximumCellTemperature"
+                                    />
+                                </div>
+                                <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
+                                    <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                    <input
+                                        defaultValue={template_?.maximumCellTemperature?.type ?? ""}
+                                        name="typeMaximumCellTemperature"
+                                    />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div className="DAT_BmsEditRack_Main_Footer">
+                            <button type="submit" className="DAT_BmsEditRack_Main_Footer_Save">
+                                {lang.formatMessage({ id: "save" })}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <div className="DAT_BmsEditRack_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_template" })}</div>
-                <div className="DAT_BmsEditRack_Main_Edit">
-
-                    {/* Status */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group--hidden">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Status</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "status" })}</label>
-                            <input
-                                defaultValue={template_?.status?.scale ?? ""}
-                                name="scaleStatus"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.status?.offset ?? ""}
-                                name="offsetStatus"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.status?.type ?? ""}
-                                name="typeStatus"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Voltage */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "voltage" })}</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.voltage?.scale ?? ""}
-                                name="scaleVoltage"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.voltage?.offset ?? ""}
-                                name="offsetVoltage"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.voltage?.type ?? ""}
-                                name="typeVoltage"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Current */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "current" })}</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.current?.scale ?? ""}
-                                name="scaleCurrent"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.current?.offset ?? ""}
-                                name="offsetCurrent"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.current?.type ?? ""}
-                                name="typeCurrent"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Soc */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Soc</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.soc?.scale ?? ""}
-                                name="scaleSoc"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.soc?.offset ?? ""}
-                                name="offsetSoc"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.soc?.type ?? ""}
-                                name="typeSoc"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Soh */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Soh</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.soh?.scale ?? ""}
-                                name="scaleSoh"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.soh?.offset ?? ""}
-                                name="offsetSoh"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.soh?.type ?? ""}
-                                name="typeSoh"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Temperature */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_temp" })}</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.temperature?.scale ?? ""}
-                                name="scaleTemperature"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.temperature?.offset ?? ""}
-                                name="offsetTemperature"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.temperature?.type ?? ""}
-                                name="typeTemperature"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Minimum Cell Voltage */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_min_voltage" })}</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.minimumCellVoltage?.scale ?? ""}
-                                name="scaleMinimumCellVoltage"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.minimumCellVoltage?.offset ?? ""}
-                                name="offsetMinimumCellVoltage"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.minimumCellVoltage?.type ?? ""}
-                                name="typeMinimumCellVoltage"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Maximum Cell Voltage */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_max_voltage" })}</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.maximumCellVoltage?.scale ?? ""}
-                                name="scaleMaximumCellVoltage"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.maximumCellVoltage?.offset ?? ""}
-                                name="offsetMaximumCellVoltage"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.maximumCellVoltage?.type ?? ""}
-                                name="typeMaximumCellVoltage"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Minimum Cell Temperature */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_min_temp" })}</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.minimumCellTemperature?.scale ?? ""}
-                                name="scaleMinimumCellTemperature"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.minimumCellTemperature?.offset ?? ""}
-                                name="offsetMinimumCellTemperature"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.minimumCellTemperature?.type ?? ""}
-                                name="typeMinimumCellTemperature"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Maximum Cell Temperature */}
-                    <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_max_temp" })}</div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
-                            <input
-                                defaultValue={template_?.maximumCellTemperature?.scale ?? ""}
-                                name="scaleMaximumCellTemperature"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
-                            <input
-                                defaultValue={template_?.maximumCellTemperature?.offset ?? ""}
-                                name="offsetMaximumCellTemperature"
-                            />
-                        </div>
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
-                            <input
-                                defaultValue={template_?.maximumCellTemperature?.type ?? ""}
-                                name="typeMaximumCellTemperature"
-                            />
-                        </div>
-                    </div>
-
-                </div>
-
-                <div className="DAT_BmsEditRack_Main_Footer">
-                    <button type="submit" className="DAT_BmsEditRack_Main_Footer_Save">
-                        {lang.formatMessage({ id: "save" })}
-                    </button>
-                </div>
-            </form>
-        </div>
+            )}
+        </>
     );
 };
 

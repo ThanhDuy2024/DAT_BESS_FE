@@ -22,7 +22,6 @@ import UserInfoPage from "./components/Screen/UserInfo/UserInfo";
 import AlarmPage from "./components/Screen/Alarm/Alarm";
 import UserRecovery from "./components/Screen/UserRecovery/UserRecovery"
 import RoleEdit from "./components/Screen/RoleEdit/RoleEdit"
-import BmsEdit from "./components/Screen/BmsEdit/BmsEdit"
 import { io } from "socket.io-client";
 import { signal } from "@preact/signals-react";
 import { useContext, useEffect } from "react";
@@ -178,7 +177,7 @@ function AppRoutes() {
 
             <Route element={<ProtectedPermission permission="bms" />}>
               <Route path="/bms" element={<BmsManagement />} />
-              <Route path="/bms/:id" element={<BmsEdit />} />
+              {/* <Route path="/bms/:id" element={<BmsEdit />} /> */}
               <Route path="/bms/rack/edit/:id" element={<BmsEditRack />} />
               <Route path="bms/module/edit/:id" element={<BmsEditModule/>}/>
             </Route>

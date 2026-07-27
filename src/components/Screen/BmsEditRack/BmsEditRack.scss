@@ -55,7 +55,7 @@
         &_Information {
             margin-bottom: 40px;
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 22px;
 
             &_Group {
@@ -107,7 +107,7 @@
 
         &_Edit {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
             gap: 22px;
 
             &_Group {
@@ -117,6 +117,7 @@
                 padding: 24px;
                 height: 100%;
                 transition: .2s;
+                width: 100%;
 
                 &:hover {
                     border-color:
@@ -141,6 +142,237 @@
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    margin-bottom: 8px;
+
+                    &:last-child {
+                        margin-bottom: 0px;
+                    }
+
+                    label {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: var(--text-primary)
+                    }
+
+                    input,
+                    select {
+                        height: 36px;
+                        padding: 0 18px;
+                        border-radius: 10px;
+                        border: 1px solid rgba(0, 92, 184, .12);
+                        background: white;
+                        font-size: 15px;
+                        outline: none;
+                        transition: .18s;
+                        color: rgba(0, 55, 120, 1);
+
+                        &:focus {
+                            border-color: rgba(0, 92, 184, .35);
+                            box-shadow: 0 0 0 4px rgba(0, 92, 184, .06);
+                        }
+                    }
+
+                    select {
+                        cursor: pointer;
+                    }
+
+                    input::placeholder {
+                        color: rgba(120, 140, 170, 1);
+                    }
+                }
+
+                &_Box--hidden {
+                    display: none;
+                }
+            }
+
+            &_Group--hidden {
+                display: none;
+            }
+        }
+
+        &_Footer {
+            margin-top: 20px;
+            text-align: center;
+
+            &_Save {
+                height: 46px;
+
+                padding: 0 28px;
+
+                border: none;
+
+                border-radius: 12px;
+
+                background: var(--primary);
+                color: white;
+
+                font-size: 15px;
+
+                font-weight: 600;
+
+                cursor: pointer;
+
+                transition: .2s;
+
+                &:hover {
+                    background:
+                        rgba(0, 78, 156, 1);
+                }
+
+                &:active {
+                    transform: translateY(1px);
+                }
+            }
+        }
+
+    }
+}
+
+.DAT_BmsEditRackMobile {
+    &_HeaderCard {
+        padding: var(--space-lg);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        background: var(--card-bg);
+        box-shadow: var(--shadow-card);
+        transition: box-shadow var(--transition-base);
+        display: flex;
+        align-items: center;
+
+        &_Main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+
+            &_Title {
+                grid-area: title;
+                margin: 0;
+                color: var(--text-primary);
+                font-size: 24px;
+                font-weight: var(--font-weight-semibold);
+            }
+
+            &_Button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--space-sm);
+                padding: 10px 20px;
+                border: 1px solid transparent;
+                border-radius: var(--radius-md);
+                font-size: var(--font-size-base);
+                font-weight: var(--font-weight-medium);
+                line-height: 1.4;
+                white-space: nowrap;
+                background-color: var(--primary);
+                color: white;
+            }
+
+        }
+    }
+
+    &_Main {
+        background: #fff;
+        padding: 10px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(0, 92, 184, 0.08);
+        margin-top: 10px;
+        box-shadow:
+            0 10px 35px rgba(0, 92, 184, 0.04);
+
+        &_Information {
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 22px;
+
+            &_Group {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+
+                label {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: var(--text-primary)
+                }
+
+                input,
+                select {
+                    height: 56px;
+                    padding: 0 18px;
+                    border-radius: 14px;
+                    border: 1px solid rgba(0, 92, 184, .12);
+                    background: rgba(249, 252, 255, 1);
+                    font-size: 15px;
+                    outline: none;
+                    transition: .18s;
+                    color: rgba(0, 55, 120, 1);
+
+                    &:focus {
+                        border-color: rgba(0, 92, 184, .35);
+                        background: white;
+                        box-shadow: 0 0 0 4px rgba(0, 92, 184, .06);
+                    }
+                }
+
+                select {
+                    cursor: pointer;
+                }
+
+                input::placeholder {
+                    color: rgba(120, 140, 170, 1);
+                }
+            }
+        }
+
+        &_Title {
+            margin-bottom: 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        &_Edit {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 22px;
+
+            &_Group {
+                // background: linear-gradient(180deg, rgba(252, 253, 255, 1), rgba(247, 250, 255, 1));
+                border: 1px solid rgba(0, 92, 184, 1);
+                border-radius: 20px;
+                height: 100%;
+                transition: .2s;
+                width: 100%;
+                padding: 10px;
+
+                &:hover {
+                    border-color:
+                        rgba(0, 92, 184, .15);
+
+                    box-shadow:
+                        0 8px 20px rgba(0, 92, 184, .04);
+                }
+
+                &_Title {
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: rgba(11, 25, 103, 1);
+                    margin-bottom: 10px;
+                    position: relative;
+                    // padding-left: 14px;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                &_Box {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 10px;
                     margin-bottom: 8px;
 
                     &:last-child {
