@@ -62,7 +62,6 @@ export default function Battery() {
       let data = await callApi("post", process.env.REACT_APP_API + "/data/readBess", {
         level: "bmslevel",
       });
-      console.log(data);
       if (data.status === "true") {
         setDataInf(data.data);
         setStep(1);
@@ -111,7 +110,7 @@ export default function Battery() {
     });
 
     socket.value.on("BESS_DATA", (payload) => {
-      console.log(payload.level, payload.data)
+      // console.log(payload.level, payload.data)
       setDataInf(prev => ({
         ...prev,
         ...payload.data
@@ -133,7 +132,6 @@ export default function Battery() {
 
   useEffect(() => {
     const response = bmsData || [];
-    console.log(response);
     for (const item of response) {
       setDataMapping((prev) => {
         const index = prev.findIndex((rack) => rack.rackName === item.rack_name_);
@@ -148,7 +146,6 @@ export default function Battery() {
               cellVoltage: (dataInf[itemInCell.cellVoltage.register] * itemInCell.cellVoltage.scale).toFixed(2),
               cellTemperature: dataInf[itemInCell.cellTemperature.register] * itemInCell.cellTemperature.scale - Math.abs(itemInCell.cellTemperature.offset),
               cellSoc: (dataInf[itemInCell.cellSoc.register] * itemInCell.cellSoc.scale),
-              cellSoh: (dataInf[itemInCell.cellSoh.register] * itemInCell.cellSoh.scale),
             }
             cellArr.push(obj)
             index += 1;
@@ -314,7 +311,7 @@ export default function Battery() {
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="DAT_ModalMobile_Overlay_Box_Header">
-                  <h2>{selectedRack.rackName_.toUpperCase()} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
+                  <h2>{selectedRack.rackName.toUpperCase()} - {lang.formatMessage({ id: "bms_rack_detail" })}</h2>
                   <button
                     className="DAT_ModalMobile_Overlay_Box_Header_Close"
                     onClick={() => setIsModalOpen(false)}

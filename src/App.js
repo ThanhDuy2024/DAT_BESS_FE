@@ -31,6 +31,7 @@ import { SystemContext } from "./components/contexts/SystemContext";
 import { callApi } from "./components/Api/Api";
 import BmsManagement from "./components/Screen/BmsManagement/BmsManagement";
 import BmsEditRack from "./components/Screen/BmsEditRack/BmsEditRack";
+import BmsEditModule from "./components/Screen/BmsEditModule/BmsEditModule";
 //import { listenForegroundNotification, requestNotificationPermission } from "./firebase/notification";
 export const socket = signal(io.connect(process.env.REACT_APP_API));
 
@@ -179,6 +180,7 @@ function AppRoutes() {
               <Route path="/bms" element={<BmsManagement />} />
               <Route path="/bms/:id" element={<BmsEdit />} />
               <Route path="/bms/rack/edit/:id" element={<BmsEditRack />} />
+              <Route path="bms/module/edit/:id" element={<BmsEditModule/>}/>
             </Route>
 
             <Route element={<ProtectedPermission permission="users" />}>

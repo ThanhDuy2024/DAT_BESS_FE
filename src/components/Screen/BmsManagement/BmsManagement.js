@@ -9,10 +9,12 @@ import Modal from "../../Modal/Modal";
 import { RackContext } from "../../contexts/RackContext";
 import { FiEdit3 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { SystemContext } from "../../contexts/SystemContext";
 
 const BmsManagement = () => {
     const navigate = useNavigate();
     const lang = useIntl();
+    const { permissions } = useContext(SystemContext);
     const { rackData, rackDispatch } = useContext(RackContext);
     const [modalType, setModalType] = useState(null);
     const [createRack, setCreateRack] = useState({});
@@ -44,59 +46,72 @@ const BmsManagement = () => {
         voltage: {
             value: voltage,
             setValue: setVoltage,
+            lang: "voltage"
         },
         current: {
             value: current,
             setValue: setCurrent,
+            lang: "current"
         },
         temperature: {
             value: temperature,
             setValue: setTemperature,
+            lang: "temperature"
         },
         soc: {
             value: soc,
             setValue: setSoc,
+            lang: "soc"
         },
         soh: {
             value: soh,
             setValue: setSoh,
+            lang: "soh"
         },
         maximumCellVoltage: {
             value: maximumCellVoltage,
             setValue: setMaximumCellVoltage,
+            lang: "bms_max_voltage"
         },
         minimumCellVoltage: {
             value: minimumCellVoltage,
             setValue: setMinimumCellVoltage,
+            lang: "bms_min_voltage"
         },
         maximumCellTemperature: {
             value: maximumCellTemperature,
             setValue: setMaximumCellTemperature,
+            lang: "bms_max_temp"
         },
         minimumCellTemperature: {
             value: minimumCellTemperature,
             setValue: setMinimumCellTemperature,
+            lang: "bms_min_temp"
         },
         cellVoltage: {
             value: cellVoltage,
-            setValue: setCellVoltage
+            setValue: setCellVoltage,
+            lang: "voltage"
         },
         cellTemperature: {
             value: cellTemperature,
-            setValue: setCellTemperature
+            setValue: setCellTemperature,
+            lang: "temperature"
         },
         cellSoc: {
             value: cellSoc,
-            setValue: setCellSoc
+            setValue: setCellSoc,
+            lang: "soc"
         },
         cellSoh: {
             value: cellSoh,
-            setValue: setCellSoh
+            setValue: setCellSoh,
+            lang: "soh"
         },
     };
 
     const labelsRack = ["voltage", "current", "temperature", "soc", "soh", "maximumCellVoltage", "minimumCellVoltage", "maximumCellTemperature", "minimumCellTemperature"];
-    const labelsModule = ["voltage", "temperature", "soc", "soh"]
+    const labelsModule = ["cellVoltage", "cellTemperature", "cellSoc", "cellSoh"]
     useEffect(() => {
         (async () => {
             const res = await callApi('get', `${process.env.REACT_APP_APIDEV}/data/getAllRack`, {});
@@ -183,14 +198,20 @@ const BmsManagement = () => {
                 offset: 0,
                 type: "word"
             })
+            setTempValue({
+                scale: null,
+                offset: null,
+                type: null
+            })
             setCreateRack({})
             setCreateModule({})
         }
     }, [modalType]);
+
     const handleCreateRack = async () => {
         try {
             if (Object.keys(createRack).length === 0) {
-                toast.error(lang.formatMessage({ id: "toast_error_data" }))
+                toast.error(lang.formatMessage({ id: "toast_data_empty" }))
                 return;
             }
             const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/v2/createRack`, {
@@ -225,18 +246,26 @@ const BmsManagement = () => {
                         }
                     }
                 })
+                setTempValue(prev => ({
+                    ...prev,
+                    scale: null,
+                    offset: null,
+                    type: null,
+                }))
             }
         } catch (error) {
             console.log(error);
+            toast.error(lang.formatMessage({ id: "toast_cell_error" }))
         }
     }
 
     const handleCreateModule = async () => {
         try {
             if (Object.keys(createModule).length === 0) {
-                toast.error(lang.formatMessage({ id: "toast_error_data" }))
+                toast.error(lang.formatMessage({ id: "toast_data_empty" }))
                 return;
             }
+            console.log(cellTemperature)
             const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/v3/createModule`, {
                 rackId: rackId,
                 totalModules: Number(createModule.totalModules),
@@ -251,6 +280,12 @@ const BmsManagement = () => {
             } else {
                 toast.success(lang.formatMessage({ id: "toast_created" }));
                 setModalType(null)
+                setTempValue(prev => ({
+                    ...prev,
+                    scale: null,
+                    offset: null,
+                    type: null,
+                }))
                 rackDispatch({
                     type: "CREATE_RACK_MODULE_DATA",
                     payload: {
@@ -272,8 +307,16 @@ const BmsManagement = () => {
             type: tempValue.type === null ? prev.type : tempValue.type,
         }));
         setModalType("add");
+        setTempValue(prev => ({
+            ...prev,
+            scale: null,
+            offset: null,
+            type: null,
+        }))
     }
     const handleSaveValueModule = () => {
+        console.log(signals[selectedValue])
+        console.log(tempValue)
         signals[selectedValue].setValue(prev => ({
             ...prev,
             scale: tempValue.scale === null ? prev.scale : tempValue.scale,
@@ -281,6 +324,12 @@ const BmsManagement = () => {
             type: tempValue.type === null ? prev.type : tempValue.type,
         }));
         setModalType("addModule");
+        setTempValue(prev => ({
+            ...prev,
+            scale: null,
+            offset: null,
+            type: null,
+        }))
     }
 
     const renderModalAdd = () => {
@@ -292,6 +341,8 @@ const BmsManagement = () => {
                     </label>
                     <input
                         className="DAT_Bms_Form_Grid_Group_Input"
+                        value={createRack.rackName}
+                        key={"rackName"}
                         onChange={(e) => setCreateRack({ ...createRack, rackName: e.target.value })}
                     />
                 </div>
@@ -301,6 +352,8 @@ const BmsManagement = () => {
                     </label>
                     <input
                         className="DAT_Bms_Form_Grid_Group_Input"
+                        value={createRack.model}
+                        key={"model"}
                         onChange={(e) => setCreateRack({ ...createRack, model: e.target.value })}
                     />
                 </div>
@@ -310,13 +363,15 @@ const BmsManagement = () => {
                     </label>
                     <input
                         className="DAT_Bms_Form_Grid_Group_Input"
+                        value={createRack.brand}
+                        key={"brand"}
                         onChange={(e) => setCreateRack({ ...createRack, brand: e.target.value })}
                     />
                 </div>
                 {labelsRack.map((item) => (
                     <div className="DAT_Bms_Form_Grid_Box" onClick={() => { setModalType("editValueRack"); setSelectedValue(item) }}>
                         <div className="DAT_Bms_Form_Grid_Box_Label">
-                            {lang.formatMessage({ id: `${item}` })}
+                            {lang.formatMessage({ id: signals[item].lang })}
                         </div>
                         <div className="DAT_Bms_Form_Grid_Box_Content">
                             <div className="DAT_Bms_Form_Grid_Box_Content_Label">Scale: </div>
@@ -348,6 +403,7 @@ const BmsManagement = () => {
                     <input
                         className="DAT_Bms_Form_Grid_Group_Input"
                         defaultValue={signals[selectedValue].value.scale}
+                        key={`${selectedValue}-scale`}
                         onChange={(e) =>
                             setTempValue((prev) => ({
                                 ...prev,
@@ -363,6 +419,7 @@ const BmsManagement = () => {
                     <input
                         className="DAT_Bms_Form_Grid_Group_Input"
                         defaultValue={signals[selectedValue].value.offset}
+                        key={`${selectedValue}-offset`}
                         onChange={(e) =>
                             setTempValue((prev) => ({
                                 ...prev,
@@ -378,6 +435,7 @@ const BmsManagement = () => {
                     <input
                         className="DAT_Bms_Form_Grid_Group_Input"
                         defaultValue={signals[selectedValue].value.type}
+                        key={`${selectedValue}-type`}
                         onChange={(e) =>
                             setTempValue((prev) => ({
                                 ...prev,
@@ -452,6 +510,8 @@ const BmsManagement = () => {
                     </label>
                     <input
                         className="DAT_Bms_Form_Grid_Group_Input"
+                        key={"totalModules"}
+                        value={createModule.totalModules}
                         onChange={(e) => setCreateModule({ ...createModule, totalModules: e.target.value })}
                     />
                 </div>
@@ -461,14 +521,15 @@ const BmsManagement = () => {
                     </label>
                     <input
                         className="DAT_Bms_Form_Grid_Group_Input"
-                        max={10}
+                        key={"totalCells"}
+                        value={createModule.totalCells}
                         onChange={(e) => setCreateModule({ ...createModule, totalCells: e.target.value })}
                     />
                 </div>
                 {labelsModule.map((item) => (
                     <div className="DAT_Bms_Form_Grid_Box" onClick={() => { setModalType("editValueModule"); setSelectedValue(item) }}>
                         <div className="DAT_Bms_Form_Grid_Box_Label">
-                            {lang.formatMessage({ id: `${item}` })}
+                            {lang.formatMessage({ id: signals[item].lang })}
                         </div>
                         <div className="DAT_Bms_Form_Grid_Box_Content">
                             <div className="DAT_Bms_Form_Grid_Box_Content_Label">Scale: </div>
@@ -561,47 +622,51 @@ const BmsManagement = () => {
 
     const renderModalEditModule = () => {
         return (
-            <div className="DAT_Bms_Form_Grid" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }
-            }>
-                <div className="DAT_Bms_Form_Grid_Group">
-                    <label className="DAT_Bms_Form_Grid_Group_Label">
-                        {lang.formatMessage({ id: "bms_module_total" })}
-                    </label>
-                    <input
-                        className="DAT_Bms_Form_Grid_Group_Input"
-                        value={selectedRack.total_module_}
-                        onChange={(e) => setCreateModule({ ...createModule, totalModules: e.target.value })}
-                    />
-                </div>
-                <div className="DAT_Bms_Form_Grid_Group">
-                    <label className="DAT_Bms_Form_Grid_Group_Label">
-                        {lang.formatMessage({ id: "bms_total_cell" })}
-                    </label>
-                    <input
-                        className="DAT_Bms_Form_Grid_Group_Input"
-                        onChange={(e) => setCreateModule({ ...createModule, totalCells: e.target.value })}
-                    />
-                </div>
-                {labelsModule.map((item) => (
-                    <div className="DAT_Bms_Form_Grid_Box" onClick={() => { setModalType("editValueModule"); setSelectedValue(item) }}>
-                        <div className="DAT_Bms_Form_Grid_Box_Label">
-                            {lang.formatMessage({ id: `${item}` })}
-                        </div>
-                        <div className="DAT_Bms_Form_Grid_Box_Content">
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Label">Scale: </div>
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.scale}</div>
-                        </div>
-                        <div className="DAT_Bms_Form_Grid_Box_Content">
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Label">Offset: </div>
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.offset}</div>
-                        </div>
-                        <div className="DAT_Bms_Form_Grid_Box_Content">
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Label">Type: </div>
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.type}</div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <></>
+            // <div className="DAT_Bms_Form_Grid" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }
+            // }>
+            //     <div className="DAT_Bms_Form_Grid_Group">
+            //         <label className="DAT_Bms_Form_Grid_Group_Label">
+            //             {lang.formatMessage({ id: "bms_module_total" })}
+            //         </label>
+            //         <input
+            //             className="DAT_Bms_Form_Grid_Group_Input"
+            //             value={createModule.totalModules}
+            //             key={"totalModules"}
+            //             onChange={(e) => setCreateModule({ ...createModule, totalModules: e.target.value })}
+            //         />
+            //     </div>
+            //     <div className="DAT_Bms_Form_Grid_Group">
+            //         <label className="DAT_Bms_Form_Grid_Group_Label">
+            //             {lang.formatMessage({ id: "bms_total_cell" })}
+            //         </label>
+            //         <input
+            //             className="DAT_Bms_Form_Grid_Group_Input"
+            //             value={createModule.totalCells}
+            //             key={"totalCells"}
+            //             onChange={(e) => setCreateModule({ ...createModule, totalCells: e.target.value })}
+            //         />
+            //     </div>
+            //     {labelsModule.map((item) => (
+            //         <div className="DAT_Bms_Form_Grid_Box" onClick={() => { setModalType("editValueModule"); setSelectedValue(item) }}>
+            //             <div className="DAT_Bms_Form_Grid_Box_Label">
+            //                 {lang.formatMessage({ id: `${item}` })}
+            //             </div>
+            //             <div className="DAT_Bms_Form_Grid_Box_Content">
+            //                 <div className="DAT_Bms_Form_Grid_Box_Content_Label">Scale: </div>
+            //                 <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.scale}</div>
+            //             </div>
+            //             <div className="DAT_Bms_Form_Grid_Box_Content">
+            //                 <div className="DAT_Bms_Form_Grid_Box_Content_Label">Offset: </div>
+            //                 <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.offset}</div>
+            //             </div>
+            //             <div className="DAT_Bms_Form_Grid_Box_Content">
+            //                 <div className="DAT_Bms_Form_Grid_Box_Content_Label">Type: </div>
+            //                 <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.type}</div>
+            //             </div>
+            //         </div>
+            //     ))}
+            // </div>
         )
     }
 
@@ -699,7 +764,15 @@ const BmsManagement = () => {
                     <>
                         <button
                             className="DAT_Bms_Modal_Footer_Button_Secondary"
-                            onClick={() => setModalType("add")}
+                            onClick={() => {
+                                setModalType("add")
+                                setTempValue(prev => ({
+                                    ...prev,
+                                    scale: null,
+                                    offset: null,
+                                    type: null,
+                                }))
+                            }}
                         >
                             {lang.formatMessage({ id: "go_back" })}
                         </button>
@@ -716,7 +789,15 @@ const BmsManagement = () => {
                     <>
                         <button
                             className="DAT_Bms_Modal_Footer_Button_Secondary"
-                            onClick={() => setModalType("addModule")}
+                            onClick={() => {
+                                setModalType("addModule");
+                                setTempValue(prev => ({
+                                    ...prev,
+                                    scale: null,
+                                    offset: null,
+                                    type: null,
+                                }))
+                            }}
                         >
                             {lang.formatMessage({ id: "go_back" })}
                         </button>
@@ -763,12 +844,14 @@ const BmsManagement = () => {
                         {lang.formatMessage({ id: "bms_management" })}
                     </div>
                 </div>
-                <button
-                    className="DAT_Bms_Card_Actions_Button_Primary"
-                    onClick={() => setModalType("add")}
-                >
-                    {lang.formatMessage({ id: "add_rack" })}
-                </button>
+                {permissions["bms"].includes("create") && (
+                    <button
+                        className="DAT_Bms_Card_Actions_Button_Primary"
+                        onClick={() => setModalType("add")}
+                    >
+                        {lang.formatMessage({ id: "add_rack" })}
+                    </button>
+                )}
             </div>
 
             <div className="DAT_Bms_Container">
@@ -782,7 +865,9 @@ const BmsManagement = () => {
                                 <th>{lang.formatMessage({ id: "bms_rack_brand" })}</th>
                                 <th>{lang.formatMessage({ id: "bms_rack_start_address" })}</th>
                                 <th>{lang.formatMessage({ id: "bms_rack_module" })}</th>
-                                <th>{lang.formatMessage({ id: "bms_actions" })}</th>
+                                {permissions["bms"].includes("update") && (
+                                    <th>{lang.formatMessage({ id: "bms_actions" })}</th>
+                                )}
                             </tr>
                         </thead>
                         <tbody className="DAT_Bms_Container_Table_Main_Body">
@@ -790,7 +875,7 @@ const BmsManagement = () => {
                                 return (
                                     <tr className='DAT_Bms_Container_Table_Main_Row'>
                                         <td className="DAT_Bms_Container_Table_Main_Cell">
-                                            RACK-{item.id >= 10 ? `0${item.id_}` : `00${item.id_}`}
+                                            RACK-{item.id_ >= 10 ? `0${item.id_}` : `00${item.id_}`}
                                         </td>
                                         <td className="DAT_Bms_Container_Table_Main_Cell">
                                             {item.rack_name_}
@@ -807,25 +892,38 @@ const BmsManagement = () => {
                                         <td className="DAT_Bms_Container_Table_Main_Cell">
                                             {item.total_module_}
                                         </td>
-                                        <td className="DAT_RoleSetting_Container_Table_Main_Cell">
-                                            <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
-                                                <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
-                                                    onClick={() => { setModalType("addModule"); setRackId(item.id_) }}
-                                                >
-                                                    {lang.formatMessage({ id: "bms_add_module" })}
-                                                </button>
-                                                <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
-                                                    // onClick={() => { setModalType("editRack"); setSelectedRack(item) }}
-                                                    onClick={() => navigate(`/bms/rack/edit/${item.id_}`)}
-                                                >
-                                                    {lang.formatMessage({ id: "bms_edit" })}
-                                                </button>
-                                                <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                                        {permissions["bms"].includes("update") && (
+                                            <td className="DAT_RoleSetting_Container_Table_Main_Cell">
+                                                <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
+                                                    <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                                                        // onClick={() => { setModalType("editRack"); setSelectedRack(item) }}
+                                                        onClick={() => navigate(`/bms/rack/edit/${item.id_}`)}
+                                                    >
+                                                        {lang.formatMessage({ id: "bms_edit_rack" })}
+                                                    </button>
+
+                                                    {item.total_module_ === 0 ? (
+                                                        <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                                                            onClick={() => { setModalType("addModule"); setRackId(item.id_) }}
+                                                        >
+                                                            {lang.formatMessage({ id: "bms_add_module" })}
+                                                        </button>
+                                                    ) : (
+                                                        <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                                                            // onClick={() => { setModalType("editRack"); setSelectedRack(item) }}
+                                                            onClick={() => navigate(`/bms/module/edit/${item.id_}`)}
+                                                        >
+                                                            {lang.formatMessage({ id: "bms_edit_module" })}
+                                                        </button>
+                                                    )}
+
+                                                    {/* <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
                                                 >
                                                     {lang.formatMessage({ id: "bms_delete" })}
-                                                </button>
-                                            </div>
-                                        </td>
+                                                </button> */}
+                                                </div>
+                                            </td>
+                                        )}
                                     </tr>
                                 )
                             })}
@@ -839,7 +937,7 @@ const BmsManagement = () => {
                 onClose={() => setModalType(null)}
                 title={renderTitle()}
                 footer={renderFooter()}
-                size="large"
+                size="xlarge"
             >
                 {renderBody()}
             </Modal>

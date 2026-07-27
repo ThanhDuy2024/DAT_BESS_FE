@@ -478,7 +478,8 @@ const enMessages = {
   bms_rack_brand: "Brand name",
   bms_rack_start_address: "Start address",
   bms_actions: "Actions",
-  bms_edit: "Edit module",
+  bms_edit_module: "Edit module",
+  bms_edit_rack: "Edit rack",
   bms_delete: "Delete rack",
   bms_add_module: "Add module",
   bms_modal_create_title: "Add new rack",
@@ -498,7 +499,13 @@ const enMessages = {
   bms_max_temp: "Maximum cell temperature",
   bms_min_temp: "Minimum cell temperature",
   temperature: "Temperature",
-  soh: "Soh"
+  soh: "Soh",
+  go_back: "Return to the list",
+  bms_module_edit_title: "Edit module in rack",
+  bms_module_edit_infor: "Module infor",
+  bms_total_module: "Total Module",
+  bms_total_cell: "Total cells",
+  bms_module_template: "Module template",
 };
 
 const viMessages = {
@@ -992,7 +999,8 @@ const viMessages = {
   bms_rack_brand: "Tên brand",
   bms_rack_start_address: "Địa chỉ bắt đầu",
   bms_actions: "Hành động",
-  bms_edit: "Chỉnh sửa",
+  bms_edit_rack: "Chỉnh sửa rack",
+  bms_edit_module: "Chỉnh sửa module",
   bms_delete: "Xóa rack",
   bms_add_module: "Thêm module",
   bms_modal_create_title: "Thêm mới rack",
@@ -1006,14 +1014,21 @@ const viMessages = {
 
   bms_rack_edit_title: "Chỉnh sửa rack",
   bms_rack_edit_infor: "Thông tin rack",
-  bms_rack_edit_template: "Mẫu rack",
+  bms_rack_edit_template: "Thông số của rack",
   bms_scale: "Tỉ lệ",
   bms_offset: "Phần bù",
   bms_type: "Kiểu",
   bms_max_temp: "Nhiệt độ cell cao nhất",
   bms_min_temp: "Nhiệt độ cell thấp nhất",
   temperature: "Nhiệt độ",
-  soh: "Tình trạng pin"
+  soh: "Tình trạng pin",
+  go_back: "Trở lại danh sách",
+  bms_module_edit_title: "Chỉnh sửa module",
+
+  bms_module_edit_infor: "Thông tin module",
+  bms_total_module: "Số lượng module",
+  bms_total_cell: "Số lượng cell",
+  bms_module_template: "Thông số của module",
 };
 
 export const messages = {

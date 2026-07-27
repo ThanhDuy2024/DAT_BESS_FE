@@ -2,7 +2,7 @@ import "./BmsEditRack.scss";
 import { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { callApi } from "../../Api/Api";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner"
 const defaultGroup = { register: 0, scale: "", offset: "", type: "" };
 const defaultTemplate = {
@@ -20,6 +20,7 @@ const defaultTemplate = {
 
 const BmsEditRack = () => {
     const lang = useIntl();
+    const navigate = useNavigate();
     const { id } = useParams();
     const [rackDetail, setRackDetail] = useState(null);
 
@@ -134,7 +135,7 @@ const BmsEditRack = () => {
         try {
             const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/editRack`, payload);
             if (res.status === true) {
-                toast.success(lang.formatMessage({ id: "toast_updated"}))
+                toast.success(lang.formatMessage({ id: "toast_updated" }))
             } else {
                 toast.error(lang.formatMessage({ id: "toast_error" }))
             }
@@ -150,14 +151,20 @@ const BmsEditRack = () => {
                     <div className="DAT_BmsEditRack_HeaderCard_Main_Title">
                         {lang.formatMessage({ id: "bms_rack_edit_title" })}
                     </div>
+                    <button
+                        className="DAT_BmsEditRack_HeaderCard_Main_Button"
+                        onClick={() => navigate("/bms")}
+                    >
+                        {lang.formatMessage({ id: "go_back" })}
+                    </button>
                 </div>
             </div>
 
             <form className="DAT_BmsEditRack_Main" onSubmit={handleSubmit} key={rackDetail?.id || id}>
-                <div className="DAT_BmsEditRack_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_infor"})}</div>
+                <div className="DAT_BmsEditRack_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_infor" })}</div>
                 <div className="DAT_BmsEditRack_Main_Information">
                     <div className="DAT_BmsEditRack_Main_Information_Group">
-                        <label>{lang.formatMessage({ id: "bms_rack_name"})}</label>
+                        <label>{lang.formatMessage({ id: "bms_rack_name" })}</label>
                         <input
                             type="text"
                             placeholder="Enter rack name"
@@ -166,7 +173,7 @@ const BmsEditRack = () => {
                         />
                     </div>
                     <div className="DAT_BmsEditRack_Main_Information_Group">
-                        <label>{lang.formatMessage({ id: "bms_rack_model"})}</label>
+                        <label>{lang.formatMessage({ id: "bms_rack_model" })}</label>
                         <input
                             type="text"
                             placeholder="Enter model name"
@@ -175,7 +182,7 @@ const BmsEditRack = () => {
                         />
                     </div>
                     <div className="DAT_BmsEditRack_Main_Information_Group">
-                        <label>{lang.formatMessage({ id: "bms_rack_brand"})}</label>
+                        <label>{lang.formatMessage({ id: "bms_rack_brand" })}</label>
                         <input
                             type="text"
                             placeholder="Enter brand name"
@@ -184,7 +191,7 @@ const BmsEditRack = () => {
                         />
                     </div>
                     <div className="DAT_BmsEditRack_Main_Information_Group">
-                        <label>{lang.formatMessage({id: "bms_rack_start_address"})}</label>
+                        <label>{lang.formatMessage({ id: "bms_rack_start_address" })}</label>
                         <input
                             type="text"
                             defaultValue={rackDetail?.start_rack_address_ || ""}
@@ -193,28 +200,28 @@ const BmsEditRack = () => {
                     </div>
                 </div>
 
-                <div className="DAT_BmsEditRack_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_template"})}</div>
+                <div className="DAT_BmsEditRack_Main_Title">{lang.formatMessage({ id: "bms_rack_edit_template" })}</div>
                 <div className="DAT_BmsEditRack_Main_Edit">
 
                     {/* Status */}
                     <div className="DAT_BmsEditRack_Main_Edit_Group--hidden">
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Status</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "status"})}</label>
+                            <label>{lang.formatMessage({ id: "status" })}</label>
                             <input
                                 defaultValue={template_?.status?.scale ?? ""}
                                 name="scaleStatus"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.status?.offset ?? ""}
                                 name="offsetStatus"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.status?.type ?? ""}
                                 name="typeStatus"
@@ -224,23 +231,23 @@ const BmsEditRack = () => {
 
                     {/* Voltage */}
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({id: "voltage"})}</div>
+                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "voltage" })}</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.voltage?.scale ?? ""}
                                 name="scaleVoltage"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.voltage?.offset ?? ""}
                                 name="offsetVoltage"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.voltage?.type ?? ""}
                                 name="typeVoltage"
@@ -250,23 +257,23 @@ const BmsEditRack = () => {
 
                     {/* Current */}
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({id: "current"})}</div>
+                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "current" })}</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.current?.scale ?? ""}
                                 name="scaleCurrent"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.current?.offset ?? ""}
                                 name="offsetCurrent"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.current?.type ?? ""}
                                 name="typeCurrent"
@@ -278,21 +285,21 @@ const BmsEditRack = () => {
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Soc</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.soc?.scale ?? ""}
                                 name="scaleSoc"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.soc?.offset ?? ""}
                                 name="offsetSoc"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.soc?.type ?? ""}
                                 name="typeSoc"
@@ -304,21 +311,21 @@ const BmsEditRack = () => {
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Title">Soh</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.soh?.scale ?? ""}
                                 name="scaleSoh"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.soh?.offset ?? ""}
                                 name="offsetSoh"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.soh?.type ?? ""}
                                 name="typeSoh"
@@ -328,23 +335,23 @@ const BmsEditRack = () => {
 
                     {/* Temperature */}
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({id: "bms_temp"})}</div>
+                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_temp" })}</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.temperature?.scale ?? ""}
                                 name="scaleTemperature"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.temperature?.offset ?? ""}
                                 name="offsetTemperature"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.temperature?.type ?? ""}
                                 name="typeTemperature"
@@ -354,23 +361,23 @@ const BmsEditRack = () => {
 
                     {/* Minimum Cell Voltage */}
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({id: "bms_min_voltage"})}</div>
+                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_min_voltage" })}</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.minimumCellVoltage?.scale ?? ""}
                                 name="scaleMinimumCellVoltage"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.minimumCellVoltage?.offset ?? ""}
                                 name="offsetMinimumCellVoltage"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.minimumCellVoltage?.type ?? ""}
                                 name="typeMinimumCellVoltage"
@@ -380,23 +387,23 @@ const BmsEditRack = () => {
 
                     {/* Maximum Cell Voltage */}
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({id: "bms_max_voltage"})}</div>
+                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_max_voltage" })}</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.maximumCellVoltage?.scale ?? ""}
                                 name="scaleMaximumCellVoltage"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.maximumCellVoltage?.offset ?? ""}
                                 name="offsetMaximumCellVoltage"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.maximumCellVoltage?.type ?? ""}
                                 name="typeMaximumCellVoltage"
@@ -406,23 +413,23 @@ const BmsEditRack = () => {
 
                     {/* Minimum Cell Temperature */}
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({id: "bms_min_temp"})}</div>
+                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_min_temp" })}</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.minimumCellTemperature?.scale ?? ""}
                                 name="scaleMinimumCellTemperature"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.minimumCellTemperature?.offset ?? ""}
                                 name="offsetMinimumCellTemperature"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.minimumCellTemperature?.type ?? ""}
                                 name="typeMinimumCellTemperature"
@@ -432,23 +439,23 @@ const BmsEditRack = () => {
 
                     {/* Maximum Cell Temperature */}
                     <div className="DAT_BmsEditRack_Main_Edit_Group">
-                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({id: "bms_max_temp"})}</div>
+                        <div className="DAT_BmsEditRack_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_max_temp" })}</div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_scale"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_scale" })}</label>
                             <input
                                 defaultValue={template_?.maximumCellTemperature?.scale ?? ""}
                                 name="scaleMaximumCellTemperature"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_offset"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_offset" })}</label>
                             <input
                                 defaultValue={template_?.maximumCellTemperature?.offset ?? ""}
                                 name="offsetMaximumCellTemperature"
                             />
                         </div>
                         <div className="DAT_BmsEditRack_Main_Edit_Group_Box">
-                            <label>{lang.formatMessage({id: "bms_type"})}</label>
+                            <label>{lang.formatMessage({ id: "bms_type" })}</label>
                             <input
                                 defaultValue={template_?.maximumCellTemperature?.type ?? ""}
                                 name="typeMaximumCellTemperature"
@@ -460,7 +467,7 @@ const BmsEditRack = () => {
 
                 <div className="DAT_BmsEditRack_Main_Footer">
                     <button type="submit" className="DAT_BmsEditRack_Main_Footer_Save">
-                        {lang.formatMessage({ id: "save"})}
+                        {lang.formatMessage({ id: "save" })}
                     </button>
                 </div>
             </form>

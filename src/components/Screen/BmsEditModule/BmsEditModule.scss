@@ -1,4 +1,4 @@
-.DAT_BmsEditRack {
+.DAT_BmsEditModule {
     &_HeaderCard {
         padding: var(--space-lg);
         border: 1px solid var(--border-light);
@@ -107,7 +107,7 @@
 
         &_Edit {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 22px;
 
             &_Group {
