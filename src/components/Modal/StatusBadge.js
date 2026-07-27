@@ -66,6 +66,9 @@ const badgeMap = {
   Supplied: "status-badge--success",
   Generating: "status-badge--success",
   Idle: "status-badge--gray",
+  Medium: "status-badge--medium",
+  Slight: "status-badge--warning",
+  Serious: "status-badge--danger"
 };
 
 const iconMap = {
@@ -147,6 +150,9 @@ const statusMessageIds = {
   Supplied: "status_supplied",
   Generating: "status_generating",
   Idle: "status_idle",
+  Medium: "status_medium",
+  Serious: "status_serious",
+  Slight: "status_slight"
 };
 
 export default function StatusBadge({ status }) {

@@ -28,6 +28,11 @@
     color: var(--danger);
   }
 
+  &--medium {
+    background: rgba(236, 147, 14, 0.3);
+    color: var(--warning-dark);
+  }
+
   &--purple {
     background: var(--purple-light);
     color: var(--purple);

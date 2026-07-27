@@ -515,6 +515,15 @@ const enMessages = {
   sort_address_asc: "Address (ascending)",
   sort_address_desc: "Address (descending)",
   bms_search: "Search rack...",
+  sidebar_item_alarm_management2: "Alarm management",
+  add_alarm: "Add alarm",
+  alarm_name: "Alarm name",
+  alarm_level: "Alarm level",
+  alarm_message: "Alarm message",
+  alarm_address: "Alarm address",
+  alarm_actions: "Actions",
+  alarm_edit_button: "Edit",
+  alarm_delete_button: "Delete",
 };
 
 const viMessages = {
@@ -582,6 +591,7 @@ const viMessages = {
   sidebar_item_battery_detail: "BMS",
   sidebar_item_energy_report: "Báo cáo",
   sidebar_item_alarm_management: "Cảnh báo",
+  sidebar_item_alarm_management2: "Quản lý cảnh báo",
   sidebar_item_user_management: "Quản lý người dùng",
   sidebar_item_system_settings: "Cài đặt hệ thống",
   sidebar_item_role_management: "Quản lý vai trò",
@@ -1036,7 +1046,6 @@ const viMessages = {
   bms_total_cell: "Số lượng cell",
   bms_module_template: "Thông số của module",
   created_at: "Ngày tạo",
-
   sort_created_at: "Sắp xếp theo ngày",
   sort_created_newest: "Mới tới cũ",
   sort_created_oldest: "Cũ tới mới",
@@ -1045,6 +1054,15 @@ const viMessages = {
   sort_address_asc: "Địa chỉ tăng dần",
   sort_address_desc: "Địa chỉ giảm dần",
   bms_search: "Tìm kiếm rack...",
+  add_alarm: "Thêm cảnh báo",
+
+  alarm_name: "Tên cảnh báo",
+  alarm_level: "Mức độ cảnh báo",
+  alarm_message: "Thông tin cảnh báo",
+  alarm_address: "Địa chỉ",
+  alarm_actions: "Hành động",
+  alarm_edit_button: "Chỉnh Sửa",
+  alarm_delete_button: "Xóa",
 };
 
 export const messages = {

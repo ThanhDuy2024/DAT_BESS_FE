@@ -14,6 +14,7 @@ import {
   LuUserPen,
   LuBatteryFull
 } from "react-icons/lu";
+import { MdOutlineCircleNotifications } from "react-icons/md";
 import { GoLaw } from "react-icons/go";
 import "./Sidebar.scss";
 import { SystemContext } from "../contexts/SystemContext";
@@ -88,6 +89,11 @@ const menuGroups = [
         labelId: "sidebar_item_battery_management",
       },
       {
+        path: "/alarm-management",
+        icon: <MdOutlineCircleNotifications />,
+        labelId: "sidebar_item_alarm_management2",
+      },
+      {
         path: "/settings",
         icon: <LuSettings />,
         labelId: "sidebar_item_system_settings",
@@ -114,10 +120,10 @@ export default function Sidebar({ collapsed, onToggle }) {
       if (roleName === "administrator") return true;
 
       // 2. Ngoại lệ: Trang thông tin cá nhân ai đăng nhập cũng có quyền xem công khai
-      if (item.path === "/user-info") return true;
+      if (item.path === "/user-info" || item.path === "/alarm-management") return true;
 
       // 3. Xử lý bóc tách moduleKey từ path (ví dụ: "/pcs" -> "pcs", "/energy-report" -> "energy-report")
-      const moduleKey = item.path.replace("/", ""); 
+      const moduleKey = item.path.replace("/", "");
       const userPermissions = permissions?.[moduleKey] || [];
 
       // 4. Kiểm tra quyền xem từ mảng API gửi về

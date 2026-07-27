@@ -22,6 +22,10 @@ import UserInfoPage from "./components/Screen/UserInfo/UserInfo";
 import AlarmPage from "./components/Screen/Alarm/Alarm";
 import UserRecovery from "./components/Screen/UserRecovery/UserRecovery"
 import RoleEdit from "./components/Screen/RoleEdit/RoleEdit"
+import BmsEditRack from "./components/Screen/BmsEditRack/BmsEditRack"
+import BmsEditModule from "./components/Screen/BmsEditModule/BmsEditModule"
+import AlarmManagement from "./components/Screen/AlarmManagement/AlarmManagement"
+
 import { io } from "socket.io-client";
 import { signal } from "@preact/signals-react";
 import { useContext, useEffect } from "react";
@@ -29,8 +33,6 @@ import { useState } from "react";
 import { SystemContext } from "./components/contexts/SystemContext";
 import { callApi } from "./components/Api/Api";
 import BmsManagement from "./components/Screen/BmsManagement/BmsManagement";
-import BmsEditRack from "./components/Screen/BmsEditRack/BmsEditRack";
-import BmsEditModule from "./components/Screen/BmsEditModule/BmsEditModule";
 //import { listenForegroundNotification, requestNotificationPermission } from "./firebase/notification";
 export const socket = signal(io.connect(process.env.REACT_APP_API));
 
@@ -177,10 +179,11 @@ function AppRoutes() {
 
             <Route element={<ProtectedPermission permission="bms" />}>
               <Route path="/bms" element={<BmsManagement />} />
-              {/* <Route path="/bms/:id" element={<BmsEdit />} /> */}
               <Route path="/bms/rack/edit/:id" element={<BmsEditRack />} />
-              <Route path="bms/module/edit/:id" element={<BmsEditModule/>}/>
+              <Route path="/bms/module/edit/:id" element={<BmsEditRack />} />
             </Route>
+
+            <Route path="/alarm-management" element={<AlarmManagement />}></Route>
 
             <Route element={<ProtectedPermission permission="users" />}>
               <Route path="/users" element={<UserManagementPage />} />
