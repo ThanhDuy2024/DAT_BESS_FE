@@ -160,11 +160,27 @@
         background-position: right 12px center;
       }
 
-      &_Button_Primary,
-      &_Button_Secondary,
-      &_Button_Ghost,
-      &_Button_GhostSm,
-      &_Button_SecondarySm {
+      &_Button--Primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-sm);
+        padding: 10px 20px;
+        border: 1px solid transparent;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        line-height: 1.4;
+        white-space: nowrap;
+        transition: all var(--transition-base);
+        background-color: var(--primary);
+        color: white;
+      }
+
+      &_Button--Secondary,
+      &_Button--Ghost,
+      &_Button--GhostSm,
+      &_Button--SecondarySm {
         display: inline-flex;
         align-items: center;
         justify-content: center;

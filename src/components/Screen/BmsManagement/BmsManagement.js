@@ -41,6 +41,9 @@ const BmsManagement = () => {
     const [cellTemperature, setCellTemperature] = useState({})
     const [cellSoc, setCellSoc] = useState({})
     const [cellSoh, setCellSoh] = useState({})
+    const [createdAtFilter, setCreatedAtFilter] = useState("id");
+    const [addressFilter, setAddressFilter] = useState("id");
+    const [search, setSearch] = useState("");
 
     const signals = {
         voltage: {
@@ -114,7 +117,7 @@ const BmsManagement = () => {
     const labelsModule = ["cellVoltage", "cellTemperature", "cellSoc", "cellSoh"]
     useEffect(() => {
         (async () => {
-            const res = await callApi('get', `${process.env.REACT_APP_APIDEV}/data/getAllRack`, {});
+            const res = await callApi('get', `${process.env.REACT_APP_APIDEV}/data/getAllRack?createdAtFillter=${createdAtFilter}&addressFilter=${addressFilter}&search=${search}`, {});
             if (res.status === false) {
                 console.log("Failed to get data");
             } else {
@@ -126,7 +129,8 @@ const BmsManagement = () => {
                 })
             }
         })()
-    }, []);
+    }, [createdAtFilter, addressFilter, search]);
+
     useEffect(() => {
         if (modalType === null) {
             setVoltage({
@@ -265,7 +269,6 @@ const BmsManagement = () => {
                 toast.error(lang.formatMessage({ id: "toast_data_empty" }))
                 return;
             }
-            console.log(cellTemperature)
             const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/v3/createModule`, {
                 rackId: rackId,
                 totalModules: Number(createModule.totalModules),
@@ -299,6 +302,7 @@ const BmsManagement = () => {
             console.log(error);
         }
     }
+
     const handleSaveValueRack = () => {
         signals[selectedValue].setValue(prev => ({
             ...prev,
@@ -314,9 +318,8 @@ const BmsManagement = () => {
             type: null,
         }))
     }
+
     const handleSaveValueModule = () => {
-        console.log(signals[selectedValue])
-        console.log(tempValue)
         signals[selectedValue].setValue(prev => ({
             ...prev,
             scale: tempValue.scale === null ? prev.scale : tempValue.scale,
@@ -844,14 +847,50 @@ const BmsManagement = () => {
                         {lang.formatMessage({ id: "bms_management" })}
                     </div>
                 </div>
-                {permissions["bms"].includes("create") && (
-                    <button
-                        className="DAT_Bms_Card_Actions_Button_Primary"
-                        onClick={() => setModalType("add")}
+                <div className="DAT_Bms_Card_Actions">
+                    <input
+                        className="DAT_RoleSettingMobile_Card_Actions_FilterInput"
+                        placeholder={lang.formatMessage({ id: "bms_search" })}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={{ width: 220 }}
+                    />
+                    <select
+                        className="DAT_Bms_Card_Actions_FilterSelect"
+                        style={{ width: 200 }}
+                        defaultValue={createdAtFilter != "id" ? createdAtFilter : ""}
+                        onChange={(e) => {
+                            setCreatedAtFilter(e.target.value);
+                            setAddressFilter("id");
+                        }}
                     >
-                        {lang.formatMessage({ id: "add_rack" })}
-                    </button>
-                )}
+                        <option value="" disabled selected>{lang.formatMessage({ id: "sort_created_at" })}</option>
+                        <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+                        <option value="asc">{lang.formatMessage({ id: "sort_created_oldest" })}</option>
+                        <option value="desc">{lang.formatMessage({ id: "sort_created_newest" })}</option>
+                    </select>
+                    <select
+                        className="DAT_Bms_Card_Actions_FilterSelect"
+                        style={{ width: 200 }}
+                        defaultValue={addressFilter != "id" ? addressFilter : ""}
+                        onChange={(e) => {
+                            setCreatedAtFilter("id");
+                            setAddressFilter(e.target.value);
+                        }}
+                    >
+                        <option value="" disabled selected>{lang.formatMessage({ id: "sort_address" })}</option>
+                        <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+                        <option value="asc">{lang.formatMessage({ id: "sort_address_asc" })}</option>
+                        <option value="desc">{lang.formatMessage({ id: "sort_address_desc" })}</option>
+                    </select>
+                    {permissions["bms"].includes("create") && (
+                        <button
+                            className="DAT_Bms_Card_Actions_Button--Primary"
+                            onClick={() => setModalType("add")}
+                        >
+                            {lang.formatMessage({ id: "add_rack" })}
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className="DAT_Bms_Container">
@@ -865,6 +904,7 @@ const BmsManagement = () => {
                                 <th>{lang.formatMessage({ id: "bms_rack_brand" })}</th>
                                 <th>{lang.formatMessage({ id: "bms_rack_start_address" })}</th>
                                 <th>{lang.formatMessage({ id: "bms_rack_module" })}</th>
+                                <th>{lang.formatMessage({ id: "created_at" })}</th>
                                 {permissions["bms"].includes("update") && (
                                     <th>{lang.formatMessage({ id: "bms_actions" })}</th>
                                 )}
@@ -890,7 +930,10 @@ const BmsManagement = () => {
                                             {item.start_rack_address_}
                                         </td>
                                         <td className="DAT_Bms_Container_Table_Main_Cell">
-                                            {item.total_module_}
+                                            {item.total_module_} module
+                                        </td>
+                                        <td className="DAT_Bms_Container_Table_Main_Cell">
+                                            {item.created_at_}
                                         </td>
                                         {permissions["bms"].includes("update") && (
                                             <td className="DAT_RoleSetting_Container_Table_Main_Cell">

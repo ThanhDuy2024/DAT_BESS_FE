@@ -506,6 +506,15 @@ const enMessages = {
   bms_total_module: "Total Module",
   bms_total_cell: "Total cells",
   bms_module_template: "Module template",
+  created_at: "Created At",
+  sort_created_at: "Sort by date",
+  sort_created_newest: "Newest to oldest",
+  sort_created_oldest: "Oldest to newest",
+  sort_id: "Default",
+  sort_address: "Sort by address",
+  sort_address_asc: "Address (ascending)",
+  sort_address_desc: "Address (descending)",
+  bms_search: "Search rack...",
 };
 
 const viMessages = {
@@ -763,8 +772,6 @@ const viMessages = {
   user_edit_button: "Chỉnh sửa",
   user_locked_button: "Khóa",
   user_unlock_button: "Mở khóa",
-
-
   energy_report: "Báo cáo năng lượng",
   ack_alarm: "Xác nhận",
   clear_alarm: "Xóa",
@@ -1024,11 +1031,20 @@ const viMessages = {
   soh: "Tình trạng pin",
   go_back: "Trở lại danh sách",
   bms_module_edit_title: "Chỉnh sửa module",
-
   bms_module_edit_infor: "Thông tin module",
   bms_total_module: "Số lượng module",
   bms_total_cell: "Số lượng cell",
   bms_module_template: "Thông số của module",
+  created_at: "Ngày tạo",
+
+  sort_created_at: "Sắp xếp theo ngày",
+  sort_created_newest: "Mới tới cũ",
+  sort_created_oldest: "Cũ tới mới",
+  sort_id: "Mặc định",
+  sort_address: "Sắp xếp theo địa chỉ",
+  sort_address_asc: "Địa chỉ tăng dần",
+  sort_address_desc: "Địa chỉ giảm dần",
+  bms_search: "Tìm kiếm rack...",
 };
 
 export const messages = {
