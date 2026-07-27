@@ -3,13 +3,15 @@ import { toast } from "sonner";
 import { useIntl } from "react-intl";
 import { useContext } from "react";
 import { useEffect, useState } from "react";
-import { LuBatteryFull } from "react-icons/lu";
+import { LuBatteryFull, LuEye } from "react-icons/lu";
 import { callApi } from "../../Api/Api"
 import Modal from "../../Modal/Modal";
 import { RackContext } from "../../contexts/RackContext";
 import { FiEdit3 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { SystemContext } from "../../contexts/SystemContext";
+import { isMobile } from "react-device-detect";
+import { IoMdAddCircleOutline } from "react-icons/io";
 
 const BmsManagement = () => {
     const navigate = useNavigate();
@@ -337,62 +339,70 @@ const BmsManagement = () => {
 
     const renderModalAdd = () => {
         return (
-            <div className="DAT_Bms_Form_Grid">
-                <div className="DAT_Bms_Form_Grid_Group">
-                    <label className="DAT_Bms_Form_Grid_Group_Label">
-                        {lang.formatMessage({ id: "bms_rack_name" })}
-                    </label>
-                    <input
-                        className="DAT_Bms_Form_Grid_Group_Input"
-                        value={createRack.rackName}
-                        key={"rackName"}
-                        onChange={(e) => setCreateRack({ ...createRack, rackName: e.target.value })}
-                    />
-                </div>
-                <div className="DAT_Bms_Form_Grid_Group">
-                    <label className="DAT_Bms_Form_Grid_Group_Label">
-                        {lang.formatMessage({ id: "bms_rack_model" })}
-                    </label>
-                    <input
-                        className="DAT_Bms_Form_Grid_Group_Input"
-                        value={createRack.model}
-                        key={"model"}
-                        onChange={(e) => setCreateRack({ ...createRack, model: e.target.value })}
-                    />
-                </div>
-                <div className="DAT_Bms_Form_Grid_Group">
-                    <label className="DAT_Bms_Form_Grid_Group_Label">
-                        {lang.formatMessage({ id: "bms_rack_brand" })}
-                    </label>
-                    <input
-                        className="DAT_Bms_Form_Grid_Group_Input"
-                        value={createRack.brand}
-                        key={"brand"}
-                        onChange={(e) => setCreateRack({ ...createRack, brand: e.target.value })}
-                    />
-                </div>
-                {labelsRack.map((item) => (
-                    <div className="DAT_Bms_Form_Grid_Box" onClick={() => { setModalType("editValueRack"); setSelectedValue(item) }}>
-                        <div className="DAT_Bms_Form_Grid_Box_Label">
-                            {lang.formatMessage({ id: signals[item].lang })}
-                        </div>
-                        <div className="DAT_Bms_Form_Grid_Box_Content">
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Label">Scale: </div>
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.scale}</div>
-                        </div>
-                        <div className="DAT_Bms_Form_Grid_Box_Content">
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Label">Offset: </div>
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.offset}</div>
-                        </div>
-                        <div className="DAT_Bms_Form_Grid_Box_Content">
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Label">Type: </div>
-                            <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.type}</div>
-                        </div>
+            <>
+                <div className="DAT_Bms_Form_Grid" style={{
+                    gridTemplateColumns: isMobile ? " repeat(1, minmax(0, 1fr))" : " repeat(3, minmax(0, 1fr))",
+                }}>
+                    <div className="DAT_Bms_Form_Grid_Group">
+                        <label className="DAT_Bms_Form_Grid_Group_Label">
+                            {lang.formatMessage({ id: "bms_rack_name" })}
+                        </label>
+                        <input
+                            className="DAT_Bms_Form_Grid_Group_Input"
+                            value={createRack.rackName}
+                            key={"rackName"}
+                            onChange={(e) => setCreateRack({ ...createRack, rackName: e.target.value })}
+                        />
                     </div>
-                ))}
-
-
-            </div>
+                    <div className="DAT_Bms_Form_Grid_Group">
+                        <label className="DAT_Bms_Form_Grid_Group_Label">
+                            {lang.formatMessage({ id: "bms_rack_model" })}
+                        </label>
+                        <input
+                            className="DAT_Bms_Form_Grid_Group_Input"
+                            value={createRack.model}
+                            key={"model"}
+                            onChange={(e) => setCreateRack({ ...createRack, model: e.target.value })}
+                        />
+                    </div>
+                    <div className="DAT_Bms_Form_Grid_Group">
+                        <label className="DAT_Bms_Form_Grid_Group_Label">
+                            {lang.formatMessage({ id: "bms_rack_brand" })}
+                        </label>
+                        <input
+                            className="DAT_Bms_Form_Grid_Group_Input"
+                            value={createRack.brand}
+                            key={"brand"}
+                            onChange={(e) => setCreateRack({ ...createRack, brand: e.target.value })}
+                        />
+                    </div>
+                </div>
+                <div className="DAT_Bms_Form_Grid"
+                    style={{
+                        gridTemplateColumns: isMobile ? " repeat(1, minmax(0, 1fr))" : " repeat(3, minmax(0, 1fr))",
+                    }}
+                >
+                    {labelsRack.map((item) => (
+                        <div className="DAT_Bms_Form_Grid_Box" onClick={() => { setModalType("editValueRack"); setSelectedValue(item) }}>
+                            <div className="DAT_Bms_Form_Grid_Box_Label">
+                                {lang.formatMessage({ id: signals[item].lang })}
+                            </div>
+                            <div className="DAT_Bms_Form_Grid_Box_Content">
+                                <div className="DAT_Bms_Form_Grid_Box_Content_Label">Scale: </div>
+                                <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.scale}</div>
+                            </div>
+                            <div className="DAT_Bms_Form_Grid_Box_Content">
+                                <div className="DAT_Bms_Form_Grid_Box_Content_Label">Offset: </div>
+                                <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.offset}</div>
+                            </div>
+                            <div className="DAT_Bms_Form_Grid_Box_Content">
+                                <div className="DAT_Bms_Form_Grid_Box_Content_Label">Type: </div>
+                                <div className="DAT_Bms_Form_Grid_Box_Content_Value">{signals[item].value.type}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </>
         )
     };
 
@@ -505,7 +515,7 @@ const BmsManagement = () => {
 
     const renderModalAddModule = () => {
         return (
-            <div className="DAT_Bms_Form_Grid" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }
+            <div className="DAT_Bms_Form_Grid" style={{ gridTemplateColumns: isMobile ? "repeat(1, minmax(0, 1fr))" : "repeat(2, minmax(0, 1fr))" }
             }>
                 <div className="DAT_Bms_Form_Grid_Group">
                     <label className="DAT_Bms_Form_Grid_Group_Label">
@@ -673,6 +683,41 @@ const BmsManagement = () => {
         )
     }
 
+    const renderModalViewMobile = () => {
+        return (
+            <>
+                <div className="DAT_BmsMobile_Modal_Row">
+                    <div className="DAT_BmsMobile_Modal_Row_Label">Rack Id</div>
+                    <div className="DAT_BmsMobile_Modal_Row_Value">RACK-{selectedRack.id_ >= 10 ? `0${selectedRack.id_}` : `00${selectedRack.id_}`}</div>
+                </div>
+                <div className="DAT_BmsMobile_Modal_Row">
+                    <div className="DAT_BmsMobile_Modal_Row_Label">{lang.formatMessage({ id: "rack_name" })}</div>
+                    <div className="DAT_BmsMobile_Modal_Row_Value">{selectedRack.rack_name_}</div>
+                </div>
+                <div className="DAT_BmsMobile_Modal_Row">
+                    <div className="DAT_BmsMobile_Modal_Row_Label">{lang.formatMessage({ id: "bms_rack_model" })}</div>
+                    <div className="DAT_BmsMobile_Modal_Row_Value">{selectedRack.model_}</div>
+                </div>
+                <div className="DAT_BmsMobile_Modal_Row">
+                    <div className="DAT_BmsMobile_Modal_Row_Label">{lang.formatMessage({ id: "bms_rack_brand" })}</div>
+                    <div className="DAT_BmsMobile_Modal_Row_Value">{selectedRack.brand_}</div>
+                </div>
+                <div className="DAT_BmsMobile_Modal_Row">
+                    <div className="DAT_BmsMobile_Modal_Row_Label">{lang.formatMessage({ id: "bms_rack_module" })}</div>
+                    <div className="DAT_BmsMobile_Modal_Row_Value">{selectedRack.total_module_}</div>
+                </div>
+                <div className="DAT_BmsMobile_Modal_Row">
+                    <div className="DAT_BmsMobile_Modal_Row_Label">{lang.formatMessage({ id: "bms_rack_start_address" })}</div>
+                    <div className="DAT_BmsMobile_Modal_Row_Value">{selectedRack.start_rack_address_}</div>
+                </div>
+                <div className="DAT_BmsMobile_Modal_Row">
+                    <div className="DAT_BmsMobile_Modal_Row_Label">{lang.formatMessage({ id: "created_at" })}</div>
+                    <div className="DAT_BmsMobile_Modal_Row_Value">{selectedRack.created_at_}</div>
+                </div>
+            </>
+        )
+    }
+
     const renderTitle = () => {
         switch (modalType) {
             case "add":
@@ -687,6 +732,8 @@ const BmsManagement = () => {
                 return lang.formatMessage({ id: "bms_modal_edit_value_rack_title" });
             case "editValueModule":
                 return lang.formatMessage({ id: "bms_modal_edit_value_module_title" });
+            case "viewMobile":
+                return lang.formatMessage({ id: "bms_modal_view_title" })
             default:
                 return "";
         }
@@ -812,6 +859,35 @@ const BmsManagement = () => {
                         </button>
                     </>
                 )
+            case "viewMobile":
+                return (
+                    <>
+                        {permissions["bms"].includes("update") && (
+                            <>
+                                <button
+                                    className="DAT_BmsMobile_Modal_Footer_Button_Primary"
+                                    onClick={() => navigate(`/bms/rack/edit/${selectedRack.id_}`)}
+                                >
+                                    {lang.formatMessage({ id: "bms_edit_rack" })}
+                                </button>
+                                {selectedRack.total_module_ === 0 ? (
+                                    <button className="DAT_BmsMobile_Modal_Footer_Button_Primary"
+                                        onClick={() => { setModalType("addModule"); setRackId(selectedRack.id_) }}
+                                    >
+                                        {lang.formatMessage({ id: "bms_add_module" })}
+                                    </button>
+                                ) : (
+                                    <button className="DAT_BmsMobile_Modal_Footer_Button_Primary"
+                                        // onClick={() => { setModalType("editRack"); setSelectedRack(item) }}
+                                        onClick={() => navigate(`/bms/module/edit/${selectedRack.id_}`)}
+                                    >
+                                        {lang.formatMessage({ id: "bms_edit_module" })}
+                                    </button>
+                                )}
+                            </>
+                        )}
+                    </>
+                )
             default:
                 return null;
         }
@@ -831,160 +907,264 @@ const BmsManagement = () => {
                 return renderEditValueRack();
             case "editValueModule":
                 return renderEditValueModule();
+            case "viewMobile":
+                return renderModalViewMobile();
             default:
                 return null;
         }
     };
 
     return (
-        <div className="DAT_Bms">
-            <div className="DAT_Bms_HeaderCard">
-                <div className="DAT_Bms_HeaderCard_Main">
-                    <div className="DAT_Bms_HeaderCard_Main_Icon">
-                        <LuBatteryFull size={25} />
-                    </div>
-                    <div className="DAT_Bms_HeaderCard_Main_Title">
-                        {lang.formatMessage({ id: "bms_management" })}
-                    </div>
-                </div>
-                <div className="DAT_Bms_Card_Actions">
-                    <input
-                        className="DAT_RoleSettingMobile_Card_Actions_FilterInput"
-                        placeholder={lang.formatMessage({ id: "bms_search" })}
-                        onChange={(e) => setSearch(e.target.value)}
-                        style={{ width: 220 }}
-                    />
-                    <select
-                        className="DAT_Bms_Card_Actions_FilterSelect"
-                        style={{ width: 200 }}
-                        defaultValue={createdAtFilter != "id" ? createdAtFilter : ""}
-                        onChange={(e) => {
-                            setCreatedAtFilter(e.target.value);
-                            setAddressFilter("id");
-                        }}
-                    >
-                        <option value="" disabled selected>{lang.formatMessage({ id: "sort_created_at" })}</option>
-                        <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
-                        <option value="asc">{lang.formatMessage({ id: "sort_created_oldest" })}</option>
-                        <option value="desc">{lang.formatMessage({ id: "sort_created_newest" })}</option>
-                    </select>
-                    <select
-                        className="DAT_Bms_Card_Actions_FilterSelect"
-                        style={{ width: 200 }}
-                        defaultValue={addressFilter != "id" ? addressFilter : ""}
-                        onChange={(e) => {
-                            setCreatedAtFilter("id");
-                            setAddressFilter(e.target.value);
-                        }}
-                    >
-                        <option value="" disabled selected>{lang.formatMessage({ id: "sort_address" })}</option>
-                        <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
-                        <option value="asc">{lang.formatMessage({ id: "sort_address_asc" })}</option>
-                        <option value="desc">{lang.formatMessage({ id: "sort_address_desc" })}</option>
-                    </select>
-                    {permissions["bms"].includes("create") && (
-                        <button
-                            className="DAT_Bms_Card_Actions_Button--Primary"
-                            onClick={() => setModalType("add")}
-                        >
-                            {lang.formatMessage({ id: "add_rack" })}
-                        </button>
-                    )}
-                </div>
-            </div>
+        <>
+            {isMobile ? (
+                <div className="DAT_BmsMobile">
+                    <div className="DAT_BmsMobile_HeaderCard">
+                        <div className="DAT_BmsMobile_HeaderCard_Main">
+                            <div className="DAT_BmsMobile_HeaderCard_Main_Title">
+                                <LuBatteryFull size={25} />
+                                {lang.formatMessage({ id: "bms_management" })}
+                            </div>
 
-            <div className="DAT_Bms_Container">
-                <div className="DAT_Bms_Container_Table">
-                    <table className="DAT_Bms_Container_Table_Main">
-                        <thead>
-                            <tr style={{ textAlign: "center" }}>
-                                <th>{lang.formatMessage({ id: "bms_rack_id" })}</th>
-                                <th>{lang.formatMessage({ id: "bms_rack_name" })}</th>
-                                <th>{lang.formatMessage({ id: "bms_rack_model" })}</th>
-                                <th>{lang.formatMessage({ id: "bms_rack_brand" })}</th>
-                                <th>{lang.formatMessage({ id: "bms_rack_start_address" })}</th>
-                                <th>{lang.formatMessage({ id: "bms_rack_module" })}</th>
-                                <th>{lang.formatMessage({ id: "created_at" })}</th>
-                                {permissions["bms"].includes("update") && (
-                                    <th>{lang.formatMessage({ id: "bms_actions" })}</th>
-                                )}
-                            </tr>
-                        </thead>
-                        <tbody className="DAT_Bms_Container_Table_Main_Body">
-                            {rackData.map((item) => {
-                                return (
-                                    <tr className='DAT_Bms_Container_Table_Main_Row'>
-                                        <td className="DAT_Bms_Container_Table_Main_Cell">
+                        </div>
+                        <div className="DAT_BmsMobile_Card_Actions">
+                            <input
+                                className="DAT_RoleSettingMobile_Card_Actions_FilterInput"
+                                placeholder={lang.formatMessage({ id: "bms_search" })}
+                                onChange={(e) => setSearch(e.target.value)}
+                                style={{ width: 220 }}
+                            />
+                            {permissions["bms"].includes("create") && (
+                                <button
+                                    className="DAT_BmsMobile_Card_Actions_Button--Primary"
+                                    onClick={() => setModalType("add")}
+                                >
+                                    <IoMdAddCircleOutline />
+                                </button>
+                            )}
+                            <select
+                                className="DAT_BmsMobile_Card_Actions_FilterSelect"
+                                style={{ width: 200 }}
+                                defaultValue={createdAtFilter != "id" ? createdAtFilter : ""}
+                                onChange={(e) => {
+                                    setCreatedAtFilter(e.target.value);
+                                    setAddressFilter("id");
+                                }}
+                            >
+                                <option value="" disabled selected>{lang.formatMessage({ id: "sort_created_at" })}</option>
+                                <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+                                <option value="asc">{lang.formatMessage({ id: "sort_created_oldest" })}</option>
+                                <option value="desc">{lang.formatMessage({ id: "sort_created_newest" })}</option>
+                            </select>
+                            <select
+                                className="DAT_BmsMobile_Card_Actions_FilterSelect"
+                                style={{ width: 200 }}
+                                defaultValue={addressFilter != "id" ? addressFilter : ""}
+                                onChange={(e) => {
+                                    setCreatedAtFilter("id");
+                                    setAddressFilter(e.target.value);
+                                }}
+                            >
+                                <option value="" disabled selected>{lang.formatMessage({ id: "sort_address" })}</option>
+                                <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+                                <option value="asc">{lang.formatMessage({ id: "sort_address_asc" })}</option>
+                                <option value="desc">{lang.formatMessage({ id: "sort_address_desc" })}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="DAT_BmsMobile_Container">
+                        {rackData.map((item) => {
+                            return (
+                                <div className="DAT_BmsMobile_Container_Card">
+                                    <div className="DAT_BmsMobile_Container_Card_Left">
+                                        <div className="DAT_BmsMobile_Container_Card_Left_Label">
                                             RACK-{item.id_ >= 10 ? `0${item.id_}` : `00${item.id_}`}
-                                        </td>
-                                        <td className="DAT_Bms_Container_Table_Main_Cell">
-                                            {item.rack_name_}
-                                        </td>
-                                        <td className="DAT_Bms_Container_Table_Main_Cell">
-                                            {item.model_}
-                                        </td>
-                                        <td className="DAT_Bms_Container_Table_Main_Cell">
-                                            {item.brand_}
-                                        </td>
-                                        <td className="DAT_Bms_Container_Table_Main_Cell">
-                                            {item.start_rack_address_}
-                                        </td>
-                                        <td className="DAT_Bms_Container_Table_Main_Cell">
-                                            {item.total_module_} module
-                                        </td>
-                                        <td className="DAT_Bms_Container_Table_Main_Cell">
-                                            {item.created_at_}
-                                        </td>
+                                        </div>
+                                        <div className="DAT_BmsMobile_Container_Card_Left_Item">
+                                            <div className="DAT_BmsMobile_Container_Card_Left_Item_Title">{item.rack_name_}</div>
+                                            <div className="DAT_BmsMobile_Container_Card_Left_Item_Subtitle">{item.total_module_} module</div>
+                                        </div>
+                                    </div>
+                                    <div className="DAT_BmsMobile_Container_Card_Right">
+                                        <div className="DAT_BmsMobile_Container_Card_Right_Item">
+                                            <div className="DAT_BmsMobile_Container_Card_Right_Item_Date">{item.created_at_}</div>
+                                            <div className="DAT_BmsMobile_Container_Card_Right_Item_Subtitle"
+                                            >{item.model_}
+                                            </div>
+                                        </div>
+                                        <button
+                                            className="DAT_BmsMobile_Container_Card_Right_Button"
+                                            aria-label="View alarm detail"
+                                            onClick={() => { setModalType("viewMobile"); setSelectedRack(item) }}
+                                        >
+                                            <LuEye />
+                                        </button>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                    <Modal
+                        isOpen={modalType !== null}
+                        onClose={() => setModalType(null)}
+                        title={renderTitle()}
+                        footer={renderFooter()}
+                        size="large"
+                    >
+                        {renderBody()}
+                    </Modal>
+                </div>
+            ) : (
+                <div className="DAT_Bms">
+                    <div className="DAT_Bms_HeaderCard">
+                        <div className="DAT_Bms_HeaderCard_Main">
+                            <div className="DAT_Bms_HeaderCard_Main_Icon">
+                                <LuBatteryFull size={25} />
+                            </div>
+                            <div className="DAT_Bms_HeaderCard_Main_Title">
+                                {lang.formatMessage({ id: "bms_management" })}
+                            </div>
+                        </div>
+                        <div className="DAT_Bms_Card_Actions">
+                            <input
+                                className="DAT_RoleSettingMobile_Card_Actions_FilterInput"
+                                placeholder={lang.formatMessage({ id: "bms_search" })}
+                                onChange={(e) => setSearch(e.target.value)}
+                                style={{ width: 220 }}
+                            />
+                            <select
+                                className="DAT_Bms_Card_Actions_FilterSelect"
+                                style={{ width: 200 }}
+                                defaultValue={createdAtFilter != "id" ? createdAtFilter : ""}
+                                onChange={(e) => {
+                                    setCreatedAtFilter(e.target.value);
+                                    setAddressFilter("id");
+                                }}
+                            >
+                                <option value="" disabled selected>{lang.formatMessage({ id: "sort_created_at" })}</option>
+                                <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+                                <option value="asc">{lang.formatMessage({ id: "sort_created_oldest" })}</option>
+                                <option value="desc">{lang.formatMessage({ id: "sort_created_newest" })}</option>
+                            </select>
+                            <select
+                                className="DAT_Bms_Card_Actions_FilterSelect"
+                                style={{ width: 200 }}
+                                defaultValue={addressFilter != "id" ? addressFilter : ""}
+                                onChange={(e) => {
+                                    setCreatedAtFilter("id");
+                                    setAddressFilter(e.target.value);
+                                }}
+                            >
+                                <option value="" disabled selected>{lang.formatMessage({ id: "sort_address" })}</option>
+                                <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+                                <option value="asc">{lang.formatMessage({ id: "sort_address_asc" })}</option>
+                                <option value="desc">{lang.formatMessage({ id: "sort_address_desc" })}</option>
+                            </select>
+                            {permissions["bms"].includes("create") && (
+                                <button
+                                    className="DAT_Bms_Card_Actions_Button--Primary"
+                                    onClick={() => setModalType("add")}
+                                >
+                                    {lang.formatMessage({ id: "add_rack" })}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="DAT_Bms_Container">
+                        <div className="DAT_Bms_Container_Table">
+                            <table className="DAT_Bms_Container_Table_Main">
+                                <thead>
+                                    <tr style={{ textAlign: "center" }}>
+                                        <th>{lang.formatMessage({ id: "bms_rack_id" })}</th>
+                                        <th>{lang.formatMessage({ id: "bms_rack_name" })}</th>
+                                        <th>{lang.formatMessage({ id: "bms_rack_model" })}</th>
+                                        <th>{lang.formatMessage({ id: "bms_rack_brand" })}</th>
+                                        <th>{lang.formatMessage({ id: "bms_rack_start_address" })}</th>
+                                        <th>{lang.formatMessage({ id: "bms_rack_module" })}</th>
+                                        <th>{lang.formatMessage({ id: "created_at" })}</th>
                                         {permissions["bms"].includes("update") && (
-                                            <td className="DAT_RoleSetting_Container_Table_Main_Cell">
-                                                <div className='DAT_RoleSetting_Container_Table_Main_Cell_Action'>
-                                                    <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
-                                                        // onClick={() => { setModalType("editRack"); setSelectedRack(item) }}
-                                                        onClick={() => navigate(`/bms/rack/edit/${item.id_}`)}
-                                                    >
-                                                        {lang.formatMessage({ id: "bms_edit_rack" })}
-                                                    </button>
+                                            <th>{lang.formatMessage({ id: "bms_actions" })}</th>
+                                        )}
+                                    </tr>
+                                </thead>
+                                <tbody className="DAT_Bms_Container_Table_Main_Body">
+                                    {rackData.map((item) => {
+                                        return (
+                                            <tr className='DAT_Bms_Container_Table_Main_Row'>
+                                                <td className="DAT_Bms_Container_Table_Main_Cell">
+                                                    RACK-{item.id_ >= 10 ? `0${item.id_}` : `00${item.id_}`}
+                                                </td>
+                                                <td className="DAT_Bms_Container_Table_Main_Cell">
+                                                    {item.rack_name_}
+                                                </td>
+                                                <td className="DAT_Bms_Container_Table_Main_Cell">
+                                                    {item.model_}
+                                                </td>
+                                                <td className="DAT_Bms_Container_Table_Main_Cell">
+                                                    {item.brand_}
+                                                </td>
+                                                <td className="DAT_Bms_Container_Table_Main_Cell">
+                                                    {item.start_rack_address_}
+                                                </td>
+                                                <td className="DAT_Bms_Container_Table_Main_Cell">
+                                                    {item.total_module_} module
+                                                </td>
+                                                <td className="DAT_Bms_Container_Table_Main_Cell">
+                                                    {item.created_at_}
+                                                </td>
+                                                {permissions["bms"].includes("update") && (
+                                                    <td className="DAT_Bms_Container_Table_Main_Cell">
+                                                        <div className='DAT_Bms_Container_Table_Main_Cell_Action'>
+                                                            <button className='DAT_Bms_Container_Table_Main_Cell_Action_Button'
+                                                                // onClick={() => { setModalType("editRack"); setSelectedRack(item) }}
+                                                                onClick={() => navigate(`/bms/rack/edit/${item.id_}`)}
+                                                            >
+                                                                {lang.formatMessage({ id: "bms_edit_rack" })}
+                                                            </button>
 
-                                                    {item.total_module_ === 0 ? (
-                                                        <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
-                                                            onClick={() => { setModalType("addModule"); setRackId(item.id_) }}
-                                                        >
-                                                            {lang.formatMessage({ id: "bms_add_module" })}
-                                                        </button>
-                                                    ) : (
-                                                        <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
-                                                            // onClick={() => { setModalType("editRack"); setSelectedRack(item) }}
-                                                            onClick={() => navigate(`/bms/module/edit/${item.id_}`)}
-                                                        >
-                                                            {lang.formatMessage({ id: "bms_edit_module" })}
-                                                        </button>
-                                                    )}
+                                                            {item.total_module_ === 0 ? (
+                                                                <button className='DAT_Bms_Container_Table_Main_Cell_Action_Button'
+                                                                    onClick={() => { setModalType("addModule"); setRackId(item.id_) }}
+                                                                >
+                                                                    {lang.formatMessage({ id: "bms_add_module" })}
+                                                                </button>
+                                                            ) : (
+                                                                <button className='DAT_Bms_Container_Table_Main_Cell_Action_Button'
+                                                                    // onClick={() => { setModalType("editRack"); setSelectedRack(item) }}
+                                                                    onClick={() => navigate(`/bms/module/edit/${item.id_}`)}
+                                                                >
+                                                                    {lang.formatMessage({ id: "bms_edit_module" })}
+                                                                </button>
+                                                            )}
 
-                                                    {/* <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
+                                                            {/* <button className='DAT_RoleSetting_Container_Table_Main_Cell_Action_Button'
                                                 >
                                                     {lang.formatMessage({ id: "bms_delete" })}
                                                 </button> */}
-                                                </div>
-                                            </td>
-                                        )}
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                                        </div>
+                                                    </td>
+                                                )}
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-            <Modal
-                isOpen={modalType !== null}
-                onClose={() => setModalType(null)}
-                title={renderTitle()}
-                footer={renderFooter()}
-                size="xlarge"
-            >
-                {renderBody()}
-            </Modal>
-        </div >
+                    <Modal
+                        isOpen={modalType !== null}
+                        onClose={() => setModalType(null)}
+                        title={renderTitle()}
+                        footer={renderFooter()}
+                        size="xlarge"
+                    >
+                        {renderBody()}
+                    </Modal>
+                </div >
+            )}
+        </>
     )
 }
 

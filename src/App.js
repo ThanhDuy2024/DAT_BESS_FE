@@ -180,7 +180,7 @@ function AppRoutes() {
             <Route element={<ProtectedPermission permission="bms" />}>
               <Route path="/bms" element={<BmsManagement />} />
               <Route path="/bms/rack/edit/:id" element={<BmsEditRack />} />
-              <Route path="/bms/module/edit/:id" element={<BmsEditRack />} />
+              <Route path="/bms/module/edit/:id" element={<BmsEditModule />} />
             </Route>
 
             <Route path="/alarm-management" element={<AlarmManagement />}></Route>
