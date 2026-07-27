@@ -79,134 +79,159 @@ const BmsEdit = () => {
 
     return (
         <>
-            <div className="DAT_BmsEdit">
-                <div className="DAT_BmsEdit_HeaderCard">
-                    <div className="DAT_BmsEdit_HeaderCard_Main">
-                        <div className="DAT_BmsEdit_HeaderCard_Main_Icon">
-                            {/* <LuSettings size={25} /> */}
+            <div className="DAT_BmsEditModuleMobile">
+                <div className="DAT_BmsEditModuleMobile_HeaderCard">
+                    <div className="DAT_BmsEditModuleMobile_HeaderCard_Main">
+                        <div className="DAT_BmsEditModuleMobile_HeaderCard_Main_Title">
+                            {lang.formatMessage({ id: "bms_module_edit_title" })}
                         </div>
-                        <div className="DAT_BmsEdit_HeaderCard_Main_Title">
-                            {lang.formatMessage({ id: "rack_edit_title" })}
-                        </div>
-                    </div>
-                </div>
-                <div className="DAT_BmsEdit_Main">
-                    <div className="DAT_BmsEdit_Main_Title">Rack Information</div>
-                    <div className="DAT_BmsEdit_Main_Information">
-                        <div className="DAT_BmsEdit_Main_Information_Group">
-                            <label>Rack Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter rack name"
-                                defaultValue={rack.rack_name_}
-                                onChange={(e) =>
-                                    setRack(prev => ({
-                                        ...prev,
-                                        rack_name_: e.target.value
-                                    }))
-                                }
-                            />
-                        </div>
-                        <div className="DAT_BmsEdit_Main_Information_Group">
-                            <label>Model Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter model name"
-                                value={rack.model_}
-                            // onChange={(e) => setRoleName(e.target.value)}
-                            />
-                        </div>
-                        <div className="DAT_BmsEdit_Main_Information_Group">
-                            <label>Brand Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter brand name"
-                                value={rack.brand_}
-                            // onChange={(e) => setRoleName(e.target.value)}
-                            />
-                        </div>
-                        <div className="DAT_BmsEdit_Main_Information_Group">
-                            <label>Start Address</label>
-                            <input
-                                type="text"
-                                disabled
-                                value={rack.start_rack_address_}
-                            // onChange={(e) => setRoleName(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <div className="DAT_BmsEdit_Main_Title">Rack Template</div>
-                    <div className="DAT_BmsEdit_Main_Edit">
-                        {labelsRack.map((item) => (
-                            <div className="DAT_BmsEdit_Main_Edit_Group">
-                                <div className="DAT_BmsEdit_Main_Edit_Group_Title">{item.toUpperCase()}</div>
-                                <div className="DAT_BmsEdit_Main_Edit_Group_Box">
-                                    <label>Scale</label>
-                                    <input
-                                        defaultValue={rack?.template_?.[item]?.scale ?? ""}
-                                        onChange={(e) =>
-                                            setRack(prev => ({
-                                                ...prev,
-                                                template_: {
-                                                    ...prev.template_,
-                                                    [item]: {
-                                                        ...prev.template_[item],
-                                                        scale: Number(e.target.value),
-                                                    },
-                                                },
-                                            }))
-                                        }
-                                    ></input>
-                                </div>
-                                <div className="DAT_BmsEdit_Main_Edit_Group_Box">
-                                    <label>Offset</label>
-                                    <input
-                                        defaultValue={rack?.template_?.[item]?.offset ?? ""}
-                                        onChange={(e) =>
-                                            setRack(prev => ({
-                                                ...prev,
-                                                template_: {
-                                                    ...prev.template_,
-                                                    [item]: {
-                                                        ...prev.template_[item],
-                                                        offset: Number(e.target.value),
-                                                    },
-                                                },
-                                            }))
-                                        }
-                                    ></input>
-                                </div>
-                                <div className="DAT_BmsEdit_Main_Edit_Group_Box">
-                                    <label>Type</label>
-                                    <input
-                                        defaultValue={rack?.template_?.[item]?.type ?? ""}
-                                        onChange={(e) =>
-                                            setRack(prev => ({
-                                                ...prev,
-                                                template_: {
-                                                    ...prev.template_,
-                                                    [item]: {
-                                                        ...prev.template_[item],
-                                                        type: e.target.value,
-                                                    },
-                                                },
-                                            }))
-                                        }
-                                    ></input>
-                                </div>
-
-                            </div>
-                        ))}
-                    </div>
-                    <div className="DAT_BmsEdit_Main_Footer">
                         <button
-                            className="DAT_BmsEdit_Main_Footer_Save"
-                            onClick={handleSubmit}
+                            className="DAT_BmsEditModuleMobile_HeaderCard_Main_Button"
+                            onClick={() => navigate("/bms")}
                         >
-                            Save
+                            {lang.formatMessage({ id: "go_back" })}
                         </button>
                     </div>
                 </div>
+
+                <form className="DAT_BmsEditModuleMobile_Main" onSubmit={handleSubmit}>
+                    <div className="DAT_BmsEditModuleMobile_Main_Title">
+                        {lang.formatMessage({ id: "bms_module_edit_infor" })}
+                    </div>
+                    <div className="DAT_BmsEditModuleMobile_Main_Information">
+                        <div className="DAT_BmsEditModuleMobile_Main_Information_Group">
+                            <label>{lang.formatMessage({ id: "bms_total_module" })}</label>
+                            <input
+                                type="text"
+                                placeholder="Enter total module"
+                                defaultValue={moduleDetail?.total?.total_module_ || 0}
+                                name="totalModule"
+                            />
+                        </div>
+                        <div className="DAT_BmsEditModuleMobile_Main_Information_Group">
+                            <label>{lang.formatMessage({ id: "bms_total_cell" })}</label>
+                            <input
+                                type="text"
+                                placeholder="Enter totalModule"
+                                defaultValue={moduleDetail?.total?.total_cells_ || 0}
+                                name="totalCells"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="DAT_BmsEditModuleMobile_Main_Title">{lang.formatMessage({ id: "bms_module_template" })}</div>
+                    <div className="DAT_BmsEditModuleMobile_Main_Edit">
+                        {/* Voltage */}
+                        <div className="DAT_BmsEditModuleMobile_Main_Edit_Group">
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "voltage" })}</div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellVoltage.scale}
+                                    name="scaleVoltage"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellVoltage.offset}
+                                    name="offsetVoltage"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellVoltage.type}
+                                    name="typeVoltage"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Temperature */}
+                        <div className="DAT_BmsEditModuleMobile_Main_Edit_Group">
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Title">{lang.formatMessage({ id: "bms_temp" })}</div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellTemperature.scale}
+                                    name="scaleTemperature"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellTemperature.offset}
+                                    name="offsetTemperature"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellTemperature.type}
+                                    name="typeTemperature"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Soc */}
+                        <div className="DAT_BmsEditModuleMobile_Main_Edit_Group">
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Title">SoC</div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellSoc.scale}
+                                    name="scaleSoc"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellSoc.offset}
+                                    name="offsetSoc"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellSoc.type}
+                                    name="typeSoc"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Soc */}
+                        <div className="DAT_BmsEditModuleMobile_Main_Edit_Group">
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Title">Soh</div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_scale" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellSoc.scale}
+                                    name="scaleSoc"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_offset" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellSoc.offset}
+                                    name="offsetSoc"
+                                />
+                            </div>
+                            <div className="DAT_BmsEditModuleMobile_Main_Edit_Group_Box">
+                                <label>{lang.formatMessage({ id: "bms_type" })}</label>
+                                <input
+                                    defaultValue={moduleDetail.template.cellSoc.type}
+                                    name="typeSoc"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="DAT_BmsEditModuleMobile_Main_Footer">
+                        <button type="submit" className="DAT_BmsEditModuleMobile_Main_Footer_Save">
+                            {lang.formatMessage({ id: "save" })}
+                        </button>
+                    </div>
+                </form>
             </div>
         </>
     )
