@@ -114,9 +114,9 @@ const BmsManagement = () => {
             lang: "soh"
         },
     };
-
     const labelsRack = ["voltage", "current", "temperature", "soc", "soh", "maximumCellVoltage", "minimumCellVoltage", "maximumCellTemperature", "minimumCellTemperature"];
     const labelsModule = ["cellVoltage", "cellTemperature", "cellSoc", "cellSoh"]
+    
     useEffect(() => {
         (async () => {
             const res = await callApi('get', `${process.env.REACT_APP_APIDEV}/data/getAllRack?createdAtFillter=${createdAtFilter}&addressFilter=${addressFilter}&search=${search}`, {});

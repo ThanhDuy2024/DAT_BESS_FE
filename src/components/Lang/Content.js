@@ -530,6 +530,7 @@ const enMessages = {
   bms_modal_view_title: "View detail rack",
   bms_modal_edit_value_rack_title: "Edit value rack",
   bms_modal_edit_value_module_title: "Edit value module",
+  alarm_search: "Search alarm message...",
 };
 
 const viMessages = {
@@ -1071,10 +1072,12 @@ const viMessages = {
   alarm_delete_button: "Xóa",
   status_serious: "Nghiêm trọng",
   status_medium: "Trung bình",
-  status_slight: "Nhẹ",
+  status_slight: "Cảnh báo nhẹ",
   bms_modal_view_title: "Xem chi tiết rack",
   bms_modal_edit_value_rack_title: "Chỉnh sửa giá trị rack",
   bms_modal_edit_value_module_title: "Chỉnh sửa giá trị module",
+  alarm_search: "Tìm kiếm thông tin cảnh báo...",
+
 };
 
 export const messages = {

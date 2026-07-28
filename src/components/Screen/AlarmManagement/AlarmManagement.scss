@@ -160,7 +160,24 @@
         background-position: right 12px center;
       }
 
-      &_Button_Primary,
+      &_Button--Primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-sm);
+        padding: 10px 20px;
+        border: 1px solid transparent;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        line-height: 1.4;
+        white-space: nowrap;
+        transition: all var(--transition-base);
+        background-color: var(--primary);
+        color: white;
+        height: 42px;
+      }
+
       &_Button_Secondary,
       &_Button_Ghost,
       &_Button_GhostSm,
