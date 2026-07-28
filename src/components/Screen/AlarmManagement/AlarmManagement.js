@@ -14,6 +14,7 @@ const AlarmManagement = () => {
     const [alarms, setAlarms] = useState([]);
     const [createdAtFilter, setCreatedAtFilter] = useState("id");
     const [levelFilter, setLevelFilter] = useState("all");
+    const [deleteId, setDeleteId] = useState();
     const [search, setSearch] = useState("");
     const [modalType, setModalType] = useState(null);
     const [reloadTrigger, setReloadTrigger] = useState(false);
@@ -30,7 +31,7 @@ const AlarmManagement = () => {
 
     useEffect(() => {
         (async () => {
-            const res = await callApi("get", `${process.env.REACT_APP_APIDEV}/data/v2/getAllAlarmManagement?createdAtFillter=${createdAtFilter}&search=${search}&levelFilter=${levelFilter}&page=${currentPage}`, {});
+            const res = await callApi("get", `${process.env.REACT_APP_APIDEV}/data/getAllAlarmManagement?createdAtFillter=${createdAtFilter}&search=${search}&levelFilter=${levelFilter}&page=${currentPage}`, {});
             if (res.status === false) {
                 console.log("Failed to get data");
             } else {
@@ -95,6 +96,26 @@ const AlarmManagement = () => {
         } catch (error) {
             console.log(error);
             toast.error(lang.formatMessage({ id: "toast_error" }));
+        }
+    };
+
+    const handleDeleteAlarm = async () => {
+        try {
+            setReloadTrigger(false);
+            const res = await callApi("post", `${process.env.REACT_APP_APIDEV}/data/deleteAlarm`, {
+                id: deleteId,
+            });
+
+            if(res.status === false) {
+                toast.error(lang.formatMessage({ id: "toast_notFound_alarm" }))
+            } else {
+                toast.success(lang.formatMessage({ id: "toast_deleted"}))
+                setModalType(null);
+                setReloadTrigger(true);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(lang.formatMessage({id: "toast_error"}))
         }
     };
 
@@ -196,7 +217,7 @@ const AlarmManagement = () => {
         switch (modalType) {
             case "add": return renderModalAdd();
             case "edit": return renderModalEdit();
-            case "delete": return lang.formatMessage({ id: "description_delete_role" });
+            case "delete": return lang.formatMessage({ id: "description_delete_alarm" });
             default: return null;
         }
     };
@@ -225,6 +246,28 @@ const AlarmManagement = () => {
                         </button>
                     </>
                 );
+            case "delete":
+                return (
+                    <>
+                        <button
+                            className="DAT_RoleSetting_Modal_Container_Foot_Btn_Cancel"
+                            onClick={() => setModalType(null)}
+                        >
+                            {lang.formatMessage({ id: "cancel" })}
+                        </button>
+
+                        <button
+                            className="DAT_RoleSetting_Modal_Container_Foot_Btn_Delete"
+                            onClick={() => {
+                                handleDeleteAlarm()
+                            }}
+                        >
+                            {lang.formatMessage({
+                                id: "user_delete_button",
+                            })}
+                        </button>
+                    </>
+                )
             default:
                 return null;
         }
@@ -323,7 +366,13 @@ const AlarmManagement = () => {
                                                     </button>
                                                 )}
                                                 {permissions['alarm-management'].includes("delete") && (
-                                                    <button className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button' onClick={handleActions}>
+                                                    <button 
+                                                        className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button' 
+                                                        onClick={() => {
+                                                            setModalType("delete");
+                                                            setDeleteId(item.id_);
+                                                        }}
+                                                    >
                                                         {lang.formatMessage({ id: "alarm_delete_button" })}
                                                     </button>
                                                 )}
