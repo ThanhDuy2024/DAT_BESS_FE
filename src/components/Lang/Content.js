@@ -438,6 +438,8 @@ const enMessages = {
   toast_created: "Create successful",
   toast_recovery: "Recovery successful",
   toast_existed_role: "Role has exited",
+  toast_existed_alarm: "Alarm has exited",
+  toast_notFound_alarm: "Alarm not found",
   role_information: "Role Information",
   role_name: "Role name",
   permission_management: "Permission Management",
@@ -531,6 +533,10 @@ const enMessages = {
   bms_modal_edit_value_rack_title: "Edit value rack",
   bms_modal_edit_value_module_title: "Edit value module",
   alarm_search: "Search alarm message...",
+  alarm_modal_save: "Save alarm",
+  alarm_modal_create_title: "Create alarm",
+  alarm_modal_edit_title: "Edit alarm",
+  alarm_modal_edit: "Update alarm"
 };
 
 const viMessages = {
@@ -983,6 +989,8 @@ const viMessages = {
   toast_created: "Tạo thành công",
   toast_recovery: "Khôi phục thành công",
   toast_existed_role: "Vai trò này đã tồn tại",
+  toast_existed_alarm: "Cảnh báo đã tồn tại",
+  toast_notFound_alarm: "Cảnh báo không tồn tồn tại",
   role_information: "Thông tin vai trò",
   role_name: "Tên vai trò",
   permission_management: "Quản lý vai trò",
@@ -1077,7 +1085,10 @@ const viMessages = {
   bms_modal_edit_value_rack_title: "Chỉnh sửa giá trị rack",
   bms_modal_edit_value_module_title: "Chỉnh sửa giá trị module",
   alarm_search: "Tìm kiếm thông tin cảnh báo...",
-
+  alarm_modal_save: "Lưu cảnh báo",
+  alarm_modal_create_title: "Tạo cảnh báo",
+  alarm_modal_edit_title: "Chỉnh sửa cảnh báo",
+  alarm_modal_edit: "Cập nhật cảnh báo"
 };
 
 export const messages = {
