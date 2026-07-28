@@ -536,7 +536,8 @@ const enMessages = {
   alarm_modal_save: "Save alarm",
   alarm_modal_create_title: "Create alarm",
   alarm_modal_edit_title: "Edit alarm",
-  alarm_modal_edit: "Update alarm"
+  alarm_modal_edit: "Update alarm",
+  alarm_level_filter: "Level filter"
 };
 
 const viMessages = {
@@ -1088,7 +1089,8 @@ const viMessages = {
   alarm_modal_save: "Lưu cảnh báo",
   alarm_modal_create_title: "Tạo cảnh báo",
   alarm_modal_edit_title: "Chỉnh sửa cảnh báo",
-  alarm_modal_edit: "Cập nhật cảnh báo"
+  alarm_modal_edit: "Cập nhật cảnh báo",
+  alarm_level_filter: "Lọc theo mức độ"
 };
 
 export const messages = {

@@ -120,7 +120,7 @@ export default function Sidebar({ collapsed, onToggle }) {
       if (roleName === "administrator") return true;
 
       // 2. Ngoại lệ: Trang thông tin cá nhân ai đăng nhập cũng có quyền xem công khai
-      if (item.path === "/user-info" || item.path === "/alarm-management") return true;
+      if (item.path === "/user-info") return true;
 
       // 3. Xử lý bóc tách moduleKey từ path (ví dụ: "/pcs" -> "pcs", "/energy-report" -> "energy-report")
       const moduleKey = item.path.replace("/", "");

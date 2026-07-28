@@ -1,19 +1,22 @@
 import './AlarmManagement.scss'
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { callApi } from "../../Api/Api";
 import { MdOutlineCircleNotifications } from "react-icons/md";
 import StatusBadge from '../../Modal/StatusBadge';
 import { toast } from 'sonner';
 import Modal from '../../Modal/Modal';
+import { SystemContext } from '../../contexts/SystemContext';
 
 const AlarmManagement = () => {
     const lang = useIntl();
+    const { permissions } = useContext(SystemContext);
     const [alarms, setAlarms] = useState([]);
     const [createdAtFilter, setCreatedAtFilter] = useState("id");
+    const [levelFilter, setLevelFilter] = useState("all");
     const [search, setSearch] = useState("");
     const [modalType, setModalType] = useState(null);
-    const [reloadTrigger, setReloadTrigger] = useState(false); // Đổi tên cho rõ nghĩa
+    const [reloadTrigger, setReloadTrigger] = useState(false);
     const [createAlarm, setCreateAlarm] = useState({
         level: "Slight",
         address: "",
@@ -21,17 +24,21 @@ const AlarmManagement = () => {
     });
     const [alarmDetail, setAlarmDetail] = useState(null);
     const [editAlarmData, setEditAlarmData] = useState({});
+    const [totalPage, setTotalPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+
 
     useEffect(() => {
         (async () => {
-            const res = await callApi("get", `${process.env.REACT_APP_APIDEV}/data/getAllAlarmManagement?createdAtFillter=${createdAtFilter}&search=${search}`, {});
+            const res = await callApi("get", `${process.env.REACT_APP_APIDEV}/data/v2/getAllAlarmManagement?createdAtFillter=${createdAtFilter}&search=${search}&levelFilter=${levelFilter}&page=${currentPage}`, {});
             if (res.status === false) {
                 console.log("Failed to get data");
             } else {
                 setAlarms(res.data);
+                setTotalPage(res.totalPage);
             }
         })();
-    }, [createdAtFilter, search, reloadTrigger]);
+    }, [createdAtFilter, search, reloadTrigger, currentPage, levelFilter]);
 
     const handleActions = () => {
         toast.warning("Tính năng đang được phát triển");
@@ -244,7 +251,19 @@ const AlarmManagement = () => {
                     <select
                         className="DAT_Bms_Card_Actions_FilterSelect"
                         style={{ width: 200 }}
-                        value={createdAtFilter}
+                        value={levelFilter != 'id' ? createdAtFilter : ''}
+                        onChange={(e) => setLevelFilter(e.target.value)}
+                    >
+                        <option value="">{lang.formatMessage({ id: "alarm_level_filter" })}</option>
+                        <option value="all">{lang.formatMessage({ id: "all_levels" })}</option>
+                        <option value="Slight">{lang.formatMessage({ id: "status_slight" })}</option>
+                        <option value="Medium">{lang.formatMessage({ id: "status_medium" })}</option>
+                        <option value="Serious">{lang.formatMessage({ id: "status_serious" })}</option>
+                    </select>
+                    <select
+                        className="DAT_Bms_Card_Actions_FilterSelect"
+                        style={{ width: 200 }}
+                        value={createdAtFilter != 'id' ? createdAtFilter : ''}
                         onChange={(e) => setCreatedAtFilter(e.target.value)}
                     >
                         <option value="" disabled>{lang.formatMessage({ id: "sort_created_at" })}</option>
@@ -252,12 +271,14 @@ const AlarmManagement = () => {
                         <option value="asc">{lang.formatMessage({ id: "sort_created_oldest" })}</option>
                         <option value="desc">{lang.formatMessage({ id: "sort_created_newest" })}</option>
                     </select>
-                    <button
-                        className="DAT_AlarmManagement_Card_Actions_Button--Primary"
-                        onClick={() => setModalType('add')}
-                    >
-                        {lang.formatMessage({ id: "add_alarm" })}
-                    </button>
+                    {permissions['alarm-management'].includes("create") && (
+                        <button
+                            className="DAT_AlarmManagement_Card_Actions_Button--Primary"
+                            onClick={() => setModalType('add')}
+                        >
+                            {lang.formatMessage({ id: "add_alarm" })}
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -271,7 +292,9 @@ const AlarmManagement = () => {
                                 <th>{lang.formatMessage({ id: "alarm_message" })}</th>
                                 <th>{lang.formatMessage({ id: "alarm_address" })}</th>
                                 <th>{lang.formatMessage({ id: "created_at" })}</th>
-                                <th>{lang.formatMessage({ id: "alarm_actions" })}</th>
+                                {permissions['alarm-management'].includes("update") && (
+                                    <th>{lang.formatMessage({ id: "alarm_actions" })}</th>
+                                )}
                             </tr>
                         </thead>
                         <tbody className="DAT_AlarmManagement_Container_Table_Main_Body">
@@ -284,28 +307,60 @@ const AlarmManagement = () => {
                                     <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.message_}</td>
                                     <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.address_}</td>
                                     <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.created_at_}</td>
-                                    <td className="DAT_AlarmManagement_Container_Table_Main_Cell">
-                                        <div className='DAT_AlarmManagement_Container_Table_Main_Cell_Action'>
-                                            <button 
-                                                className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button' 
-                                                onClick={() => {
-                                                    setModalType("edit");
-                                                    setAlarmDetail(item);
-                                                    setEditAlarmData(item);
-                                                }}
-                                            >
-                                                {lang.formatMessage({ id: "alarm_edit_button" })}
-                                            </button>
-                                            <button className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button' onClick={handleActions}>
-                                                {lang.formatMessage({ id: "alarm_delete_button" })}
-                                            </button>
-                                        </div>
-                                    </td>
+                                    {(permissions["alarm-management"].includes("update") || permissions["alarm-management"].includes("delete")) && (
+                                        <td className="DAT_AlarmManagement_Container_Table_Main_Cell">
+                                            <div className='DAT_AlarmManagement_Container_Table_Main_Cell_Action'>
+                                                {permissions['alarm-management'].includes("update") && (
+                                                    <button
+                                                        className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button'
+                                                        onClick={() => {
+                                                            setModalType("edit");
+                                                            setAlarmDetail(item);
+                                                            setEditAlarmData(item);
+                                                        }}
+                                                    >
+                                                        {lang.formatMessage({ id: "alarm_edit_button" })}
+                                                    </button>
+                                                )}
+                                                {permissions['alarm-management'].includes("delete") && (
+                                                    <button className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button' onClick={handleActions}>
+                                                        {lang.formatMessage({ id: "alarm_delete_button" })}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
+                {totalPage > 1 && (
+                    <div className="DAT_RoleSetting_Container_Pagination">
+                        <button
+                            className="DAT_RoleSetting_Container_Pagination_Btn DAT_RoleSetting_Container_Pagination_Btn--prev"
+                            onClick={() => setCurrentPage(currentPage === 1 ? totalPage : currentPage - 1)}
+                        >
+                            &lt;
+                        </button>
+                        {Array.from({ length: totalPage }, (_, index) => (
+                            <button
+                                key={index}
+                                className={`DAT_RoleSetting_Container_Pagination_Btn${(index + 1) === currentPage ? " DAT_RoleSetting_Container_Pagination_Btn--active" : ""}`}
+
+                                onClick={() => setCurrentPage(index + 1)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button
+                            className="DAT_RoleSetting_Container_Pagination_Btn DAT_RoleSetting_Container_Pagination_Btn--next"
+                            onClick={() => setCurrentPage(currentPage == totalPage ? 1 : currentPage + 1)}
+                        >
+                            &gt;
+                        </button>
+                    </div>
+                )}
             </div>
 
             <Modal

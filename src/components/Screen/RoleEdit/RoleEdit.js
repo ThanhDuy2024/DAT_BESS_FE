@@ -21,6 +21,7 @@ const permissions = {
     bms: ["View", "Create", "Update", "Delete"],
     roles: ["View", "Create", "Update", "Delete"],
     settings: ["View", "Create", "Update", "Delete"],
+    "alarm-management": ["View", "Create", "Update", "Delete"],
 };
 
 export default function RoleEdit() {
