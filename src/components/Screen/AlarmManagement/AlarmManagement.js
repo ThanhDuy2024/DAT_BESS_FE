@@ -7,6 +7,9 @@ import StatusBadge from '../../Modal/StatusBadge';
 import { toast } from 'sonner';
 import Modal from '../../Modal/Modal';
 import { SystemContext } from '../../contexts/SystemContext';
+import { isMobile } from "react-device-detect";
+import { MdOutlineNotificationAdd } from "react-icons/md";
+import { LuEye } from "react-icons/lu";
 
 const AlarmManagement = () => {
     const lang = useIntl();
@@ -27,6 +30,7 @@ const AlarmManagement = () => {
     const [editAlarmData, setEditAlarmData] = useState({});
     const [totalPage, setTotalPage] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedAlarm, setSelectedAlarm] = useState(null);
 
 
     useEffect(() => {
@@ -40,7 +44,7 @@ const AlarmManagement = () => {
             }
         })();
     }, [createdAtFilter, search, reloadTrigger, currentPage, levelFilter]);
-
+    console.log()
     const handleActions = () => {
         toast.warning("Tính năng đang được phát triển");
     };
@@ -53,6 +57,8 @@ const AlarmManagement = () => {
                 return lang.formatMessage({ id: "alarm_modal_edit_title" });
             case "delete":
                 return lang.formatMessage({ id: "confirm_delete" });
+            case "viewMobile":
+                return lang.formatMessage({ id: "alarm_modal_detail_title" });
             default:
                 return "";
         }
@@ -74,7 +80,7 @@ const AlarmManagement = () => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(lang.formatMessage({ id: "toast_error" }));
+            toast.error(lang.formatMessage({ id: "toast_existed_alarm" }));
         }
     };
 
@@ -106,16 +112,16 @@ const AlarmManagement = () => {
                 id: deleteId,
             });
 
-            if(res.status === false) {
+            if (res.status === false) {
                 toast.error(lang.formatMessage({ id: "toast_notFound_alarm" }))
             } else {
-                toast.success(lang.formatMessage({ id: "toast_deleted"}))
+                toast.success(lang.formatMessage({ id: "toast_deleted" }))
                 setModalType(null);
                 setReloadTrigger(true);
             }
         } catch (error) {
             console.log(error);
-            toast.error(lang.formatMessage({id: "toast_error"}))
+            toast.error(lang.formatMessage({ id: "toast_error" }))
         }
     };
 
@@ -213,11 +219,39 @@ const AlarmManagement = () => {
         </div>
     );
 
+    const renderModalViewMobile = () => {
+        return (
+            <>
+                <div className="DAT_AlarmManagementMobile_Modal_Row">
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Label">{lang.formatMessage({ id: "alarm_id" })}</div>
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Value">ALARM-{selectedAlarm.id_ >= 10 ? `0${selectedAlarm.id_}` : `00${selectedAlarm.id_}`}</div>
+                </div>
+                <div className="DAT_AlarmManagementMobile_Modal_Row">
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Label">{lang.formatMessage({ id: "alarm_message" })}</div>
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Value">{selectedAlarm.message_}</div>
+                </div>
+                <div className="DAT_AlarmManagementMobile_Modal_Row">
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Label">{lang.formatMessage({ id: "alarm_level" })}</div>
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Value"><StatusBadge status={selectedAlarm.level_} /></div>
+                </div>
+                <div className="DAT_AlarmManagementMobile_Modal_Row">
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Label">{lang.formatMessage({ id: "alarm_address" })}</div>
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Value">{selectedAlarm.address_}</div>
+                </div>
+                <div className="DAT_AlarmManagementMobile_Modal_Row">
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Label">{lang.formatMessage({ id: "created_at" })}</div>
+                    <div className="DAT_AlarmManagementMobile_Modal_Row_Value">{selectedAlarm.created_at_}</div>
+                </div>
+            </>
+        )
+    }
+
     const renderBody = () => {
         switch (modalType) {
             case "add": return renderModalAdd();
             case "edit": return renderModalEdit();
             case "delete": return lang.formatMessage({ id: "description_delete_alarm" });
+            case "viewMobile": return renderModalViewMobile();
             default: return null;
         }
     };
@@ -250,14 +284,14 @@ const AlarmManagement = () => {
                 return (
                     <>
                         <button
-                            className="DAT_RoleSetting_Modal_Container_Foot_Btn_Cancel"
+                            className="DAT_AlarmManagementMobile_Modal_Container_Foot_Btn_Cancel"
                             onClick={() => setModalType(null)}
                         >
                             {lang.formatMessage({ id: "cancel" })}
                         </button>
 
                         <button
-                            className="DAT_RoleSetting_Modal_Container_Foot_Btn_Delete"
+                            className="DAT_AlarmManagementMobile_Modal_Container_Foot_Btn_Delete"
                             onClick={() => {
                                 handleDeleteAlarm()
                             }}
@@ -268,159 +302,304 @@ const AlarmManagement = () => {
                         </button>
                     </>
                 )
+            case "viewMobile":
+                return (
+                    <>
+                        <button
+                            className="DAT_AlarmManagementMobile_Modal_Footer_Button_Primary"
+                            onClick={() => { setModalType("edit"); setEditAlarmData(selectedAlarm); }}
+                        >
+                            {lang.formatMessage({ id: "edit" })}
+                        </button>
+
+                        <button
+                            className="DAT_AlarmManagementMobile_Modal_Footer_Button_Primary"
+                            onClick={() => {
+                                { setModalType("delete"); setDeleteId(selectedAlarm.id_); }
+                            }}
+                        >
+                            {lang.formatMessage({
+                                id: "delete",
+                            })}
+                        </button>
+                    </>
+                )
             default:
                 return null;
         }
     };
 
     return (
-        <div className="DAT_AlarmManagement">
-            <div className="DAT_AlarmManagement_HeaderCard">
-                <div className="DAT_AlarmManagement_HeaderCard_Main">
-                    <div className="DAT_AlarmManagement_HeaderCard_Main_Icon">
-                        <MdOutlineCircleNotifications size={28} />
-                    </div>
-                    <div className="DAT_AlarmManagement_HeaderCard_Main_Title">
-                        {lang.formatMessage({ id: "sidebar_item_alarm_management2" })}
-                    </div>
-                </div>
-                <div className="DAT_AlarmManagement_Card_Actions">
-                    <input
-                        className="DAT_AlarmManagement_Card_Actions_FilterInput"
-                        placeholder={lang.formatMessage({ id: "alarm_search" })}
-                        onChange={(e) => setSearch(e.target.value)}
-                        style={{ width: 250 }}
-                    />
-                    <select
-                        className="DAT_Bms_Card_Actions_FilterSelect"
-                        style={{ width: 200 }}
-                        value={levelFilter != 'id' ? createdAtFilter : ''}
-                        onChange={(e) => setLevelFilter(e.target.value)}
-                    >
-                        <option value="">{lang.formatMessage({ id: "alarm_level_filter" })}</option>
-                        <option value="all">{lang.formatMessage({ id: "all_levels" })}</option>
-                        <option value="Slight">{lang.formatMessage({ id: "status_slight" })}</option>
-                        <option value="Medium">{lang.formatMessage({ id: "status_medium" })}</option>
-                        <option value="Serious">{lang.formatMessage({ id: "status_serious" })}</option>
-                    </select>
-                    <select
-                        className="DAT_Bms_Card_Actions_FilterSelect"
-                        style={{ width: 200 }}
-                        value={createdAtFilter != 'id' ? createdAtFilter : ''}
-                        onChange={(e) => setCreatedAtFilter(e.target.value)}
-                    >
-                        <option value="" disabled>{lang.formatMessage({ id: "sort_created_at" })}</option>
-                        <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
-                        <option value="asc">{lang.formatMessage({ id: "sort_created_oldest" })}</option>
-                        <option value="desc">{lang.formatMessage({ id: "sort_created_newest" })}</option>
-                    </select>
-                    {permissions['alarm-management'].includes("create") && (
-                        <button
-                            className="DAT_AlarmManagement_Card_Actions_Button--Primary"
-                            onClick={() => setModalType('add')}
-                        >
-                            {lang.formatMessage({ id: "add_alarm" })}
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            <div className="DAT_AlarmManagement_Container">
-                <div className="DAT_AlarmManagement_Container_Table">
-                    <table className="DAT_AlarmManagement_Container_Table_Main">
-                        <thead>
-                            <tr style={{ textAlign: "center" }}>
-                                <th>{lang.formatMessage({ id: "role_id_table" })}</th>
-                                <th>{lang.formatMessage({ id: "alarm_level" })}</th>
-                                <th>{lang.formatMessage({ id: "alarm_message" })}</th>
-                                <th>{lang.formatMessage({ id: "alarm_address" })}</th>
-                                <th>{lang.formatMessage({ id: "created_at" })}</th>
-                                {permissions['alarm-management'].includes("update") && (
-                                    <th>{lang.formatMessage({ id: "alarm_actions" })}</th>
-                                )}
-                            </tr>
-                        </thead>
-                        <tbody className="DAT_AlarmManagement_Container_Table_Main_Body">
-                            {alarms.map(item => (
-                                <tr key={item.id_} className='DAT_AlarmManagement_Container_Table_Main_Row'>
-                                    <td className="DAT_AlarmManagement_Container_Table_Main_Cell">ALARM-{item.id_ >= 10 ? `0${item.id_}` : `00${item.id_}`}</td>
-                                    <td className="DAT_AlarmManagement_Container_Table_Main_Cell">
-                                        <StatusBadge status={item.level_} />
-                                    </td>
-                                    <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.message_}</td>
-                                    <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.address_}</td>
-                                    <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.created_at_}</td>
-                                    {(permissions["alarm-management"].includes("update") || permissions["alarm-management"].includes("delete")) && (
-                                        <td className="DAT_AlarmManagement_Container_Table_Main_Cell">
-                                            <div className='DAT_AlarmManagement_Container_Table_Main_Cell_Action'>
-                                                {permissions['alarm-management'].includes("update") && (
-                                                    <button
-                                                        className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button'
-                                                        onClick={() => {
-                                                            setModalType("edit");
-                                                            setAlarmDetail(item);
-                                                            setEditAlarmData(item);
-                                                        }}
-                                                    >
-                                                        {lang.formatMessage({ id: "alarm_edit_button" })}
-                                                    </button>
-                                                )}
-                                                {permissions['alarm-management'].includes("delete") && (
-                                                    <button 
-                                                        className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button' 
-                                                        onClick={() => {
-                                                            setModalType("delete");
-                                                            setDeleteId(item.id_);
-                                                        }}
-                                                    >
-                                                        {lang.formatMessage({ id: "alarm_delete_button" })}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </td>
-                                    )}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                {totalPage > 1 && (
-                    <div className="DAT_RoleSetting_Container_Pagination">
-                        <button
-                            className="DAT_RoleSetting_Container_Pagination_Btn DAT_RoleSetting_Container_Pagination_Btn--prev"
-                            onClick={() => setCurrentPage(currentPage === 1 ? totalPage : currentPage - 1)}
-                        >
-                            &lt;
-                        </button>
-                        {Array.from({ length: totalPage }, (_, index) => (
-                            <button
-                                key={index}
-                                className={`DAT_RoleSetting_Container_Pagination_Btn${(index + 1) === currentPage ? " DAT_RoleSetting_Container_Pagination_Btn--active" : ""}`}
-
-                                onClick={() => setCurrentPage(index + 1)}
+        <>
+            {isMobile ? (
+                <div className="DAT_AlarmManagementMobile">
+                    <div className="DAT_AlarmManagementMobile_HeaderCard">
+                        <div className="DAT_AlarmManagementMobile_HeaderCard_Main">
+                            <div className="DAT_AlarmManagementMobile_HeaderCard_Main_Icon">
+                                <MdOutlineCircleNotifications size={28} />
+                            </div>
+                            <div className="DAT_AlarmManagementMobile_HeaderCard_Main_Title">
+                                {lang.formatMessage({ id: "sidebar_item_alarm_management2" })}
+                            </div>
+                        </div>
+                        <div className="DAT_AlarmManagementMobile_Card_Actions">
+                            <input
+                                className="DAT_AlarmManagementMobile_Card_Actions_FilterInput"
+                                placeholder={lang.formatMessage({ id: "alarm_search" })}
+                                onChange={(e) => setSearch(e.target.value)}
+                                style={{ width: 225 }}
+                            />
+                            {permissions['alarm-management'].includes("create") && (
+                                <button
+                                    className="DAT_AlarmManagementMobile_Card_Actions_Button--Primary"
+                                    onClick={() => setModalType('add')}
+                                >
+                                    <MdOutlineNotificationAdd />
+                                </button>
+                            )}
+                            <select
+                                className="DAT_AlarmManagementMobile_Card_Actions_FilterSelect"
+                                style={{ width: 140 }}
+                                value={levelFilter != 'id' ? createdAtFilter : ''}
+                                onChange={(e) => setLevelFilter(e.target.value)}
                             >
-                                {index + 1}
-                            </button>
-                        ))}
-                        <button
-                            className="DAT_RoleSetting_Container_Pagination_Btn DAT_RoleSetting_Container_Pagination_Btn--next"
-                            onClick={() => setCurrentPage(currentPage == totalPage ? 1 : currentPage + 1)}
-                        >
-                            &gt;
-                        </button>
+                                <option value="">{lang.formatMessage({ id: "alarm_level_filter" })}</option>
+                                <option value="all">{lang.formatMessage({ id: "all_levels" })}</option>
+                                <option value="Slight">{lang.formatMessage({ id: "status_slight" })}</option>
+                                <option value="Medium">{lang.formatMessage({ id: "status_medium" })}</option>
+                                <option value="Serious">{lang.formatMessage({ id: "status_serious" })}</option>
+                            </select>
+                            <select
+                                className="DAT_AlarmManagementMobile_Card_Actions_FilterSelect"
+                                style={{ width: 140 }}
+                                value={createdAtFilter != 'id' ? createdAtFilter : ''}
+                                onChange={(e) => setCreatedAtFilter(e.target.value)}
+                            >
+                                <option value="" disabled>{lang.formatMessage({ id: "sort_created_at" })}</option>
+                                <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+                                <option value="asc">{lang.formatMessage({ id: "sort_created_oldest" })}</option>
+                                <option value="desc">{lang.formatMessage({ id: "sort_created_newest" })}</option>
+                            </select>
+                        </div>
                     </div>
-                )}
-            </div>
 
-            <Modal
-                isOpen={modalType !== null}
-                onClose={() => setModalType(null)}
-                title={renderTitle()}
-                footer={renderFooter()}
-            >
-                {renderBody()}
-            </Modal>
-        </div>
+                    <div className="DAT_AlarmManagementMobile_Container">
+                        {alarms.map(item => (
+                            <div key={item.id_} className="DAT_AlarmManagementMobile_Container_Card">
+                                <div className="DAT_AlarmManagementMobile_Container_Card_Left">
+                                    <div className="DAT_AlarmManagementMobile_Container_Card_Left_Label"
+                                        style={{ backgroundColor: item.level_ === "Serious" ? "var(--danger)" : item.level_ === "Medium" ? " var(--warning-dark)" : "rgb(224, 174, 23)" }}
+                                    >
+                                        ALARM-{item.id_ >= 10 ? `0${item.id_}` : `00${item.id_}`}
+                                    </div>
+                                    <div className="DAT_AlarmManagementMobile_Container_Card_Left_Item">
+                                        <div className="DAT_AlarmManagementMobile_Container_Card_Left_Item_Title">{item.message_}</div>
+                                        <div className="DAT_AlarmManagementMobile_Container_Card_Left_Item_Subtitle">
+                                            <StatusBadge status={item.level_} />
+                                            <div className="DAT_AlarmManagementMobile_Container_Card_Left_Item_Subtitle_Date">{item.created_at_}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="DAT_AlarmManagementMobile_Container_Card_Right">
+                                    <button
+                                        className="DAT_AlarmManagementMobile_Container_Card_Right_Button"
+                                        aria-label="View alarm detail"
+                                        onClick={() => { setModalType("viewMobile"); setSelectedAlarm(item) }}
+                                    >
+                                        <LuEye />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                        {totalPage > 1 && (
+                            <div className="DAT_AlarmManagementMobile_Container_Pagination">
+                                <button
+                                    className="DAT_AlarmManagementMobile_Container_Pagination_Btn DAT_AlarmManagementMobile_Container_Pagination_Btn--prev"
+                                    onClick={() => setCurrentPage(currentPage === 1 ? totalPage : currentPage - 1)}
+                                >
+                                    &lt;
+                                </button>
+                                {Array.from({ length: totalPage }, (_, index) => (
+                                    <button
+                                        key={index}
+                                        className={`DAT_AlarmManagementMobile_Container_Pagination_Btn${(index + 1) === currentPage ? " DAT_AlarmManagementMobile_Container_Pagination_Btn--active" : ""}`}
+
+                                        onClick={() => setCurrentPage(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    className="DAT_AlarmManagementMobile_Container_Pagination_Btn DAT_AlarmManagement_Container_Pagination_Btn--next"
+                                    onClick={() => setCurrentPage(currentPage == totalPage ? 1 : currentPage + 1)}
+                                >
+                                    &gt;
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <Modal
+                        isOpen={modalType !== null}
+                        onClose={() => setModalType(null)}
+                        title={renderTitle()}
+                        footer={renderFooter()}
+                        size="xlarge"
+                    >
+                        {renderBody()}
+                    </Modal>
+                </div>
+            ) : (
+                <div className="DAT_AlarmManagement">
+                    <div className="DAT_AlarmManagement_HeaderCard">
+                        <div className="DAT_AlarmManagement_HeaderCard_Main">
+                            <div className="DAT_AlarmManagement_HeaderCard_Main_Icon">
+                                <MdOutlineCircleNotifications size={28} />
+                            </div>
+                            <div className="DAT_AlarmManagement_HeaderCard_Main_Title">
+                                {lang.formatMessage({ id: "sidebar_item_alarm_management2" })}
+                            </div>
+                        </div>
+                        <div className="DAT_AlarmManagement_Card_Actions">
+                            <input
+                                className="DAT_AlarmManagement_Card_Actions_FilterInput"
+                                placeholder={lang.formatMessage({ id: "alarm_search" })}
+                                onChange={(e) => setSearch(e.target.value)}
+                                style={{ width: 250 }}
+                            />
+                            <select
+                                className="DAT_Bms_Card_Actions_FilterSelect"
+                                style={{ width: 200 }}
+                                value={levelFilter != 'id' ? createdAtFilter : ''}
+                                onChange={(e) => setLevelFilter(e.target.value)}
+                            >
+                                <option value="">{lang.formatMessage({ id: "alarm_level_filter" })}</option>
+                                <option value="all">{lang.formatMessage({ id: "all_levels" })}</option>
+                                <option value="Slight">{lang.formatMessage({ id: "status_slight" })}</option>
+                                <option value="Medium">{lang.formatMessage({ id: "status_medium" })}</option>
+                                <option value="Serious">{lang.formatMessage({ id: "status_serious" })}</option>
+                            </select>
+                            <select
+                                className="DAT_Bms_Card_Actions_FilterSelect"
+                                style={{ width: 200 }}
+                                value={createdAtFilter != 'id' ? createdAtFilter : ''}
+                                onChange={(e) => setCreatedAtFilter(e.target.value)}
+                            >
+                                <option value="" disabled>{lang.formatMessage({ id: "sort_created_at" })}</option>
+                                <option value="id">{lang.formatMessage({ id: "sort_id" })}</option>
+                                <option value="asc">{lang.formatMessage({ id: "sort_created_oldest" })}</option>
+                                <option value="desc">{lang.formatMessage({ id: "sort_created_newest" })}</option>
+                            </select>
+                            {permissions['alarm-management'].includes("create") && (
+                                <button
+                                    className="DAT_AlarmManagement_Card_Actions_Button--Primary"
+                                    onClick={() => setModalType('add')}
+                                >
+                                    {lang.formatMessage({ id: "add_alarm" })}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="DAT_AlarmManagement_Container">
+                        <div className="DAT_AlarmManagement_Container_Table">
+                            <table className="DAT_AlarmManagement_Container_Table_Main">
+                                <thead>
+                                    <tr style={{ textAlign: "center" }}>
+                                        <th>{lang.formatMessage({ id: "role_id_table" })}</th>
+                                        <th>{lang.formatMessage({ id: "alarm_level" })}</th>
+                                        <th>{lang.formatMessage({ id: "alarm_message" })}</th>
+                                        <th>{lang.formatMessage({ id: "alarm_address" })}</th>
+                                        <th>{lang.formatMessage({ id: "created_at" })}</th>
+                                        {permissions['alarm-management'].includes("update") && (
+                                            <th>{lang.formatMessage({ id: "alarm_actions" })}</th>
+                                        )}
+                                    </tr>
+                                </thead>
+                                <tbody className="DAT_AlarmManagement_Container_Table_Main_Body">
+                                    {alarms.map(item => (
+                                        <tr key={item.id_} className='DAT_AlarmManagement_Container_Table_Main_Row'>
+                                            <td className="DAT_AlarmManagement_Container_Table_Main_Cell">ALARM-{item.id_ >= 10 ? `0${item.id_}` : `00${item.id_}`}</td>
+                                            <td className="DAT_AlarmManagement_Container_Table_Main_Cell">
+                                                <StatusBadge status={item.level_} />
+                                            </td>
+                                            <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.message_}</td>
+                                            <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.address_}</td>
+                                            <td className="DAT_AlarmManagement_Container_Table_Main_Cell">{item.created_at_}</td>
+                                            {(permissions["alarm-management"].includes("update") || permissions["alarm-management"].includes("delete")) && (
+                                                <td className="DAT_AlarmManagement_Container_Table_Main_Cell">
+                                                    <div className='DAT_AlarmManagement_Container_Table_Main_Cell_Action'>
+                                                        {permissions['alarm-management'].includes("update") && (
+                                                            <button
+                                                                className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button'
+                                                                onClick={() => {
+                                                                    setModalType("edit");
+                                                                    setAlarmDetail(item);
+                                                                    setEditAlarmData(item);
+                                                                }}
+                                                            >
+                                                                {lang.formatMessage({ id: "alarm_edit_button" })}
+                                                            </button>
+                                                        )}
+                                                        {permissions['alarm-management'].includes("delete") && (
+                                                            <button
+                                                                className='DAT_AlarmManagement_Container_Table_Main_Cell_Action_Button'
+                                                                onClick={() => {
+                                                                    setModalType("delete");
+                                                                    setDeleteId(item.id_);
+                                                                }}
+                                                            >
+                                                                {lang.formatMessage({ id: "alarm_delete_button" })}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            )}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        {totalPage > 1 && (
+                            <div className="DAT_AlarmManagement_Container_Pagination">
+                                <button
+                                    className="DAT_AlarmManagement_Container_Pagination_Btn DAT_AlarmManagement_Container_Pagination_Btn--prev"
+                                    onClick={() => setCurrentPage(currentPage === 1 ? totalPage : currentPage - 1)}
+                                >
+                                    &lt;
+                                </button>
+                                {Array.from({ length: totalPage }, (_, index) => (
+                                    <button
+                                        key={index}
+                                        className={`DAT_AlarmManagement_Container_Pagination_Btn${(index + 1) === currentPage ? " DAT_AlarmManagement_Container_Pagination_Btn--active" : ""}`}
+
+                                        onClick={() => setCurrentPage(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    className="DAT_AlarmManagement_Container_Pagination_Btn DAT_AlarmManagement_Container_Pagination_Btn--next"
+                                    onClick={() => setCurrentPage(currentPage == totalPage ? 1 : currentPage + 1)}
+                                >
+                                    &gt;
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <Modal
+                        isOpen={modalType !== null}
+                        onClose={() => setModalType(null)}
+                        title={renderTitle()}
+                        footer={renderFooter()}
+
+                    >
+                        {renderBody()}
+                    </Modal>
+                </div>
+            )}
+        </>
     );
 };
 
